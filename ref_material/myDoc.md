@@ -98,8 +98,8 @@ instructions are called.
 When the instructions reference registers some specific bits in the instruction
 determines which register is to be used. 
 
-#### Single Register
-When a single register is referenced by three bits it is denoted by `XXX` or `YYY` in
+#### Register
+When a register is referenced by three bits it is denoted by `XXX` or `YYY` in
 this documentation. Translation of bits `XXX` or `YYY` to a register:
 - 000: B
 - 001: C
@@ -111,63 +111,42 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 - 111: A
 
 
-### Families
 
-#### Carry Bit Instructions 
-```0011X111```
-operates directly on the carry flag
+* Carry Bit Instructions ```0011X111``` operates directly on the carry flag. Two instructions.
+<!-- ```0```:  -->
+<!-- STC _set_ carry flag -->
+<!--  -->
+<!-- ```1```: -->
+<!-- CMC _complement_ (set carry flag to its opposite value) -->
+* Single Register Instructions. Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
 
-```0```: 
-STC _set_ carry flag
+<!-- ```00XXX100```  -->
+<!-- **INC** Increment instruction. Register or memory is incremented by one. For -->
+<!-- `XXX` see [here](#single-register). _Flags_: Z, S, P, A -->
 
-```1```:
-CMC _complement_ (set carry flag to its opposite value)
+<!-- ```00XXX101```  -->
+<!-- **DCR** Decrement instruction. Decrement register or memory by one. For `XXX` -->
+<!-- see [here](#single-register). _Flags_: Z, S, P, A -->
 
-#### Single Register Instructions 
-Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
+<!-- ```00101111``` -->
+<!-- **CMA** complement accumulator register, i.e. each bit is changed to its -->
+<!-- opposite value. _Flags_: None -->
 
-```00XXX100``` 
-**INC** Increment instruction. Register or memory is incremented by one. For
-`XXX` see [here](#single-register). _Flags_: Z, S, P, A
+<!-- ```00100111``` -->
+<!-- **DAA** Decimal adjust accumulator register. Special OP. -->
+<!-- 1. If value of the LS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*. -->
+<!-- 2. If value of the MS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*.  -->
+<!--   - _Flags_: Z, S, P, C, A  -->
+<!--   - If overflow occurs during (1), flag *A* is set. If overflow occurs during -->
+<!--     (2), flag *C* is set. _NOTE_ that overflow in this case is overflow of -->
+<!--     four bits not the whole byte. -->
+* Data Transfer Instructions
+  * ```01XXXYYY```  **MOV** move byte to `XXX` from `YYY`. See [reg. ref.](#single-register). If XXX is equal to YYY it counts as a **NOP**
+  * ```000XY010```   **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
 
-```00XXX101``` 
-**DCR** Decrement instruction. Decrement register or memory by one. For `XXX`
-see [here](#single-register). _Flags_: Z, S, P, A
-
-```00101111```
-**CMA** complement accumulator register, i.e. each bit is changed to its
-opposite value. _Flags_: None
-
-```00100111```
-**DAA** Decimal adjust accumulator register. Special OP.
-1. If value of the LS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*.
-2. If value of the MS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*. 
-  - _Flags_: Z, S, P, C, A 
-  - If overflow occurs during (1), flag *A* is set. If overflow occurs during
-    (2), flag *C* is set. _NOTE_ that overflow in this case is overflow of
-    four bits not the whole byte.
-        
-        
-#### Data Transfer Instructions
-```01XXXYYY``` 
- **MOV** move byte to `XXX` from `YYY`. See [reg. ref.](#single-register). If XXX is equal to YYY it counts as a **NOP**
-instruction
-- _Flags_ None
-
-```000XY010``` 
- **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
-- `Y` 0: ST
-- `Y` 1: LD
-- `X` 0: register pair B and C (LSB)
-- `X` 1: register pair D and E (LSB)
-- _Flags_ None
-   
-#### Register/Memory to Accumulator Instructions
-operations on the accumulator using one byte fetched from a register or memory address. 
-
-```10XXXYYY``` 
+*  Register/Memory to Accumulator Instructions. operations on the accumulator using one byte fetched from a register or memory address. 
+   * ```10XXXYYY``` 
 Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
-
 | XXX | OP             | LHS | RHS | FLAGS     | Two's Comp. | Note       |
 |-----|----------------|-----|-----|-----------|-------------|------------|
 | 000 | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            |
@@ -191,12 +170,8 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 <!-- * TODO Halt instructions -->
 <!-- * TODO Pseudo instructions -->
 
-#### Immediate 
-
-
- ```00XX0001``` 
- **LXI** Load register XX with two next bytes, instruction bits. See [reg. ref.](#single-register). 
- 
+* Immediate 
+  * ```00XX0001```  **LXI** Load register XX with two next bytes, instruction bits. See [reg. ref.](#single-register). 
 | XX | MSB | LSB |
 |----|-----|-----|
 | 00 | B   | C   |
@@ -204,11 +179,9 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 | 10 | H   | L   |
 | 11 | SP  | SP  |
   
-```00XXX110```
-**MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register) 
+  * ```00XXX110``` **MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register).
 
-```11XXX110```
-**Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
+  * ```11XXX110``` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
 | XXX | Assembly | Function       | LHS | RHS | FLAGS     | Two's Comp. | Note       |
 |-----|----------|----------------|-----|-----|-----------|-------------|------------|
@@ -223,7 +196,6 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 
 ### Required by Space Invaders
 
-|--------------|-------------|--------|-----------------|-------------------------------------------------|
 | Machine Code | Assembly    | Cycles | Flags           | Function                                        |
 |--------------|-------------|--------|-----------------|-------------------------------------------------|
 | 0x00         | NOP         | 1      |                 |                                                 |
@@ -276,11 +248,9 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 | 0xf5         | PUSH PSW    | 1      |                 | (sp-2)<-flags; (sp-1)<-A; sp <- sp - 2          |
 | 0xfb         | EI          | 1      |                 | special                                         |
 | 0xfe         | CPI D8      | 2      | Z, S, P, CY, AC | A - data                                        |
-|--------------|-------------|--------|-----------------|-------------------------------------------------|
 
 ### All Instructions
 
-|--------------|-------------|--------|-----------------|-------------------------------------------------|
 | Machine Code | Assembly    | Cycles | Flags           | Function                                        |
 |--------------|-------------|--------|-----------------|-------------------------------------------------|
 | 0X00         | NOP         | 1      |                 |                                                 |
@@ -540,4 +510,3 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 | 0XFD         | -           |        |                 |                                                 |
 | 0XFE         | CPI D8      | 2      | Z, S, P, CY, AC | A - data                                        |
 | 0XFF         | RST 7       | 1      |                 | CALL \$38                                       |
-|--------------|-------------|--------|-----------------|-------------------------------------------------|
