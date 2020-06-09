@@ -140,49 +140,51 @@ Operates on single registers. If a memory references is specified, the address i
     four bits not the whole byte.
         
         
-* **Data Transfer Instructions** moves data between registers and memory
-  * `01XXXYYY` **MOV** move byte to `XXX` from `YYY`.
-    - for `XXX` and `YYY` see [link](#single-register)
-    - if XXX is equal to YYY it counts as a **NOP** instruction
-    - _Flags_ None
-  * `000XY010` **(ST/LD)AX** Store load accumulator from/to address specified by
-    MSB **H** and LSB **L**
+#### Data Transfer Instructions
+moves data between registers and memory
+```01XXXYYY``` 
+**MOV** move byte to `XXX` from `YYY`. for `XXX` and `YYY` see
+[link](#single-register). If XXX is equal to YYY it counts as a **NOP**
+instruction
+- _Flags_ None
+
+```000XY010``` 
+**(ST/LD)AX** Store load accumulator from/to address specified by MSB **H** and LSB **L**
     - `Y` 0: ST
     - `Y` 1: LD
     - `X` 0: register pair B (MSB) & C (LSB)
     - `X` 1: register pair D (MSB) & E (LSB)
     - _Flags_ None
    
-* **Register/Memory to Accumulator Instructions** operations on the accumulator
-using one byte fetched from a register or memory address. 
-  * `10XXXYYY`Where `XXX` is OP and `YYY` is register
-    * For `YYY` see [link](#single-register)
-    * `XXX` - 
-      - 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
+#### Register/Memory to Accumulator Instructions
+operations on the accumulator using one byte fetched from a register or memory address. 
+```10XXXYYY``` 
+Where `XXX` is OP and `YYY` is register. For `YYY` see [link](#single-register). `XXX`: 
+- 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-      - 001: **ADC** Add byte in `YYY` plus carry bit to reg **A**. Two's complement arithmetic.
+- 001: **ADC** Add byte in `YYY` plus carry bit to reg **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-      - 010: **SUB** Subtract byte in `YYY` from reg. **A**. Two's complement arithmetic.
-        - _Flags_ C, S, Z, P, A
-        - _Note_ carry out causes **C** to reset
-      - 011: **SBB** Subtract byte in `YYY` plus carry from reg. **A**. Two's complement arithmetic.
-        - _Flags_ C, S, Z, P, A
-        - _Note_ carry out causes **C** to reset
-      - 100: **ANA** Logical AND operation with `YYY` and **A**.
-        - _Flags_ C, S, Z, P
-        - _Note_ **C** is reset
-      - 101: **XRA** Logical XOR operation with `YYY` and **A**.
-        - _Flags_ C, S, Z, P, A
-        - _Note_ *C* is reset
-      - 110: **ORA** Logical OR operation with `YYY` and **A**.
-        - _Flags_ C, S, Z, P
-        - _Note_ **C** is reset
-      - 111: **CMP** compares `YYY` with **A** by subtracting `YYY` from **A** without
-        modifying the content of **A** and sets appropriate flags. Two's
-        complement arithmetic.
-        - **Z** set if result is zero, reset otherwise
-        - **C** set if `YYY` is greater than **A** otherwise reset.
-        - _Flags_ C, S, Z, P, A
+- 010: **SUB** Subtract byte in `YYY` from reg. **A**. Two's complement arithmetic.
+  - _Flags_ C, S, Z, P, A
+  - _Note_ carry out causes **C** to reset
+- 011: **SBB** Subtract byte in `YYY` plus carry from reg. **A**. Two's complement arithmetic.
+  - _Flags_ C, S, Z, P, A
+  - _Note_ carry out causes **C** to reset
+- 100: **ANA** Logical AND operation with `YYY` and **A**.
+  - _Flags_ C, S, Z, P
+  - _Note_ **C** is reset
+- 101: **XRA** Logical XOR operation with `YYY` and **A**.
+  - _Flags_ C, S, Z, P, A
+  - _Note_ *C* is reset
+- 110: **ORA** Logical OR operation with `YYY` and **A**.
+  - _Flags_ C, S, Z, P
+  - _Note_ **C** is reset
+- 111: **CMP** compares `YYY` with **A** by subtracting `YYY` from **A** without
+  modifying the content of **A** and sets appropriate flags. Two's
+  complement arithmetic.
+  - **Z** set if result is zero, reset otherwise
+  - **C** set if `YYY` is greater than **A** otherwise reset.
+  - _Flags_ C, S, Z, P, A
         
 * TODO Rotate accumulator instructions
 * TODO register pair instructions
