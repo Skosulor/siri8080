@@ -164,9 +164,9 @@ operations on the accumulator using one byte fetched from a register or memory a
 ```10XXXYYY``` 
 Where `XXX` is OP and `YYY` is register. For `YYY` see [link](#single-register). `XXX`: 
 - 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
-        - _Flags_ C, S, Z, P, A
+  - _Flags_ C, S, Z, P, A
 - 001: **ADC** Add byte in `YYY` plus carry bit to reg **A**. Two's complement arithmetic.
-        - _Flags_ C, S, Z, P, A
+  - _Flags_ C, S, Z, P, A
 - 010: **SUB** Subtract byte in `YYY` from reg. **A**. Two's complement arithmetic.
   - _Flags_ C, S, Z, P, A
   - _Note_ carry out causes **C** to reset
