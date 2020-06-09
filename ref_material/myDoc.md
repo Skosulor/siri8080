@@ -127,16 +127,16 @@ CMC _complement_ (set carry flag to its opposite value)
 Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
 
 ```00XXX100``` 
-**INC** Increment instruction. Register or memory is incremented by one. For `XXX` see [here](#single-register).
-- _Flags_: Z, S, P, A
+**INC** Increment instruction. Register or memory is incremented by one. For
+`XXX` see [here](#single-register). _Flags_: Z, S, P, A
 
 ```00XXX101``` 
-**DCR** Decrement instruction. Decrement register or memory by one. For `XXX` see [here](#single-register). 
-_Flags_: Z, S, P, A
+**DCR** Decrement instruction. Decrement register or memory by one. For `XXX`
+see [here](#single-register). _Flags_: Z, S, P, A
 
 ```00101111```
-**CMA** complement accumulator register, i.e. each bit is changed to its opposite value.
-_Flags_: None
+**CMA** complement accumulator register, i.e. each bit is changed to its
+opposite value. _Flags_: None
 
 ```00100111```
 **DAA** Decimal adjust accumulator register. Special OP.
@@ -192,15 +192,15 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 <!-- * TODO Pseudo instructions -->
 
 * **Immediate**: Occupies 2-3 bytes. 
-  * `00XX0001` **LXI** Load register XX with two next bytes, instruction bits. See []
-  | XX | MSB | LSB |
-  | 00 | B   | C   |
-  | 01 | D   | E   |
-  | 10 | H   | L   |
-  | 11 | SP  | SP  |
+  * `00XX0001` **LXI** Load register XX with two next bytes, instruction bits. See [reg. ref.](#single-register). 
+| XX | MSB | LSB |
+| 00 | B   | C   |
+| 01 | D   | E   |
+| 10 | H   | L   |
+| 11 | SP  | SP  |
   
 ```00XXX110```
-**MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register)
+**MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register) 
 
 ```11XXX110```
 **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
