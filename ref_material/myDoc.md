@@ -121,19 +121,25 @@ operates directly on the carry flag
 
 #### Single Register Instructions 
 Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
-* `00XXX100` **INC** Increment instruction. Register or memory is incremented by
-    one.
-  - for `XXX` see [link](#single-register)
-  - _Flags_: Z, S, P, A
-* `00XXX101` **DCR** Decrement instruction. Decrement register or memory by one.
-  - for `XXX` see [link](#single-register)
-  - _Flags_: Z, S, P, A
-* `00101111` **CMA** complement accumulator register, i.e. each bit is changed
+```00XXX100``` 
+**INC** Increment instruction. Register or memory is incremented by one.
+- for `XXX` see [link](#single-register)
+- _Flags_: Z, S, P, A
+
+```00XXX101``` 
+**DCR** Decrement instruction. Decrement register or memory by one.
+- for `XXX` see [link](#single-register)
+- _Flags_: Z, S, P, A
+
+```00101111```
+**CMA** complement accumulator register, i.e. each bit is changed
     to its opposite value.
-  - _Flags_: None
-* `00100111` **DAA** Decimal adjust accumulator register. Special OP.
-  1. If value of the LS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**.
-  2. If value of the MS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**. 
+- _Flags_: None
+
+```00100111```
+**DAA** Decimal adjust accumulator register. Special OP.
+1. If value of the LS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**.
+2. If value of the MS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**. 
   - _Flags_: Z, S, P, C, A 
   - If overflow occurs during (1), flag **A** is set. If overflow occurs during
     (2), flag **C** is set. _NOTE_ that overflow in this case is overflow of
@@ -152,11 +158,11 @@ instruction
 ```000XY010``` 
 
 **(ST/LD)AX** Store load accumulator from/to address specified by MSB **H** and LSB **L**
-    - `Y` 0: ST
-    - `Y` 1: LD
-    - `X` 0: register pair B (MSB) & C (LSB)
-    - `X` 1: register pair D (MSB) & E (LSB)
-    - _Flags_ None
+- `Y` 0: ST
+- `Y` 1: LD
+- `X` 0: register pair B (MSB) & C (LSB)
+- `X` 1: register pair D (MSB) & E (LSB)
+- _Flags_ None
    
 #### Register/Memory to Accumulator Instructions
 operations on the accumulator using one byte fetched from a register or memory address. 
