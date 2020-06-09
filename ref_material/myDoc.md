@@ -114,8 +114,8 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 ### Families
 
 #### Carry Bit Instructions 
-operates directly on the carry flag
 ```0011X111```
+operates directly on the carry flag
 - 0: STC _set_ carry flag
 - 1: CMC _complement_ (set carry flag to its opposite value)
 
@@ -141,14 +141,16 @@ Operates on single registers. If a memory references is specified, the address i
         
         
 #### Data Transfer Instructions
-moves data between registers and memory
 ```01XXXYYY``` 
+
+
 **MOV** move byte to `XXX` from `YYY`. for `XXX` and `YYY` see
 [link](#single-register). If XXX is equal to YYY it counts as a **NOP**
 instruction
 - _Flags_ None
 
 ```000XY010``` 
+
 **(ST/LD)AX** Store load accumulator from/to address specified by MSB **H** and LSB **L**
     - `Y` 0: ST
     - `Y` 1: LD
