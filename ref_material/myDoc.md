@@ -1,5 +1,5 @@
 
-# *S*pace *I*nvaders written in *R*ust emulating *I*ntel*8080**
+# **S**pace **I**nvaders written in **R**ust emulating **I**ntel**8080**
 
 Yes i really wanted to use the acronym SIRI8080 and yes that is a horrible title name. 
 
@@ -117,7 +117,7 @@ When a register pair is referenced by two bits it is denoted by `XX` or `YY`. Tr
 - 10 - *H* and *L*
 - 11 - Flags and *A*
 
-#### Families
+#### Instruction Families
 * *Carry Bit Instructions*: operates directly on the carry flag. Two instructions.
   * ```0011X111``` **Set/Clear**
 * *Single Register Instructions*. Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
