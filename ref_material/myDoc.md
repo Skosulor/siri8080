@@ -120,7 +120,7 @@ operates directly on the carry flag
 - 1: CMC _complement_ (set carry flag to its opposite value)
 
 #### Single Register Instructions 
-Operates on single registers. If a memory references is specified, the address is specified by register **H** and **L**
+Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
 * `00XXX100` **INC** Increment instruction. Register or memory is incremented by
     one.
   - for `XXX` see [link](#single-register)
@@ -160,6 +160,7 @@ instruction
    
 #### Register/Memory to Accumulator Instructions
 operations on the accumulator using one byte fetched from a register or memory address. 
+
 ```10XXXYYY``` 
 Where `XXX` is OP and `YYY` is register. For `YYY` see [link](#single-register). `XXX`: 
 - 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
