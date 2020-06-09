@@ -98,8 +98,8 @@ instructions are called.
 When the instructions reference registers some specific bits in the instruction
 determines which register is to be used. 
 
-#### Register
-When a register is referenced by three bits it is denoted by `XXX` or `YYY` in
+#### Single Register reference
+When a single register is referenced by three bits it is denoted by `XXX` or `YYY` in
 this documentation. Translation of bits `XXX` or `YYY` to a register:
 - 000: B
 - 001: C
@@ -110,6 +110,12 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 - 110: memory reference 
 - 111: A
 
+#### Register Pair reference
+When a register pair is referenced by two bits it is denoted by `XX` or `YY`. Translation to register:
+- 00 - *B* and *C*
+- 01 - *D* and *E*
+- 10 - *H* and *L*
+- 11 - Flags and *A*
 
 #### Families
 * *Carry Bit Instructions*: operates directly on the carry flag. Two instructions.
@@ -119,12 +125,21 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
   * ```01XXXYYY```  **MOV** move byte to `XXX` from `YYY`. See [reg. ref.](#single-register). If XXX is equal to YYY it counts as a **NOP**
   * ```000XY010```  **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
 *  *Register/Memory to Accumulator Instructions*. operations on the accumulator using one byte fetched from a register or memory address. 
-   * ```10XXXYYY``` Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
+   * ```10XXXYYY``` **Arithmetic/Logic** Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
+* *Register Pair Instructions* operates on pair of instructions. See [ref](#register-pair-reference).
 * *Immediate* 
   * ```00XX0001``` **LXI** Load register XX with two next bytes, instruction bits.
   * ```00XXX110``` **MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register).
   * ```11XXX110``` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
+* *Direct Addressing instructions* OP's that reference memory by the next two bytes.
+  * ```001XX010``` **STA/LDA/SHLD/LHLD** `XX` denotes OP, second byte is low address, third byte is high address.
+* *Jump Instructions* Occupies one or Three bytes.
+  * ```11XXX01Y``` 8 different jump instructions, denoted by XX. Y: 1 for jump, 0 otherwise..
+* *Call Subroutine instructions* Occupies 3 bytes. Second byte for low address and third for high address
+  * ```11XXX10Y``` XXX denotes one of 8 functions. Y: 1 for CALL (special OP), 0 otherwise
+* *RET functions* return from subroutines.
+  * ```11XXX00X```XXX denotes one of 8 functions. Y: 1 for RET (special OP), 0 otherwise
 
 ### Required by Space Invaders
 
