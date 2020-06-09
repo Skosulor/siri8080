@@ -121,6 +121,7 @@ operates directly on the carry flag
 
 #### Single Register Instructions 
 Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
+
 ```00XXX100``` 
 **INC** Increment instruction. Register or memory is incremented by one.
 - for `XXX` see [link](#single-register)
