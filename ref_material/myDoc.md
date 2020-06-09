@@ -111,7 +111,7 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 - 111: A
 
 
-
+#### Families
 * Carry Bit Instructions ```0011X111``` operates directly on the carry flag. Two instructions.
 <!-- ```0```:  -->
 <!-- STC _set_ carry flag -->
@@ -146,7 +146,9 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 
 *  Register/Memory to Accumulator Instructions. operations on the accumulator using one byte fetched from a register or memory address. 
    * ```10XXXYYY``` 
+
 Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
+
 | XXX | OP             | LHS | RHS | FLAGS     | Two's Comp. | Note       |
 |-----|----------------|-----|-----|-----------|-------------|------------|
 | 000 | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            |
@@ -172,6 +174,8 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 
 * Immediate 
   * ```00XX0001```  **LXI** Load register XX with two next bytes, instruction bits. See [reg. ref.](#single-register). 
+  
+  
 | XX | MSB | LSB |
 |----|-----|-----|
 | 00 | B   | C   |
@@ -183,6 +187,8 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 
   * ```11XXX110``` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
+    
+    
 | XXX | Assembly | Function       | LHS | RHS | FLAGS     | Two's Comp. | Note       |
 |-----|----------|----------------|-----|-----|-----------|-------------|------------|
 | 000 | ADI      | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            |
