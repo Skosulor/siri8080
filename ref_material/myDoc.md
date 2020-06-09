@@ -86,12 +86,6 @@ and *0 if even*.
 The program counter is a 16 bit register. Contains address of next instruction
 to execute.
 
-| value | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-**Equals**
-| Bit   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-| value | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 1 |
-which represents -100
-
 ## Instructions 
 
 Instructions of the same _family_ can be determined by masking out the
@@ -119,32 +113,31 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 
 ### Families
 
-* **Carry Bit Instructions** operates directly on the carry flag
-  * `0011X111`
-    - 0: STC _set_ carry flag
-    - 1: CMC _complement_ (set carry flag to its opposite value)
+#### Carry Bit Instructions 
+operates directly on the carry flag
+```0011X111```
+- 0: STC _set_ carry flag
+- 1: CMC _complement_ (set carry flag to its opposite value)
 
-* **Single Register Instructions**: Operates on single registers. If a memory
-  references is specified, the address is specified by register **H** and **L**
-  * `00XXX100` **INC** Increment instruction. Register or memory is incremented by
+#### Single Register Instructions 
+Operates on single registers. If a memory references is specified, the address is specified by register **H** and **L**
+* `00XXX100` **INC** Increment instruction. Register or memory is incremented by
     one.
-    - for `XXX` see [link](#single-register)
-    - _Flags_: Z, S, P, A
-  * `00XXX101` **DCR** Decrement instruction. Decrement register or memory by one.
-    - for `XXX` see [link](#single-register)
-    - _Flags_: Z, S, P, A
-  * `00101111` **CMA** complement accumulator register, i.e. each bit is changed
+  - for `XXX` see [link](#single-register)
+  - _Flags_: Z, S, P, A
+* `00XXX101` **DCR** Decrement instruction. Decrement register or memory by one.
+  - for `XXX` see [link](#single-register)
+  - _Flags_: Z, S, P, A
+* `00101111` **CMA** complement accumulator register, i.e. each bit is changed
     to its opposite value.
-    - _Flags_: None
-  * `00100111` **DAA** Decimal adjust accumulator register. Special OP.
-    1. If value of the LS 4 bits of reg. **A** is greater than 9 or flag A is set,
-       add 6 to value of **A**.
-    2. If value of the MS 4 bits of reg. **A** is greater than 9 or flag A is set,
-       add 6 to value of **A**. 
-    - _Flags_: Z, S, P, C, A 
-      - If overflow occurs during (1), flag **A** is set. If overflow
-        occurs during (2), flag **C** is set. _NOTE_ that overflow in this case is
-        overflow of four bits not the whole byte.
+  - _Flags_: None
+* `00100111` **DAA** Decimal adjust accumulator register. Special OP.
+  1. If value of the LS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**.
+  2. If value of the MS 4 bits of reg. **A** is greater than 9 or flag A is set, add 6 to value of **A**. 
+  - _Flags_: Z, S, P, C, A 
+  - If overflow occurs during (1), flag **A** is set. If overflow occurs during
+    (2), flag **C** is set. _NOTE_ that overflow in this case is overflow of
+    four bits not the whole byte.
         
         
 * **Data Transfer Instructions** moves data between registers and memory
