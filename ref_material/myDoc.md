@@ -113,76 +113,17 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 
 #### Families
 * Carry Bit Instructions ```0011X111``` operates directly on the carry flag. Two instructions.
-<!-- ```0```:  -->
-<!-- STC _set_ carry flag -->
-<!--  -->
-<!-- ```1```: -->
-<!-- CMC _complement_ (set carry flag to its opposite value) -->
 * Single Register Instructions. Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
-<!-- ```00XXX100```  -->
-<!-- **INC** Increment instruction. Register or memory is incremented by one. For -->
-<!-- `XXX` see [here](#single-register). _Flags_: Z, S, P, A -->
-<!-- ```00XXX101```  -->
-<!-- **DCR** Decrement instruction. Decrement register or memory by one. For `XXX` -->
-<!-- see [here](#single-register). _Flags_: Z, S, P, A -->
-<!-- ```00101111``` -->
-<!-- **CMA** complement accumulator register, i.e. each bit is changed to its -->
-<!-- opposite value. _Flags_: None -->
-<!-- ```00100111``` -->
-<!-- **DAA** Decimal adjust accumulator register. Special OP. -->
-<!-- 1. If value of the LS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*. -->
-<!-- 2. If value of the MS 4 bits of reg. *A* is greater than 9 or flag A is set, add 6 to value of *A*.  -->
-<!--   - _Flags_: Z, S, P, C, A  -->
-<!--   - If overflow occurs during (1), flag *A* is set. If overflow occurs during -->
-<!--     (2), flag *C* is set. _NOTE_ that overflow in this case is overflow of -->
-<!--     four bits not the whole byte. -->
 * Data Transfer Instructions
   * ```01XXXYYY```  **MOV** move byte to `XXX` from `YYY`. See [reg. ref.](#single-register). If XXX is equal to YYY it counts as a **NOP**
   * ```000XY010```   **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
 *  Register/Memory to Accumulator Instructions. operations on the accumulator using one byte fetched from a register or memory address. 
    * ```10XXXYYY``` Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
-<!-- | XXX | OP             | LHS | RHS | FLAGS     | Two's Comp. | Note       | -->
-<!-- |-----|----------------|-----|-----|-----------|-------------|------------| -->
-<!-- | 000 | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 001 | ADD with Carry | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 010 | SUB            | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 011 | SUB with Carry | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 100 | AND            | *A* | YYY | C,S,Z,P   |             | Resets *C* | -->
-<!-- | 101 | XOR            | *A* | YYY | C,S,Z,P,A |             | Resets *C* | -->
-<!-- | 110 | OR             | *A* | YYY | C,S,Z,P,  |             | Resets *C* | -->
-<!-- | 111 | CMP            | *A* | YYY | C,S,Z,P,A |             | *          | -->
-<!--   \* *Z* is set if results is zero otherwise its reset. *C* is set if YYY is greater than *A* otherwise reset. -->
-<!-- * TODO Rotate accumulator instructions -->
-<!-- * TODO register pair instructions -->
-<!-- * TODO Direct addressing instructions -->
-<!-- * TODO Jump instructions -->
-<!-- * TODO Call subroutine instructions -->
-<!-- * TODO Reset Instruction -->
-<!-- * TODO Interrupt flip-flop instructions -->
-<!-- * TODO I/O instructions -->
-<!-- * TODO Halt instructions -->
-<!-- * TODO Pseudo instructions -->
 * Immediate 
   * ```00XX0001```  **LXI** Load register XX with two next bytes, instruction bits.
-<!-- | XX | MSB | LSB | -->
-<!-- |----|-----|-----| -->
-<!-- | 00 | B   | C   | -->
-<!-- | 01 | D   | E   | -->
-<!-- | 10 | H   | L   | -->
-<!-- | 11 | SP  | SP  | -->
   * ```00XXX110``` **MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register).
   * ```11XXX110``` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
-<!-- | XXX | Assembly | Function       | LHS | RHS | FLAGS     | Two's Comp. | Note       | -->
-<!-- |-----|----------|----------------|-----|-----|-----------|-------------|------------| -->
-<!-- | 000 | ADI      | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 001 | ACI      | ADD with Carry | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 010 | SUI      | SUB            | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 011 | SBI      | SUB with Carry | *A* | YYY | C,S,Z,P,A | Yes         |            | -->
-<!-- | 100 | ANI      | AND            | *A* | YYY | C,S,Z,P   |             | Resets *C* | -->
-<!-- | 101 | XRI      | XOR            | *A* | YYY | C,S,Z,P,A |             | Resets *C* | -->
-<!-- | 110 | ORI      | OR             | *A* | YYY | C,S,Z,P,  |             | Resets *C* | -->
-<!-- | 111 | CPI      | CMP            | *A* | YYY | C,S,Z,P,A |             | *          | -->
 
 ### Required by Space Invaders
 
