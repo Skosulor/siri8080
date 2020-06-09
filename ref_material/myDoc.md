@@ -112,15 +112,16 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 
 
 #### Families
-* Carry Bit Instructions ```0011X111``` operates directly on the carry flag. Two instructions.
-* Single Register Instructions. Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
-* Data Transfer Instructions
+* *Carry Bit Instructions*: operates directly on the carry flag. Two instructions.
+  * ```0011X111``` **Set/Clear**
+* *Single Register Instructions*. Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
+* *Data Transfer Instructions*
   * ```01XXXYYY```  **MOV** move byte to `XXX` from `YYY`. See [reg. ref.](#single-register). If XXX is equal to YYY it counts as a **NOP**
-  * ```000XY010```   **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
-*  Register/Memory to Accumulator Instructions. operations on the accumulator using one byte fetched from a register or memory address. 
+  * ```000XY010```  **(ST/LD)AX** Store load accumulator from/to address specified by MSB *H* and LSB *L*
+*  *Register/Memory to Accumulator Instructions*. operations on the accumulator using one byte fetched from a register or memory address. 
    * ```10XXXYYY``` Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
-* Immediate 
-  * ```00XX0001```  **LXI** Load register XX with two next bytes, instruction bits.
+* *Immediate* 
+  * ```00XX0001``` **LXI** Load register XX with two next bytes, instruction bits.
   * ```00XXX110``` **MVI** Load register X with next byte, instructions bits  [reg. ref.](#single-register).
   * ```11XXX110``` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
