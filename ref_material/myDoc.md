@@ -163,30 +163,30 @@ operations on the accumulator using one byte fetched from a register or memory a
 
 ```10XXXYYY``` 
 Where `XXX` is OP and `YYY` is register. For `YYY` see [link](#single-register). `XXX`: 
-- 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
+- 000: **ADD** Add byte in YYY to reg *A*. Two's complement arithmetic.
   - _Flags_ C, S, Z, P, A
-- 001: **ADC** Add byte in `YYY` plus carry bit to reg **A**. Two's complement arithmetic.
+- 001: **ADC** Add byte in YYY plus carry bit to reg *A*. Two's complement arithmetic.
   - _Flags_ C, S, Z, P, A
-- 010: **SUB** Subtract byte in `YYY` from reg. **A**. Two's complement arithmetic.
-  - _Flags_ C, S, Z, P, A
-  - _Note_ carry out causes **C** to reset
-- 011: **SBB** Subtract byte in `YYY` plus carry from reg. **A**. Two's complement arithmetic.
+- 010: **SUB** Subtract byte in YYY from reg. *A*. Two's complement arithmetic.
   - _Flags_ C, S, Z, P, A
   - _Note_ carry out causes **C** to reset
-- 100: **ANA** Logical AND operation with `YYY` and **A**.
+- 011: **SBB** Subtract byte in YYY plus carry from reg. *A*. Two's complement arithmetic.
+  - _Flags_ C, S, Z, P, A
+  - _Note_ carry out causes **C** to reset
+- 100: **ANA** Logical AND operation with YYY and *A*.
   - _Flags_ C, S, Z, P
   - _Note_ **C** is reset
-- 101: **XRA** Logical XOR operation with `YYY` and **A**.
+- 101: **XRA** Logical XOR operation with YYY and *A*.
   - _Flags_ C, S, Z, P, A
   - _Note_ *C* is reset
-- 110: **ORA** Logical OR operation with `YYY` and **A**.
+- 110: **ORA** Logical OR operation with YYY and *A*.
   - _Flags_ C, S, Z, P
   - _Note_ **C** is reset
-- 111: **CMP** compares `YYY` with **A** by subtracting `YYY` from **A** without
-  modifying the content of **A** and sets appropriate flags. Two's
+- 111: **CMP** compares YYY with *A* by subtracting YYY from *A* without
+  modifying the content of *A* and sets appropriate flags. Two's
   complement arithmetic.
   - **Z** set if result is zero, reset otherwise
-  - **C** set if `YYY` is greater than **A** otherwise reset.
+  - **C** set if YYY is greater than *A* otherwise reset.
   - _Flags_ C, S, Z, P, A
         
 * TODO Rotate accumulator instructions
