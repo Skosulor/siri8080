@@ -116,26 +116,26 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 #### Carry Bit Instructions 
 ```0011X111```
 operates directly on the carry flag
-- 0: STC _set_ carry flag
-- 1: CMC _complement_ (set carry flag to its opposite value)
+```0```: 
+STC _set_ carry flag
+
+```1```:
+CMC _complement_ (set carry flag to its opposite value)
 
 #### Single Register Instructions 
 Operates on single registers. If a memory reference is specified, the address is specified by register **H** and **L**
 
 ```00XXX100``` 
-**INC** Increment instruction. Register or memory is incremented by one.
-- for `XXX` see [link](#single-register)
+**INC** Increment instruction. Register or memory is incremented by one. For `XXX` see [here](#single-register).
 - _Flags_: Z, S, P, A
 
 ```00XXX101``` 
-**DCR** Decrement instruction. Decrement register or memory by one.
-- for `XXX` see [link](#single-register)
-- _Flags_: Z, S, P, A
+**DCR** Decrement instruction. Decrement register or memory by one. For `XXX` see [here](#single-register). 
+_Flags_: Z, S, P, A
 
 ```00101111```
-**CMA** complement accumulator register, i.e. each bit is changed
-    to its opposite value.
-- _Flags_: None
+**CMA** complement accumulator register, i.e. each bit is changed to its opposite value.
+_Flags_: None
 
 ```00100111```
 **DAA** Decimal adjust accumulator register. Special OP.
@@ -149,16 +149,13 @@ Operates on single registers. If a memory reference is specified, the address is
         
 #### Data Transfer Instructions
 ```01XXXYYY``` 
-
-
-**MOV** move byte to `XXX` from `YYY`. for `XXX` and `YYY` see
-[link](#single-register). If XXX is equal to YYY it counts as a **NOP**
+ **MOV** move byte to `XXX` from `YYY`. for `XXX` and `YYY` see
+[here](#single-register). If XXX is equal to YYY it counts as a **NOP**
 instruction
 - _Flags_ None
 
 ```000XY010``` 
-
-**(ST/LD)AX** Store load accumulator from/to address specified by MSB **H** and LSB **L**
+ **(ST/LD)AX** Store load accumulator from/to address specified by MSB **H** and LSB **L**
 - `Y` 0: ST
 - `Y` 1: LD
 - `X` 0: register pair B (MSB) & C (LSB)
@@ -169,48 +166,22 @@ instruction
 operations on the accumulator using one byte fetched from a register or memory address. 
 
 ```10XXXYYY``` 
-Where `XXX` is OP and `YYY` is register. For `YYY` see [link](#single-register). `XXX`: 
+Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register). `XXX`: 
 
-```000```:
-**ADD** Add byte in YYY to reg *A*. Two's complement arithmetic.
-  - _Flags_ C, S, Z, P, A
+| XXX | OP             | LHS | RHS | FLAGS     | Two's Comp. | Note       |
+|-----|----------------|-----|-----|-----------|-------------|------------|
+| 000 | ADD            | *A* | YYY | C,S,Z,P,A | Yes         |            |
+| 001 | ADD with Carry | *A* | YYY | C,S,Z,P,A | yes         |            |
+| 010 | SUB            | *A* | YYY | C,S,Z,P,A |             |            |
+| 011 | SUB with Carry | *A* | YYY | C,S,Z,P,A |             |            |
+| 100 | AND            | *A* | YYY | C,S,Z,P   |             | Resets *C* |
+| 101 | XOR            | *A* | YYY | C,S,Z,P,A |             | Resets *C* |
+| 110 | OR             | *A* | YYY | C,S,Z,P,  |             | Resets *C* |
+| 111 | CMP            | *A* | YYY | C,S,Z,P,A |             | *          |
 
-```001```:
-**ADC** Add byte in YYY plus carry bit to reg *A*. Two's complement arithmetic.
-  - _Flags_ C, S, Z, P, A
+  \* *Z* is set if results is zero otherwise its reset. *C* is set if YYY is greater than *A* otherwise reset.
 
-```010```:
-**SUB** Subtract byte in YYY from reg. *A*. Two's complement arithmetic.
-  - _Flags_ C, S, Z, P, A
-  - _Note_ carry out causes **C** to reset
 
-```011```:
-**SBB** Subtract byte in YYY plus carry from reg. *A*. Two's complement arithmetic.
-  - _Flags_ C, S, Z, P, A
-  - _Note_ carry out causes **C** to reset
-
-```100```:
-**ANA** Logical AND operation with YYY and *A*.
-  - _Flags_ C, S, Z, P
-  - _Note_ **C** is reset
-
-```101```:
-**XRA** Logical XOR operation with YYY and *A*.
-  - _Flags_ C, S, Z, P, A
-  - _Note_ *C* is reset
-
-```110```:
-**ORA** Logical OR operation with YYY and *A*.
-  - _Flags_ C, S, Z, P
-  - _Note_ **C** is reset
-
-```111```: 
-**CMP** compares YYY with *A* by subtracting YYY from *A* without
-  modifying the content of *A* and sets appropriate flags. Two's
-  complement arithmetic.
-  - **Z** set if result is zero, reset otherwise
-  - **C** set if YYY is greater than *A* otherwise reset.
-  - _Flags_ C, S, Z, P, A
         
 * TODO Rotate accumulator instructions
 * TODO register pair instructions
