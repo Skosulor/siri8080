@@ -196,8 +196,9 @@ Where `XXX` is OP and `YYY` is register. For `YYY` see [here](#single-register).
 
  ```00XX0001``` 
  **LXI** Load register XX with two next bytes, instruction bits. See [reg. ref.](#single-register). 
-
+ 
 | XX | MSB | LSB |
+|----|-----|-----|
 | 00 | B   | C   |
 | 01 | D   | E   |
 | 10 | H   | L   |
