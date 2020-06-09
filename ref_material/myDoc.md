@@ -14,7 +14,7 @@ Short (relatively) and sweet (if emulation is your jam) reference manual for the
 * MS(B) - Most Significant (Byte)
 * LS(B) - Least Significant (Byte)
 * OP(C) - Operation (Code) / instruction
-* *Flags*
+* **Flags**
   - C:  Carry flag
   - A:  Auxiliary carry bit flag
   - S:  Sign bit flag
@@ -38,13 +38,13 @@ The intel 8080 consists of the following parts
 ## Working registers
 
 Seven registers:
-* *A* - accumulator*
-* *B* - 'scratchpad' register
-* *C* - 'scratchpad' register
-* *D* - 'scratchpad' register
-* *E* - 'scratchpad' register
-* *H* - Common use: MSB of Address
-* *L* - Common use: LSB of Address
+* **A** - accumulator
+* **B** - 'scratchpad' register
+* **C** - 'scratchpad' register
+* **D** - 'scratchpad' register
+* **E** - 'scratchpad' register
+* **H** - Common use: MSB of Address
+* **L** - Common use: LSB of Address
  
 
 ## Memory
@@ -53,31 +53,31 @@ Seven registers:
 * Address length: 16 Bits
 
 Memory Addressing Modes:
-- *Direct Addressing*: Instruction supplies the exact memory address
-- *Register Pair Addressing*: A register contains the address. Register H
+- **Direct Addressing**: Instruction supplies the exact memory address
+- **Register Pair Addressing**: A register contains the address. Register H
   contains most significant Byte, L contains lowest significant Byte.
-- *Stack Pointer Addressing*: The stack pointer address is used. See *pop/push* in
+- **Stack Pointer Addressing**: The stack pointer address is used. See **pop/push** in
   the "Stack Pointer" section.
-- *Immediate Addressing*: Loads next byte (Byte after instruction byte) into the
-  *A* register.
+- **Immediate Addressing**: Loads next byte (Byte after instruction byte) into the
+  **A** register.
 
 
 ## Status Flags/Bits (sometimes called status register)
 
 Bits that have special representation. Each individual bit represents a _flag_. 
 
-* *Carry Bit*: Affected by:
+* **Carry Bit**: Affected by:
   - addition:  TODO
   - subtraction: TODO
   - rotation: TODO
   - logical OP:  TOD
-* *Auxiliary Carry Bit*: Indicates overflow (carry out) of bit 3. Special bit only for
+* **Auxiliary Carry Bit**: Indicates overflow (carry out) of bit 3. Special bit only for
  instruction DAA (TODO) and cannot be tested. 
-* *Sign Bit*: A byte cab be represented as Two complement, if __bit 7 is set_ the numerical
-   range is [-128,-1], if _bit 7 is zero_ the range is [0,127]. The *Sign Bit*
+* **Sign Bit**: A byte cab be represented as Two complement, if __bit 7 is set_ the numerical
+   range is [-128,-1], if _bit 7 is zero_ the range is [0,127]. The **Sign Bit**
    is set to the conditions of bit 7 after certain instructions (TODO).
-* *Zero Bit*: Is set if the result is zero for some instructions.
-* *Parity Bit*: Is set after certain operations depending of parity. Parity
+* **Zero Bit**: Is set if the result is zero for some instructions.
+* **Parity Bit**: Is set after certain operations depending of parity. Parity
 means if there's odd or even number of set bits in s byte. Flag is *set if odd*
 and *0 if even*.
 
@@ -87,7 +87,7 @@ The program counter is a 16 bit register. Contains address of next instruction
 to execute.
 
 | value | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
-*Equals*
+**Equals**
 | Bit   | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
 | value | 1 | 0 | 0 | 1 | 1 | 0 | 1 | 1 |
 which represents -100
@@ -95,7 +95,7 @@ which represents -100
 ## Instructions 
 
 Instructions of the same _family_ can be determined by masking out the
-instructions bits. For example the *Immediate Move* or *MVI* _family_ have a total
+instructions bits. For example the **Immediate Move** or **MVI** _family_ have a total
 of 8 instructions with bit pattern `00XXX110` where `XXX` determines which MVI
 instructions are called.
 
@@ -119,76 +119,76 @@ this documentation. Translation of bits `XXX` or `YYY` to a register:
 
 ### Families
 
-* *Carry Bit Instructions* operates directly on the carry flag
+* **Carry Bit Instructions** operates directly on the carry flag
   * `0011X111`
     - 0: STC _set_ carry flag
     - 1: CMC _complement_ (set carry flag to its opposite value)
 
-* *Single Register Instructions*: Operates on single registers. If a memory
-  references is specified, the address is specified by register _H_ and _L_
-  * `00XXX100` *INC* Increment instruction. Register or memory is incremented by
+* **Single Register Instructions**: Operates on single registers. If a memory
+  references is specified, the address is specified by register **H** and **L**
+  * `00XXX100` **INC** Increment instruction. Register or memory is incremented by
     one.
     - for `XXX` see [link](#single-register)
     - _Flags_: Z, S, P, A
-  * `00XXX101` *DCR* Decrement instruction. Decrement register or memory by one.
+  * `00XXX101` **DCR** Decrement instruction. Decrement register or memory by one.
     - for `XXX` see [link](#single-register)
     - _Flags_: Z, S, P, A
-  * `00101111` *CMA* complement accumulator register, i.e. each bit is changed
+  * `00101111` **CMA** complement accumulator register, i.e. each bit is changed
     to its opposite value.
     - _Flags_: None
-  * `00100111` *DAA* Decimal adjust accumulator register. Special OP.
-    1. If value of the LS 4 bits of reg. *A* is greater than 9 or flag A is set,
-       add 6 to value of *A*.
-    2. If value of the MS 4 bits of reg. *A* is greater than 9 or flag A is set,
-       add 6 to value of *A*. 
+  * `00100111` **DAA** Decimal adjust accumulator register. Special OP.
+    1. If value of the LS 4 bits of reg. **A** is greater than 9 or flag A is set,
+       add 6 to value of **A**.
+    2. If value of the MS 4 bits of reg. **A** is greater than 9 or flag A is set,
+       add 6 to value of **A**. 
     - _Flags_: Z, S, P, C, A 
-      - If overflow occurs during (1), flag *A* is set. If overflow
-        occurs during (2), flag *C* is set. _NOTE_ that overflow in this case is
+      - If overflow occurs during (1), flag **A** is set. If overflow
+        occurs during (2), flag **C** is set. _NOTE_ that overflow in this case is
         overflow of four bits not the whole byte.
         
         
-* *Data Transfer Instructions* moves data between registers and memory
-  * `01XXXYYY` *MOV* move byte to `XXX` from `YYY`.
+* **Data Transfer Instructions** moves data between registers and memory
+  * `01XXXYYY` **MOV** move byte to `XXX` from `YYY`.
     - for `XXX` and `YYY` see [link](#single-register)
-    - if XXX is equal to YYY it counts as a *NOP* instruction
+    - if XXX is equal to YYY it counts as a **NOP** instruction
     - _Flags_ None
-  * `000XY010` *(ST/LD)AX* Store load accumulator from/to address specified by
-    MSB *H* and LSB *L*
+  * `000XY010` **(ST/LD)AX** Store load accumulator from/to address specified by
+    MSB **H** and LSB **L**
     - `Y` 0: ST
     - `Y` 1: LD
     - `X` 0: register pair B (MSB) & C (LSB)
     - `X` 1: register pair D (MSB) & E (LSB)
     - _Flags_ None
    
-* *Register/Memory to Accumulator Instructions* operations on the accumulator
+* **Register/Memory to Accumulator Instructions** operations on the accumulator
 using one byte fetched from a register or memory address. 
   * `10XXXYYY`Where `XXX` is OP and `YYY` is register
     * For `YYY` see [link](#single-register)
     * `XXX` - 
-      - 000: *ADD* Add byte in `YYY` to reg *A*. Two's complement arithmetic.
+      - 000: **ADD** Add byte in `YYY` to reg **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-      - 001: *ADC* Add byte in `YYY` plus carry bit to reg *A*. Two's complement arithmetic.
+      - 001: **ADC** Add byte in `YYY` plus carry bit to reg **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-      - 010: *SUB* Subtract byte in `YYY` from reg. *A*. Two's complement arithmetic.
+      - 010: **SUB** Subtract byte in `YYY` from reg. **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-        - _Note_ carry out causes *C* to reset
-      - 011: *SBB* Subtract byte in `YYY` plus carry from reg. *A*. Two's complement arithmetic.
+        - _Note_ carry out causes **C** to reset
+      - 011: **SBB** Subtract byte in `YYY` plus carry from reg. **A**. Two's complement arithmetic.
         - _Flags_ C, S, Z, P, A
-        - _Note_ carry out causes *C* to reset
-      - 100: *ANA* Logical AND operation with `YYY` and *A*.
+        - _Note_ carry out causes **C** to reset
+      - 100: **ANA** Logical AND operation with `YYY` and **A**.
         - _Flags_ C, S, Z, P
-        - _Note_ *C* is reset
-      - 101: *XRA* Logical XOR operation with `YYY` and *A*.
+        - _Note_ **C** is reset
+      - 101: **XRA** Logical XOR operation with `YYY` and **A**.
         - _Flags_ C, S, Z, P, A
         - _Note_ *C* is reset
-      - 110: *ORA* Logical OR operation with `YYY` and *A*.
+      - 110: **ORA** Logical OR operation with `YYY` and **A**.
         - _Flags_ C, S, Z, P
-        - _Note_ *C* is reset
-      - 111: *CMP* compares `YYY` with *A* by subtracting `YYY` from *A* without
-        modifying the content of *A* and sets appropriate flags. Two's
+        - _Note_ **C** is reset
+      - 111: **CMP** compares `YYY` with **A** by subtracting `YYY` from **A** without
+        modifying the content of **A** and sets appropriate flags. Two's
         complement arithmetic.
-        - *Z* set if result is zero, reset otherwise
-        - *C* set if `YYY` is greater than *A* otherwise reset.
+        - **Z** set if result is zero, reset otherwise
+        - **C** set if `YYY` is greater than **A** otherwise reset.
         - _Flags_ C, S, Z, P, A
         
 * TODO Rotate accumulator instructions
@@ -202,13 +202,13 @@ using one byte fetched from a register or memory address.
 * TODO Halt instructions
 * TODO Pseudo instructions
 
-* *Immediate*: Occupies 2-3 bytes. 
-  * `00XX0001` *LXI* Load register XY with two next bytes, instruction bits 
+* **Immediate**: Occupies 2-3 bytes. 
+  * `00XX0001` **LXI** Load register XY with two next bytes, instruction bits 
     - 00: B, C
     - 01: D, E
     - 10: H, L
     - 11: SP
-  * `00XXX110` *MVI* Load register X with next byte, instructions bits 
+  * `00XXX110` **MVI** Load register X with next byte, instructions bits 
     - 000: B
     - 001: C
     - 010: D
@@ -217,7 +217,7 @@ using one byte fetched from a register or memory address.
     - 101: L
     - 110: memory reference 
     - 111: A
-  * `11XXX110` *Arithmetic/Logic* Instructions: Operates on the accumulator (reg. *A*) with
+  * `11XXX110` **Arithmetic/Logic** Instructions: Operates on the accumulator (reg. **A**) with
     the next byte. Instructions bits
     * TODO FINISH
     - 000: ADI
@@ -229,8 +229,8 @@ using one byte fetched from a register or memory address.
     - 110: ORI
     - 111: CPI
 
-* *Special*
-  * *NOP*: Does nothing
+* **Special**
+  * **NOP**: Does nothing
 ### Required by Space Invaders
 
 |--------------|-------------|--------|-----------------|-------------------------------------------------|
