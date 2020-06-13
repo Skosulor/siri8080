@@ -46,10 +46,14 @@ Seven registers:
 * **H** - Common use: MSB of Address
 * **L** - Common use: LSB of Address
  
+## System Clock 
+
+~ Some frequency
+
 
 ## Memory
 
-* Size: 65 KB memory, 0x00000 - 0xFFFFH
+* Size: 65 KB memory, 0x00000 - 0xFFFFF
 * Address length: 16 Bits
 
 Memory Addressing Modes:
@@ -61,6 +65,21 @@ Memory Addressing Modes:
 - **Immediate Addressing**: Loads next byte (Byte after instruction byte) into the
   **A** register.
 
+
+   | Memory map:   |            |
+   |---------------|------------|
+   | ROM           |            |
+   |---------------|------------|
+   | 0x0000 0x07ff | invaders.h |
+   | 0x0800-0x0fff | invaders.g |
+   | 0x1000-0x17ff | invaders.f |
+   | 0x1800-0x1fff | invaders.e |
+   |---------------|------------|
+   | RAM           |            |
+   |---------------|------------|
+   | 0x2000-0x23ff | work RAM   |
+   | 0x2400-0x3fff | video RAM  |
+   | 0x4000-:      | RAM mirror |
 
 ## Status Flags/Bits (sometimes called status register)
 
@@ -85,6 +104,11 @@ and *0 if even*.
 
 The program counter is a 16 bit register. Contains address of next instruction
 to execute.
+
+## Stack pointer (SP)
+
+16 bit pointer used for subroutines and accessing data
+
 
 ## Instructions 
 
