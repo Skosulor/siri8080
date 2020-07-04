@@ -17,7 +17,7 @@ fn main() {
     }
 
     let mut p = i8080::Processor::from(
-        "/home/ohman/progStuff/rust/siri8080/rom/space_invaders".to_string(),
+        "/home/ohman/projects/siri8080/rom/space_invaders".to_string(),
     );
 
     // println!("{}", i8080::parity(0b11110000));

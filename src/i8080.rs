@@ -6,6 +6,7 @@ const MEMORY_SIZE: usize = 0xFFFFF;
 const MOVE_TO: u8 = 3;
 const MOVE_FROM: u8 = 0;
 const ARITHMETIC_WITH: u8 = 0;
+const MOVE_I_TO: u8 = 4;
 
 const B_REG: u8 = 0b000;
 const C_REG: u8 = 0b001;
@@ -74,6 +75,20 @@ enum InstructionTypes {
     ADC,
     SUB,
     SBB,
+    // Immediate
+    MVI,
+    ADI,
+    ACI,
+    SUI,
+    SBI,
+    ANI,
+    ORI,
+    XRI,
+    CPI,
+    ANA,
+    XRA,
+    ORA,
+    CMP,
     Unknown,
 }
 
@@ -120,6 +135,12 @@ impl Processor {
             InstructionTypes::ADC => self.add_op(true),
             InstructionTypes::SUB => self.sub_op(false),
             InstructionTypes::SBB => self.sub_op(true),
+            InstructionTypes::MVI => self.mvi_op(),
+            InstructionTypes::ORA => (),
+            InstructionTypes::ANA => (),
+            InstructionTypes::XRA => (),
+            InstructionTypes::CMP => (),
+
             _ => (),
         }
     }
@@ -187,6 +208,7 @@ impl Processor {
 
     fn add_op(&mut self, with_carry: bool){
         let prev_acc_value = self.get_reg(A_REG);
+        // Todo this should be byte one?
         let add_val = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
 
 
@@ -208,6 +230,7 @@ impl Processor {
 
     fn sub_op(&mut self, with_carry: bool){
         let prev_acc_value = self.get_reg(A_REG);
+        // Todo this should be byte one?
         let sub_val = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
 
         let (res, carry ) = if with_carry {
@@ -224,6 +247,12 @@ impl Processor {
         self.flags.zero_flag = zero(res);
 
         self.set_reg(A_REG, res);
+    }
+
+    fn mvi_op(&mut self){
+        self.program_counter += 1;
+        let result = self.memory[self.program_counter as usize];
+        self.set_reg(self.current_op.byte1.unwrap(), result);
     }
 }
 
@@ -297,7 +326,7 @@ impl Instruction {
             0b10000000 =>{
                 self.byte1 = Some((b >> ARITHMETIC_WITH) & 0b111);
                 self.adress_mode = AddressingMode::Direct;
-                match b & 0b10110000{
+                match b & 0b10111000{
                     // ADD
                     0b10000000 =>{
                         self.inst_type = InstructionTypes::ADD;
@@ -305,24 +334,48 @@ impl Instruction {
                         self.name = temp;
                     },
                     // ADC
-                    0b10010000 =>{
+                    0b10001000 =>{
                         self.inst_type = InstructionTypes::ADC;
                         let temp = format!("ADC {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
                     //SUB
-                    0b10100000 =>{
+                    0b10010000 =>{
                         self.inst_type = InstructionTypes::SUB;
                         let temp = format!("SUB {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
                     //SBB
-                    0b10110000 =>{
+                    0b10011000 =>{
                         self.inst_type = InstructionTypes::SBB;
                         let temp = format!("SBB {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
-                    _ => panic!("ARithemtic does not exist!"),
+                    0b10100000 =>{
+                        // TODO
+                        self.inst_type = InstructionTypes::ANA;
+                        let temp = format!("ANA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = temp;
+                    }
+                    0b10101000 =>{
+                        // TODO
+                        self.inst_type = InstructionTypes::XRA;
+                        let temp = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = temp;
+                    }
+                    0b10110000 =>{
+                        // TODO
+                        self.inst_type = InstructionTypes::ORA;
+                        let temp = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = temp;
+                    }
+                    0b10111000 =>{
+                        // TODO
+                        self.inst_type = InstructionTypes::CMP;
+                        let temp = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = temp;
+                    }
+                    _ => panic!("ARithemtic does not exist!: {:X}", self.byte_val),
                 }
             },
             // Misc instructions
@@ -335,7 +388,10 @@ impl Instruction {
                     0b0100 => self.name = "__".to_string(),
                     0b0101 => self.name = "__".to_string(),
                     // 6
-                    0b0110 | 0b1110 => self.name = "immediate".to_string(),
+                    0b0110 | 0b1110 =>{
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
                     0b0111 => self.name = "__".to_string(),
                     0b1000 => self.name = "__".to_string(),
                     0b1001 => self.name = "__".to_string(),
@@ -353,6 +409,31 @@ impl Instruction {
         }
 
     }
+
+    fn byte_to_immediate_op(&mut self){
+        match self.byte_val & 0xF0{
+            0x00 | 0x10 | 0x20 | 0x30 =>{
+                self.adress_mode = AddressingMode::Direct;
+                self.inst_type = InstructionTypes::MVI;
+
+
+                if self.byte_val & 0x0F == 0x06{
+                    self.byte1 = Some((self.byte_val & 0x30) >> 3);
+                }else{
+                    self.byte1 = Some(((self.byte_val & 0x30) >> 3) + 0x01);
+                }
+
+                let temp = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
+                self.name = temp;
+                (); // HLT instruction
+                return
+
+            }
+            _ => (),
+        }
+
+    }
+
 }
 
 
@@ -379,7 +460,7 @@ impl Registers{
             H_REG   => String::from("H"),
             L_REG   => String::from("L"),
             MEM_REF => String::from("MEM"),
-            A_REG   => String::from("C"),
+            A_REG   => String::from("A"),
             _ => panic!("No register {}", reg)
 
         }
