@@ -1,0 +1,52 @@
+#+TITLE: Todo
+
+
+* Guide
+** How to implement new instruction:
+1. Add enum for instruction type in /instructions.rs/
+2. Match binary value of op code in function /byte_to_op/
+3. set the following:
+   - self.adress_mode
+   - self.inst_type
+   - self.byte1
+   - self.byte2
+   - self.name
+4. create function /[name]_op/ in /i8080.rs/
+5. In file /i8080.rs/ match the instruction type in function
+   /execute_instruction/ and execute the newly created function for the OP
+6. Remember to increment the PC correctly
+
+
+** Dissasembler bindings
+
+| Binding | name       | function                                   |
+|---------+------------+--------------------------------------------|
+| c       | continue   | run forever                                |
+| s       | step       | stops the loaded program and take one step |
+| b*      | breakpoint | Set a breakpoint and run                   |
+
+*Due to a unfixed issue, type a space before typing the line number.
+
+* Implement Op Codes
+** [ ] Arithmetic
+*** [X] ADD
+*** [X] SUB
+*** [X] SBB
+*** [X] ADC
+*** [ ] ANA
+*** [ ] ORA
+*** [ ] XRA
+*** [ ] CMP
+** [X] MOV
+** [ ] Immediate
+*** [ ] ADI
+*** [ ] ACI
+*** [ ] SBI
+*** [ ] SUI
+*** [ ] ANI
+*** [ ] ORI
+*** [ ] XRI
+*** [ ] CPI
+
+* General
+** [ ] Update instruction counter based on type of instruction
