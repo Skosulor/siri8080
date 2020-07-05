@@ -5,7 +5,8 @@ use tui::layout::{Constraint, Direction, Layout, Margin, Rect};
 use tui::widgets::{Row, Block, Borders, List , Text, Table };
 use tui::style::{Style, Color};
 use tui::{Terminal, backend};
-use crate::i8080::{StatusFlags, Registers};
+use crate::i8080::registers::Registers;
+use crate::i8080::flags::StatusFlags;
 
 const MEMORY_ROWS: usize = 44;
 pub const N_MEM_BYTES: usize = 44*16;
