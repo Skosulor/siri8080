@@ -39,9 +39,9 @@ TODO Op codes needed for space invaders
 *** [X] XRA
 *** [X] CMP
 ** [X] MOV
-** [1/11] Immediate
-*** [ ] ADI
-*** [ ] ACI
+** [3/10] Immediate
+*** [X] ADI
+*** [X] ACI
 *** [ ] SBI
 *** [ ] SUI
 *** [ ] ANI

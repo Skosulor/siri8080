@@ -58,7 +58,7 @@ impl Processor {
 
     fn execute_instruction(&mut self){
         match self.current_op.inst_type{
-            InstructionTypes::MOV => self.move_op(),
+            InstructionTypes::MOV => self.mov_op(),
             InstructionTypes::ADD => self.add_op(false),
             InstructionTypes::ADC => self.add_op(true),
             InstructionTypes::SUB => self.sub_op(false),
@@ -68,6 +68,14 @@ impl Processor {
             InstructionTypes::ORA => self.ora_op(),
             InstructionTypes::XRA => self.xra_op(),
             InstructionTypes::CMP => self.cmp_op(),
+            InstructionTypes::ADI => self.add_op(false),
+            InstructionTypes::ACI => self.add_op(true),
+            InstructionTypes::SUI => (), // TODO
+            InstructionTypes::SBI => (), // TODO
+            InstructionTypes::ANI => (), // TODO
+            InstructionTypes::XRI => (), // TODO
+            InstructionTypes::ORI => (), // TODO
+            InstructionTypes::CPI => (), // TODO
             _ => (),
         }
     }
@@ -125,7 +133,7 @@ impl Processor {
         }
     }
 
-    fn move_op(&mut self){
+    fn mov_op(&mut self){
 
         let to = (self.current_op.byte_val & 0b00111000) >> MOVE_TO;
         let from = (self.current_op.byte_val & 0b00000111) >> MOVE_FROM;
@@ -134,16 +142,25 @@ impl Processor {
     }
 
     fn add_op(&mut self, with_carry: bool){
-        let prev_acc_value = self.get_reg(A_REG);
-        // Todo this should be byte one?
-        let add_val = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
+        let operand1 = self.get_reg(A_REG);
+        //let operand2 = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::ADD | InstructionTypes::ADC => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::ADI | InstructionTypes::ACI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            },
+            _ => {panic!("Add type is wrong, this panic should be impossible");}
+        };
 
 
         let (res, carry ) = if with_carry {
             let c = if self.flags.carry_flag {1} else {0};
-            add_val.overflowing_add(prev_acc_value + c)
+            operand2.overflowing_add(operand1 + c)
         }else{
-            add_val.overflowing_add(prev_acc_value)
+            operand2.overflowing_add(operand1)
         };
 
         self.flags.carry_flag = carry;
@@ -156,15 +173,15 @@ impl Processor {
     }
 
     fn sub_op(&mut self, with_carry: bool){
-        let prev_acc_value = self.get_reg(A_REG);
-        // TODO this should be byte one instead of translating byte_val again?
-        let sub_val = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
+        let operand1 = self.get_reg(A_REG);
+        //let operand2 = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
+        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
 
         let (res, carry ) = if with_carry {
             let c = if self.flags.carry_flag {1} else {0};
-            sub_val.overflowing_add(prev_acc_value + c)
+            operand2.overflowing_add(operand1 + c)
         }else{
-            sub_val.overflowing_sub(prev_acc_value)
+            operand2.overflowing_sub(operand1)
         };
 
         self.flags.carry_flag = carry;
@@ -180,7 +197,8 @@ impl Processor {
     // Bits affected: C, Z, S, P
     fn ana_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        let operand2 = self.get_reg(self.current_op.byte_val);
+        //let operand2 = self.get_reg(self.current_op.byte_val);
+        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
         let res = operand1 & operand2;
         self.set_flags_CZSP(false, res);
         self.set_reg(A_REG, res);
@@ -188,7 +206,8 @@ impl Processor {
 
     fn ora_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        let operand2 = self.get_reg(self.current_op.byte_val);
+        // let operand2 = self.get_reg(self.current_op.byte_val);
+        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
         let res = operand1 | operand2;
         self.set_flags_CZSP(false, res);
         self.set_reg(A_REG, res);
@@ -196,7 +215,8 @@ impl Processor {
 
     fn xra_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        let operand2 = self.get_reg(self.current_op.byte_val);
+        //let operand2 = self.get_reg(self.current_op.byte_val);
+        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
         let res = operand1 ^ operand2;
         // REVIEW aux flag should probably alwas be set to false
         self.flags.auxiliary_flag = false;
@@ -206,7 +226,8 @@ impl Processor {
 
     fn cmp_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        let operand2 = self.get_reg(self.current_op.byte_val);
+        //let operand2 = self.get_reg(self.current_op.byte_val);
+        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
         let (res, carry) = operand2.overflowing_sub(operand1);
         // REVIEW aux flag should probably be set to false
         self.flags.auxiliary_flag = false;
