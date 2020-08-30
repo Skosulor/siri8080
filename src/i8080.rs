@@ -72,7 +72,7 @@ impl Processor {
             InstructionTypes::ACI => self.add_op(true),
             InstructionTypes::SUI => self.sub_op(false),
             InstructionTypes::SBI => self.sub_op(true),
-            InstructionTypes::ANI => (), // TODO
+            InstructionTypes::ANI => self.ana_op(),
             InstructionTypes::XRI => (), // TODO
             InstructionTypes::ORI => (), // TODO
             InstructionTypes::CPI => (), // TODO
@@ -209,11 +209,18 @@ impl Processor {
     }
 
     // Logical AND
-    // Bits affected: C, Z, S, P
     fn ana_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        //let operand2 = self.get_reg(self.current_op.byte_val);
-        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::ANA => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::ANI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            }
+            _ => panic!("should impossible case"),
+        };
         let res = operand1 & operand2;
         self.set_flags_CZSP(false, res);
         self.set_reg(A_REG, res);
