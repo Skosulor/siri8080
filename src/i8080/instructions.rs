@@ -140,7 +140,7 @@ impl Instruction{
                         let temp = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
-                    _ => panic!("ARithemtic does not exist!: {:X}", self.byte_val),
+                    _ => panic!("Arithemtic does not exist!: {:X}", self.byte_val),
                 }
             },
             // Misc instructions
@@ -175,13 +175,25 @@ impl Instruction{
 
     }
 
+    fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes){
+        if self.byte_val & 0x0F == 0x06{
+            self.inst_type = op1;
+            self.name = name1;
+        }else if self.byte_val & 0x0F == 0x0E{
+            self.inst_type = op2;
+            self.name = name2;
+        }else{
+            panic!("Error, should either be {} or {}", name1, name2);
+        }
+
+    }
+
     fn byte_to_immediate_op(&mut self){
+        self.adress_mode = AddressingMode::Direct;
+
         match self.byte_val & 0xF0{
             0x00 | 0x10 | 0x20 | 0x30 =>{
-                self.adress_mode = AddressingMode::Direct;
                 self.inst_type = InstructionTypes::MVI;
-
-
                 // "Convert" register byte to format that set_reg(reg) uses.
                 if self.byte_val & 0x0F == 0x06{
                     self.byte1 = Some((self.byte_val & 0x30) >> 3);
@@ -193,8 +205,23 @@ impl Instruction{
                 self.name = temp;
                 (); // HLT instruction
                 return
-
             }
+            // ADI, ACI
+            0xC0 => {
+                self.immediate_op_helper("ADI".to_string(), InstructionTypes::ADI, "ACI".to_string(), InstructionTypes::ACI);
+            },
+            // SUI, SBI
+            0xD0 => {
+                self.immediate_op_helper("SUI".to_string(), InstructionTypes::SUI, "SBI".to_string(), InstructionTypes::SBI);
+            },
+            // ANI, XRI
+            0xE0 => {
+                self.immediate_op_helper("ANI".to_string(), InstructionTypes::ANI, "XRI".to_string(), InstructionTypes::XRI);
+            },
+            // ORI, CPI
+            0xF0 =>{
+                self.immediate_op_helper("ORI".to_string(), InstructionTypes::ORI, "CPI".to_string(), InstructionTypes::CPI);
+            },
             _ => (),
         }
 
