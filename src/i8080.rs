@@ -70,8 +70,8 @@ impl Processor {
             InstructionTypes::CMP => self.cmp_op(),
             InstructionTypes::ADI => self.add_op(false),
             InstructionTypes::ACI => self.add_op(true),
-            InstructionTypes::SUI => (), // TODO
-            InstructionTypes::SBI => (), // TODO
+            InstructionTypes::SUI => self.sub_op(false),
+            InstructionTypes::SBI => self.sub_op(true),
             InstructionTypes::ANI => (), // TODO
             InstructionTypes::XRI => (), // TODO
             InstructionTypes::ORI => (), // TODO
@@ -104,6 +104,7 @@ impl Processor {
         term.test_tui()
     }
 
+    // Set register to value
     fn set_reg(&mut self, reg:u8, val: u8){
         match reg & 0b111{
 
@@ -118,6 +119,7 @@ impl Processor {
             _ => panic!("No register {}", reg)
         }
     }
+    // Get current value from register
     fn get_reg(&self, reg: u8) -> u8{
         match reg & 0b111{
             B_REG   => self.registers.b,
@@ -143,7 +145,8 @@ impl Processor {
 
     fn add_op(&mut self, with_carry: bool){
         let operand1 = self.get_reg(A_REG);
-        //let operand2 = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
+
+        // Fetch operand from register/memory or immediate
         let operand2 = match self.current_op.inst_type {
             InstructionTypes::ADD | InstructionTypes::ADC => {
                 self.get_reg(self.current_op.byte1.unwrap())
@@ -156,6 +159,7 @@ impl Processor {
         };
 
 
+        // Either add with or wihtout the carry bit
         let (res, carry ) = if with_carry {
             let c = if self.flags.carry_flag {1} else {0};
             operand2.overflowing_add(operand1 + c)
@@ -174,8 +178,19 @@ impl Processor {
 
     fn sub_op(&mut self, with_carry: bool){
         let operand1 = self.get_reg(A_REG);
-        //let operand2 = self.get_reg((self.current_op.byte_val >> ARITHMETIC_WITH) &0b111);
-        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
+
+        // Fetch operand from register/memory or immediate
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::SUB | InstructionTypes::SBB => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::SUI | InstructionTypes::SBI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            },
+            _ => {panic!("Add type is wrong, this panic should be impossible");}
+        };
+
 
         let (res, carry ) = if with_carry {
             let c = if self.flags.carry_flag {1} else {0};
@@ -204,6 +219,7 @@ impl Processor {
         self.set_reg(A_REG, res);
     }
 
+    // Logaical OR
     fn ora_op(&mut self){
         let operand1 = self.get_reg(A_REG);
         // let operand2 = self.get_reg(self.current_op.byte_val);
@@ -213,6 +229,7 @@ impl Processor {
         self.set_reg(A_REG, res);
     }
 
+    // Logixal exclusive-OR
     fn xra_op(&mut self){
         let operand1 = self.get_reg(A_REG);
         //let operand2 = self.get_reg(self.current_op.byte_val);
@@ -224,6 +241,7 @@ impl Processor {
         self.set_reg(A_REG, res);
     }
 
+    // Compare accumelator with reg or memory
     fn cmp_op(&mut self){
         let operand1 = self.get_reg(A_REG);
         //let operand2 = self.get_reg(self.current_op.byte_val);
@@ -234,12 +252,14 @@ impl Processor {
         self.set_flags_CZSP(carry, res);
     }
 
+    // Immediate move
     fn mvi_op(&mut self){
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
         self.set_reg(self.current_op.byte1.unwrap(), result);
     }
 
+    // Set flags depending on result.
     pub fn set_flags_CZSP(&mut self, carry: bool, res: u8){
         self.flags.carry_flag  = carry;
         self.flags.parity_flag = parity(res);
