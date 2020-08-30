@@ -73,7 +73,7 @@ impl Processor {
             InstructionTypes::SUI => self.sub_op(false),
             InstructionTypes::SBI => self.sub_op(true),
             InstructionTypes::ANI => self.ana_op(),
-            InstructionTypes::XRI => (), // TODO
+            InstructionTypes::XRI => self.xra_op(),
             InstructionTypes::ORI => (), // TODO
             InstructionTypes::CPI => (), // TODO
             _ => (),
@@ -142,6 +142,7 @@ impl Processor {
         let val = self.get_reg(from);
         self.set_reg(to, val);
     }
+
 
     fn add_op(&mut self, with_carry: bool){
         let operand1 = self.get_reg(A_REG);
@@ -239,8 +240,17 @@ impl Processor {
     // Logixal exclusive-OR
     fn xra_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        //let operand2 = self.get_reg(self.current_op.byte_val);
-        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::XRA => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::XRI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            }
+            _ => panic!("should impossible case"),
+        };
+
         let res = operand1 ^ operand2;
         // REVIEW aux flag should probably alwas be set to false
         self.flags.auxiliary_flag = false;

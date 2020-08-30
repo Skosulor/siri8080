@@ -10,6 +10,7 @@ pub enum AddressingMode {
     Unknown,
 }
 
+#[derive(Debug)]
 #[derive(Clone)]
 pub enum InstructionTypes {
     MOV,
@@ -205,7 +206,7 @@ impl Instruction{
                 self.name = temp;
                 (); // HLT instruction
                 return
-            }
+            },
             // ADI, ACI
             0xC0 => {
                 self.immediate_op_helper("ADI".to_string(), InstructionTypes::ADI, "ACI".to_string(), InstructionTypes::ACI);
