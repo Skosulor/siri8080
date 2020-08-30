@@ -1,4 +1,4 @@
-
+    
 # **S**pace **I**nvaders written in **R**ust emulating **I**ntel**8080**
 
 Yes i really wanted to use the acronym SIRI8080 and yes that is a horrible title name. 

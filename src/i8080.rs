@@ -42,11 +42,9 @@ impl Processor {
         self.next_instruction();
         self.execute_instruction();
         self.update_program_counter();
-
         // if debug {
         //     self.update_disassembler();
         // }
-
      }
 
     pub fn reset_pc(&mut self){
@@ -66,11 +64,10 @@ impl Processor {
             InstructionTypes::SUB => self.sub_op(false),
             InstructionTypes::SBB => self.sub_op(true),
             InstructionTypes::MVI => self.mvi_op(),
-            InstructionTypes::ORA => self.ana_op(),
-            InstructionTypes::ANA => (),
-            InstructionTypes::XRA => (),
-            InstructionTypes::CMP => (),
-
+            InstructionTypes::ANA => self.ana_op(),
+            InstructionTypes::ORA => self.ora_op(),
+            InstructionTypes::XRA => self.xra_op(),
+            InstructionTypes::CMP => self.cmp_op(),
             _ => (),
         }
     }
@@ -189,17 +186,43 @@ impl Processor {
         self.set_reg(A_REG, res);
     }
 
+    fn ora_op(&mut self){
+        let operand1 = self.get_reg(A_REG);
+        let operand2 = self.get_reg(self.current_op.byte_val);
+        let res = operand1 | operand2;
+        self.set_flags_CZSP(false, res);
+        self.set_reg(A_REG, res);
+    }
+
+    fn xra_op(&mut self){
+        let operand1 = self.get_reg(A_REG);
+        let operand2 = self.get_reg(self.current_op.byte_val);
+        let res = operand1 ^ operand2;
+        // REVIEW aux flag should probably alwas be set to false
+        self.flags.auxiliary_flag = false;
+        self.set_flags_CZSP(false, res);
+        self.set_reg(A_REG, res);
+    }
+
+    fn cmp_op(&mut self){
+        let operand1 = self.get_reg(A_REG);
+        let operand2 = self.get_reg(self.current_op.byte_val);
+        let (res, carry) = operand2.overflowing_sub(operand1);
+        // REVIEW aux flag should probably be set to false
+        self.flags.auxiliary_flag = false;
+        self.set_flags_CZSP(carry, res);
+    }
+
     fn mvi_op(&mut self){
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
         self.set_reg(self.current_op.byte1.unwrap(), result);
     }
 
-
     pub fn set_flags_CZSP(&mut self, carry: bool, res: u8){
-        self.flags.carry_flag = carry;
+        self.flags.carry_flag  = carry;
         self.flags.parity_flag = parity(res);
-        self.flags.sign_flag = sign(res);
-        self.flags.zero_flag = zero(res);
+        self.flags.sign_flag   = sign(res);
+        self.flags.zero_flag   = zero(res);
     }
 }

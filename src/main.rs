@@ -5,6 +5,7 @@ use termion::event::Key;
 use termion::input::TermRead;
 mod i8080;
 mod disassembler;
+
 fn main() {
     println!("Hello, world!");
     let mut test: u8 = 0x3e;

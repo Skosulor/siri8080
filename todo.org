@@ -6,12 +6,12 @@
 1. Add enum for instruction type in /instructions.rs/
 2. Match binary value of op code in function /byte_to_op/
 3. set the following:
-   - self.adress_mode
-   - self.inst_type
-   - self.byte1
-   - self.byte2
-   - self.name
-4. create function /[name]_op/ in /i8080.rs/
+   + self.adress_mode
+   + self.inst_type
+   + self.byte1 (optionally)
+   + self.byte2 (optionally)
+   + self.name
+4. create function /[name]_op/ in /i8080.rs/ which sets flags and executes OP function
 5. In file /i8080.rs/ match the instruction type in function
    /execute_instruction/ and execute the newly created function for the OP
 6. Remember to increment the PC correctly
@@ -28,17 +28,18 @@
 *Due to a unfixed issue, type a space before typing the line number.
 
 * Implement Op Codes
-** [ ] Arithmetic
+TODO Op codes needed for space invaders
+** [8/8] Arithmetic
 *** [X] ADD
 *** [X] SUB
 *** [X] SBB
 *** [X] ADC
-*** [ ] ANA
-*** [ ] ORA
-*** [ ] XRA
-*** [ ] CMP
+*** [X] ANA
+*** [X] ORA
+*** [X] XRA
+*** [X] CMP
 ** [X] MOV
-** [ ] Immediate
+** [1/11] Immediate
 *** [ ] ADI
 *** [ ] ACI
 *** [ ] SBI
@@ -47,6 +48,27 @@
 *** [ ] ORI
 *** [ ] XRI
 *** [ ] CPI
+*** [ ] LXI
+*** [X] MVI
+** [0/17] Misc
+*** [ ] DCR
+*** [ ] DAD
+*** [ ] RRC
+*** [ ] INX
+*** [ ] LXI
+*** [ ] STA
+*** [ ] LDA
+*** [ ] JNZ
+*** [ ] JMP
+*** [ ] PUSH
+*** [ ] RET
+*** [ ] CALL
+*** [ ] POP
+*** [ ] OUT
+*** [ ] PUSH
+*** [ ] XCHG
+*** [ ] EI
 
 * General
 ** [ ] Update instruction counter based on type of instruction
+** [ ] Acutally set aux flag

@@ -126,19 +126,16 @@ impl Instruction{
                         self.name = temp;
                     }
                     0b10101000 =>{
-                        // TODO
                         self.inst_type = InstructionTypes::XRA;
                         let temp = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
                     0b10110000 =>{
-                        // TODO
                         self.inst_type = InstructionTypes::ORA;
                         let temp = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
                     0b10111000 =>{
-                        // TODO
                         self.inst_type = InstructionTypes::CMP;
                         let temp = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
