@@ -74,8 +74,8 @@ impl Processor {
             InstructionTypes::SBI => self.sub_op(true),
             InstructionTypes::ANI => self.ana_op(),
             InstructionTypes::XRI => self.xra_op(),
-            InstructionTypes::ORI => (), // TODO
-            InstructionTypes::CPI => (), // TODO
+            InstructionTypes::ORI => self.ora_op(),
+            InstructionTypes::CPI => self.cmp_op(),
             _ => (),
         }
     }
@@ -220,7 +220,7 @@ impl Processor {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
-            _ => panic!("should impossible case"),
+            _ => panic!("Should be an impossible match"),
         };
         let res = operand1 & operand2;
         self.set_flags_CZSP(false, res);
@@ -230,11 +230,21 @@ impl Processor {
     // Logaical OR
     fn ora_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        // let operand2 = self.get_reg(self.current_op.byte_val);
-        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::ORA => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::ORI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            }
+            _ => panic!("Should be an impossible match"),
+        };
+
         let res = operand1 | operand2;
         self.set_flags_CZSP(false, res);
         self.set_reg(A_REG, res);
+
     }
 
     // Logixal exclusive-OR
@@ -248,7 +258,7 @@ impl Processor {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
-            _ => panic!("should impossible case"),
+            _ => panic!("Should be an impossible match"),
         };
 
         let res = operand1 ^ operand2;
@@ -261,8 +271,16 @@ impl Processor {
     // Compare accumelator with reg or memory
     fn cmp_op(&mut self){
         let operand1 = self.get_reg(A_REG);
-        //let operand2 = self.get_reg(self.current_op.byte_val);
-        let operand2 = self.get_reg(self.current_op.byte1.unwrap());
+        let operand2 = match self.current_op.inst_type {
+            InstructionTypes::CMP => {
+                self.get_reg(self.current_op.byte1.unwrap())
+            }
+            InstructionTypes::CPI => {
+                self.program_counter += 1;
+                self.memory[self.program_counter as usize]
+            }
+            _ => panic!("Should be an impossible match"),
+        };
         let (res, carry) = operand2.overflowing_sub(operand1);
         // REVIEW aux flag should probably be set to false
         self.flags.auxiliary_flag = false;

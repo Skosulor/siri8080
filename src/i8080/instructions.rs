@@ -145,28 +145,54 @@ impl Instruction{
                 }
             },
             // Misc instructions
-            0b00000000 | 0b11000000 => {
+            0b11000000 => {
                 match b & 0b00001111 {
-                    0b0000 => self.name = "__".to_string(),
-                    0b0001 => self.name = "__".to_string(),
-                    0b0010 => self.name = "__".to_string(),
-                    0b0011 => self.name = "__".to_string(),
-                    0b0100 => self.name = "__".to_string(),
-                    0b0101 => self.name = "__".to_string(),
-                    // 6
+                    0b0000 => self.name = "__".to_string(), // TODO more than one op
+                    0b0001 => self.name = "POP".to_string(),
+                    0b0010 => self.name = "__".to_string(), // TODO more than one op
+                    0b0011 => self.name = "__".to_string(), // TODO more than one op
+                    0b0100 => self.name = "__".to_string(), // TODO more than one op
+                    0b0101 => self.name = "PUSH".to_string(),
+                    // 6 | E
+                    0b0110 | 0b1110 =>{
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b0111 => self.name = "RST".to_string(),
+                    0b1000 => self.name = "__".to_string(), // TODO more than one op
+                    0b1001 => self.name = "__".to_string(), // TODO more than one op
+                    0b1010 => self.name = "__".to_string(),  // TODO more than one op
+                    0b1011 => self.name = "__".to_string(), // TODO more than one op
+                    0b1100 => self.name = "__".to_string(), // TODO more than one op
+                    0b1101 => self.name = "CALL".to_string(),
+                    //
+                    0b1111 => self.name = "RST".to_string(),
+                    _ => panic!("Misc should not exist!"),
+                }
+            },
+
+            0b00000000 => {
+                match b & 0b00001111 {
+                    0b0000 => self.name = "NOP".to_string(),
+                    0b0001 => self.name = "LXI".to_string(),
+                    0b0010 => self.name = "__".to_string(), // TODO more than one OP
+                    0b0011 => self.name = "INX".to_string(),
+                    0b0100 => self.name = "INR".to_string(),
+                    0b0101 => self.name = "DCR".to_string(),
+                    // 6 | E
                     0b0110 | 0b1110 =>{
                         self.name = "immediate".to_string();
                         self.byte_to_immediate_op();
                     },
                     0b0111 => self.name = "__".to_string(),
-                    0b1000 => self.name = "__".to_string(),
-                    0b1001 => self.name = "__".to_string(),
-                    0b1010 => self.name = "__".to_string(),
-                    0b1011 => self.name = "__".to_string(),
-                    0b1100 => self.name = "__".to_string(),
-                    0b1101 => self.name = "__".to_string(),
+                    0b1000 => self.name = "NOP".to_string(),
+                    0b1001 => self.name = "DAD".to_string(),
+                    0b1010 => self.name = "__".to_string(), // TODO more than one OP
+                    0b1011 => self.name = "DCX".to_string(),
+                    0b1100 => self.name = "INR".to_string(),
+                    0b1101 => self.name = "DCR".to_string(),
                     //
-                    0b1111 => self.name = "__".to_string(),
+                    0b1111 => self.name = "__".to_string(), // TODO more than one op
                     _ => panic!("Misc should not exist!"),
                 }
             },
