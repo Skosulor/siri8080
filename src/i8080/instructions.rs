@@ -1,7 +1,8 @@
 use crate::i8080::registers::*;
 
 #[derive(Clone)]
-pub enum AddressingMode {
+pub enum AddressingMode 
+{
     Direct,
     // Pair,
     // StackPointer,
@@ -12,7 +13,8 @@ pub enum AddressingMode {
 
 #[derive(Debug)]
 #[derive(Clone)]
-pub enum InstructionTypes {
+pub enum InstructionTypes 
+{
     MOV,
     // Arithemtic
     ADD,
@@ -37,7 +39,8 @@ pub enum InstructionTypes {
 }
 
 #[derive(Clone)]
-pub struct Instruction {
+pub struct Instruction 
+{
     pub byte_val: u8,
     name: String,
     // cycles: u8,
@@ -47,10 +50,13 @@ pub struct Instruction {
     pub byte2: Option<u8>,
 }
 
-impl Instruction{
+impl Instruction
+{
 
-    pub fn new() -> Instruction{
-        let ins = Instruction {
+    pub fn new() -> Instruction
+    {
+        let ins = Instruction 
+        {
             byte_val: 0,
             name: "_".to_string(),
             // cycles: 1,
@@ -61,24 +67,29 @@ impl Instruction{
         };
         ins
     }
-    pub fn from_byte(b: u8) -> Instruction {
+    pub fn from_byte(b: u8) -> Instruction 
+    {
         let mut ins = Instruction::new();
         ins.byte_to_op(b);
         ins
     }
-    pub fn get_name_byte(self) -> (u8, String) {
+    pub fn get_name_byte(self) -> (u8, String) 
+    {
         (self.byte_val, self.name.clone())
     }
-    pub fn byte_to_op(&mut self, b: u8) {
+    pub fn byte_to_op(&mut self, b: u8) 
+    {
         self.byte_val = b;
         *self = Instruction::new();
         self.byte_val = b;
 
-        match b & 0b11000000{
+        match b & 0b11000000
+        {
             // Move Instructions
             // byte1 should hold destination register
             // byte2 should hould source register
-            0b01000000 => {
+            0b01000000 => 
+            {
                 self.adress_mode = AddressingMode::Direct;
                 self.inst_type = InstructionTypes::MOV;
                 self.byte1 = Some((b >> MOVE_TO) & 0b111);
@@ -91,50 +102,60 @@ impl Instruction{
             // Arithmetic Instruction
             // byte1 should hold source register
             // byte2 is unused
-            0b10000000 =>{
+            0b10000000 =>
+            {
                 self.byte1 = Some((b >> ARITHMETIC_WITH) & 0b111);
                 self.adress_mode = AddressingMode::Direct;
-                match b & 0b10111000{
+                match b & 0b10111000
+                {
                     // ADD
-                    0b10000000 =>{
+                    0b10000000 =>
+                    {
                         self.inst_type = InstructionTypes::ADD;
                         let temp = format!("ADD {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
                     // ADC
-                    0b10001000 =>{
+                    0b10001000 =>
+                    {
                         self.inst_type = InstructionTypes::ADC;
                         let temp = format!("ADC {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
                     //SUB
-                    0b10010000 =>{
+                    0b10010000 =>
+                    {
                         self.inst_type = InstructionTypes::SUB;
                         let temp = format!("SUB {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
                     //SBB
-                    0b10011000 =>{
+                    0b10011000 =>
+                    {
                         self.inst_type = InstructionTypes::SBB;
                         let temp = format!("SBB {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     },
-                    0b10100000 =>{
+                    0b10100000 =>
+                    {
                         self.inst_type = InstructionTypes::ANA;
                         let temp = format!("ANA {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
-                    0b10101000 =>{
+                    0b10101000 =>
+                    {
                         self.inst_type = InstructionTypes::XRA;
                         let temp = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
-                    0b10110000 =>{
+                    0b10110000 =>
+                    {
                         self.inst_type = InstructionTypes::ORA;
                         let temp = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
                     }
-                    0b10111000 =>{
+                    0b10111000 =>
+                    {
                         self.inst_type = InstructionTypes::CMP;
                         let temp = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
                         self.name = temp;
@@ -143,8 +164,10 @@ impl Instruction{
                 }
             },
             // Misc instructions
-            0b11000000 => {
-                match b & 0b00001111 {
+            0b11000000 => 
+            {
+                match b & 0b00001111 
+                {
                     0b0000 => self.name = "__".to_string(), // TODO more than one op
                     0b0001 => self.name = "POP".to_string(),
                     0b0010 => self.name = "__".to_string(), // TODO more than one op
@@ -152,7 +175,8 @@ impl Instruction{
                     0b0100 => self.name = "__".to_string(), // TODO more than one op
                     0b0101 => self.name = "PUSH".to_string(),
                     // 6 | E
-                    0b0110 | 0b1110 =>{
+                    0b0110 | 0b1110 =>
+                    {
                         self.name = "immediate".to_string();
                         self.byte_to_immediate_op();
                     },
@@ -169,8 +193,10 @@ impl Instruction{
                 }
             },
 
-            0b00000000 => {
-                match b & 0b00001111 {
+            0b00000000 => 
+            {
+                match b & 0b00001111 
+                {
                     0b0000 => self.name = "NOP".to_string(),
                     0b0001 => self.name = "LXI".to_string(),
                     0b0010 => self.name = "__".to_string(), // TODO more than one OP
@@ -178,7 +204,8 @@ impl Instruction{
                     0b0100 => self.name = "INR".to_string(),
                     0b0101 => self.name = "DCR".to_string(),
                     // 6 | E
-                    0b0110 | 0b1110 =>{
+                    0b0110 | 0b1110 =>
+                    {
                         self.name = "immediate".to_string();
                         self.byte_to_immediate_op();
                     },
@@ -200,29 +227,41 @@ impl Instruction{
 
     }
 
-    fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes){
-        if self.byte_val & 0x0F == 0x06{
+    fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes)
+    {
+        if self.byte_val & 0x0F == 0x06
+        {
             self.inst_type = op1;
             self.name = name1;
-        }else if self.byte_val & 0x0F == 0x0E{
+        }
+        else if self.byte_val & 0x0F == 0x0E
+        {
             self.inst_type = op2;
             self.name = name2;
-        }else{
+        }
+        else
+        {
             panic!("Error, should either be {} or {}", name1, name2);
         }
 
     }
 
-    fn byte_to_immediate_op(&mut self){
+    fn byte_to_immediate_op(&mut self)
+    {
         self.adress_mode = AddressingMode::Direct;
 
-        match self.byte_val & 0xF0{
-            0x00 | 0x10 | 0x20 | 0x30 =>{
+        match self.byte_val & 0xF0
+        {
+            0x00 | 0x10 | 0x20 | 0x30 =>
+            {
                 self.inst_type = InstructionTypes::MVI;
                 // "Convert" register byte to format that set_reg(reg) uses.
-                if self.byte_val & 0x0F == 0x06{
+                if self.byte_val & 0x0F == 0x06
+                {
                     self.byte1 = Some((self.byte_val & 0x30) >> 3);
-                }else{
+                }
+                else
+                {
                     self.byte1 = Some(((self.byte_val & 0x30) >> 3) + 0x01);
                 }
 
@@ -232,26 +271,28 @@ impl Instruction{
                 return
             },
             // ADI, ACI
-            0xC0 => {
+            0xC0 => 
+            {
                 self.immediate_op_helper("ADI".to_string(), InstructionTypes::ADI, "ACI".to_string(), InstructionTypes::ACI);
             },
             // SUI, SBI
-            0xD0 => {
+            0xD0 => 
+            {
                 self.immediate_op_helper("SUI".to_string(), InstructionTypes::SUI, "SBI".to_string(), InstructionTypes::SBI);
             },
             // ANI, XRI
-            0xE0 => {
+            0xE0 => 
+            {
                 self.immediate_op_helper("ANI".to_string(), InstructionTypes::ANI, "XRI".to_string(), InstructionTypes::XRI);
             },
             // ORI, CPI
-            0xF0 =>{
+            0xF0 =>
+            {
                 self.immediate_op_helper("ORI".to_string(), InstructionTypes::ORI, "CPI".to_string(), InstructionTypes::CPI);
             },
             _ => (),
         }
-
     }
-
 }
 
  // ADD,

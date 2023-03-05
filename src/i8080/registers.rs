@@ -11,7 +11,8 @@ pub const MOVE_TO: u8 = 3;
 pub const MOVE_FROM: u8 = 0;
 pub const ARITHMETIC_WITH: u8 = 0;
 
-pub struct Registers {
+pub struct Registers 
+{
   pub accumulator: u8,
   pub b: u8,
   pub c: u8,
@@ -21,10 +22,13 @@ pub struct Registers {
   pub l: u8,
 }
 
-impl Registers{
+impl Registers
+{
 
-    pub fn new() -> Registers{
-        let reg = Registers{
+    pub fn new() -> Registers
+    {
+        let reg = Registers
+        {
             accumulator: 0,
             e: 0,
             b: 0,
@@ -35,7 +39,9 @@ impl Registers{
         };
         reg
     }
-    pub fn translate_to_reg(reg: u8) -> String{
+
+    pub fn translate_to_reg(reg: u8) -> String
+    {
         match reg & 0b111{
             B_REG   => String::from("B"),
             C_REG   => String::from("C"),

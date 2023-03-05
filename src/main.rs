@@ -33,13 +33,17 @@ fn main() {
     const PRINT_INTERVAL: usize = 20;
 
     clear();
-    loop{
+    loop
+    {
         iteration += 1;
         let input = stdin.next();
         pc = p.get_pc();
-        if let Some(Ok(key)) = input {
-            match key {
-                termion::event::Key::Char('s') => {
+        if let Some(Ok(key)) = input 
+        {
+            match key 
+            {
+                termion::event::Key::Char('s') => 
+                {
                     run = false;
                     p.clock();
                     clear();
@@ -49,7 +53,8 @@ fn main() {
                 termion::event::Key::Char('r') => { clear(); p.reset_pc();},
                 termion::event::Key::Char('c') => {run = true},
                 termion::event::Key::Char('p') => {run = false},
-                termion::event::Key::Char('b') => {
+                termion::event::Key::Char('b') => 
+                {
                     std::mem::drop(stdin);
                     bp = get_breakpoint();
                     bp_set = true;
@@ -60,23 +65,29 @@ fn main() {
                 _ => (),
             }
         }
-        if bp_set && bp == pc {
+
+        if bp_set && bp == pc 
+        {
             run = false;
         }
-        if run{
-            if iteration > PRINT_INTERVAL {
+
+        if run
+        {
+            if iteration > PRINT_INTERVAL 
+            {
                 p.update_disassembler();
                 iteration = 0;
             }
             p.clock();
             clear();
-        }else{
         }
+        else{}
     }
 
 }
 
-pub fn clear(){
+pub fn clear()
+{
         write!(
             std::io::stdout(),
             "{}",
@@ -85,7 +96,8 @@ pub fn clear(){
 }
 
 
-pub fn get_breakpoint() -> usize{
+pub fn get_breakpoint() -> usize
+{
     print!("BreakPoint:");
     let mut s = String::new();
     let stdin = stdin();

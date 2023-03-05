@@ -11,7 +11,8 @@ use flags::*;
 
 const MEMORY_SIZE: usize = 0xFFFFF;
 
-pub struct Processor {
+pub struct Processor 
+{
     // clock_freq: f32,
     stack_pointer: u16,
     program_counter: u16,
@@ -21,9 +22,12 @@ pub struct Processor {
     current_op: Instruction,
 }
 
-impl Processor {
-    pub fn from(p: String) -> Processor {
-        let mut proc = Processor {
+impl Processor 
+{
+    pub fn from(p: String) -> Processor 
+    {
+        let mut proc = Processor 
+        {
             // clock_freq: 0.0,
             stack_pointer: 0x20,
             program_counter: 0,
@@ -38,22 +42,27 @@ impl Processor {
         proc
     }
 
-    pub fn clock(&mut self) {
+    pub fn clock(&mut self) 
+    {
         self.next_instruction();
         self.execute_instruction();
         self.update_program_counter();
      }
 
-    pub fn reset_pc(&mut self){
+    pub fn reset_pc(&mut self)
+    {
         self.program_counter = 0;
     }
 
-    fn next_instruction(&mut self)  {
+    fn next_instruction(&mut self)  
+    {
         self.current_op.byte_to_op(self.memory[self.program_counter as usize]);
     }
 
-    fn execute_instruction(&mut self){
-        match self.current_op.inst_type{
+    fn execute_instruction(&mut self)
+    {
+        match self.current_op.inst_type
+        {
             InstructionTypes::MOV => self.mov_op(),
             InstructionTypes::ADD => self.add_op(false),
             InstructionTypes::ADC => self.add_op(true),
@@ -76,18 +85,22 @@ impl Processor {
         }
     }
 
-    fn update_program_counter(&mut self){
+    fn update_program_counter(&mut self)
+    {
         self.program_counter += 1;
     }
 
-    pub fn get_pc(&self) -> usize {
+    pub fn get_pc(&self) -> usize 
+    {
         return self.program_counter as usize;
     }
 
-    pub fn update_disassembler(&mut self){
+    pub fn update_disassembler(&mut self)
+    {
         let mut test: Vec<String> = Vec::new();
         test.push("".to_string());
-        for x in 1..48{
+        for x in 1..48
+        {
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
             test.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", a=(self.program_counter as usize + x), b=bin, c=stri)));
@@ -101,9 +114,10 @@ impl Processor {
     }
 
     // Set register to value
-    fn set_reg(&mut self, reg:u8, val: u8){
-        match reg & 0b111{
-
+    fn set_reg(&mut self, reg:u8, val: u8)
+    {
+        match reg & 0b111
+        {
             B_REG   => self.registers.b = val,
             C_REG   => self.registers.c = val,
             D_REG   => self.registers.d = val,
@@ -116,7 +130,8 @@ impl Processor {
         }
     }
     // Get current value from register
-    fn get_reg(&self, reg: u8) -> u8{
+    fn get_reg(&self, reg: u8) -> u8
+    {
         match reg & 0b111{
             B_REG   => self.registers.b,
             C_REG   => self.registers.c,
@@ -131,7 +146,8 @@ impl Processor {
         }
     }
 
-    fn mov_op(&mut self){
+    fn mov_op(&mut self)
+    {
         let to = (self.current_op.byte_val & 0b00111000) >> MOVE_TO;
         let from = (self.current_op.byte_val & 0b00000111) >> MOVE_FROM;
         let val = self.get_reg(from);
@@ -139,15 +155,19 @@ impl Processor {
     }
 
 
-    fn add_op(&mut self, with_carry: bool){
+    fn add_op(&mut self, with_carry: bool)
+    {
         let operand1 = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::ADD | InstructionTypes::ADC => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::ADD | InstructionTypes::ADC => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::ADI | InstructionTypes::ACI => {
+            InstructionTypes::ADI | InstructionTypes::ACI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             },
@@ -156,10 +176,13 @@ impl Processor {
 
 
         // Either add with or wihtout the carry bit
-        let (res, carry ) = if with_carry {
+        let (res, carry ) = if with_carry 
+        {
             let c = if self.flags.carry_flag {1} else {0};
             operand2.overflowing_add(operand1 + c)
-        }else{
+        }
+        else
+        {
             operand2.overflowing_add(operand1)
         };
 
@@ -172,15 +195,19 @@ impl Processor {
         self.set_reg(A_REG, res);
     }
 
-    fn sub_op(&mut self, with_carry: bool){
+    fn sub_op(&mut self, with_carry: bool)
+    {
         let operand1 = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::SUB | InstructionTypes::SBB => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::SUB | InstructionTypes::SBB => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::SUI | InstructionTypes::SBI => {
+            InstructionTypes::SUI | InstructionTypes::SBI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             },
@@ -188,10 +215,13 @@ impl Processor {
         };
 
 
-        let (res, carry ) = if with_carry {
+        let (res, carry ) = if with_carry 
+        {
             let c = if self.flags.carry_flag {1} else {0};
             operand2.overflowing_add(operand1 + c)
-        }else{
+        }
+        else
+        {
             operand2.overflowing_sub(operand1)
         };
 
@@ -205,13 +235,17 @@ impl Processor {
     }
 
     // Logical AND
-    fn ana_op(&mut self){
+    fn ana_op(&mut self)
+    {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::ANA => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::ANA => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::ANI => {
+            InstructionTypes::ANI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
@@ -223,13 +257,17 @@ impl Processor {
     }
 
     // Logaical OR
-    fn ora_op(&mut self){
+    fn ora_op(&mut self)
+    {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::ORA => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::ORA => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::ORI => {
+            InstructionTypes::ORI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
@@ -243,13 +281,17 @@ impl Processor {
     }
 
     // Logixal exclusive-OR
-    fn xra_op(&mut self){
+    fn xra_op(&mut self)
+    {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::XRA => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::XRA => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::XRI => {
+            InstructionTypes::XRI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
@@ -264,13 +306,17 @@ impl Processor {
     }
 
     // Compare accumelator with reg or memory
-    fn cmp_op(&mut self){
+    fn cmp_op(&mut self)
+    {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type {
-            InstructionTypes::CMP => {
+        let operand2 = match self.current_op.inst_type 
+        {
+            InstructionTypes::CMP => 
+            {
                 self.get_reg(self.current_op.byte1.unwrap())
             }
-            InstructionTypes::CPI => {
+            InstructionTypes::CPI => 
+            {
                 self.program_counter += 1;
                 self.memory[self.program_counter as usize]
             }
@@ -283,14 +329,16 @@ impl Processor {
     }
 
     // Immediate move
-    fn mvi_op(&mut self){
+    fn mvi_op(&mut self)
+    {
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
         self.set_reg(self.current_op.byte1.unwrap(), result);
     }
 
     // Set flags depending on result.
-    pub fn set_flags_cszp(&mut self, carry: bool, res: u8){
+    pub fn set_flags_cszp(&mut self, carry: bool, res: u8)
+    {
         self.flags.carry_flag  = carry;
         self.flags.parity_flag = parity(res);
         self.flags.sign_flag   = sign(res);
