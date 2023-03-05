@@ -12,7 +12,7 @@ use flags::*;
 const MEMORY_SIZE: usize = 0xFFFFF;
 
 pub struct Processor {
-    clock_freq: f32,
+    // clock_freq: f32,
     stack_pointer: u16,
     program_counter: u16,
     memory: [u8; MEMORY_SIZE],
@@ -24,7 +24,7 @@ pub struct Processor {
 impl Processor {
     pub fn from(p: String) -> Processor {
         let mut proc = Processor {
-            clock_freq: 0.0,
+            // clock_freq: 0.0,
             stack_pointer: 0x20,
             program_counter: 0,
             memory: [0; MEMORY_SIZE],
@@ -38,13 +38,10 @@ impl Processor {
         proc
     }
 
-    pub fn clock(&mut self, debug: bool) {
+    pub fn clock(&mut self) {
         self.next_instruction();
         self.execute_instruction();
         self.update_program_counter();
-        // if debug {
-        //     self.update_disassembler();
-        // }
      }
 
     pub fn reset_pc(&mut self){
@@ -53,7 +50,6 @@ impl Processor {
 
     fn next_instruction(&mut self)  {
         self.current_op.byte_to_op(self.memory[self.program_counter as usize]);
-            // Update program counter here?
     }
 
     fn execute_instruction(&mut self){
@@ -89,14 +85,14 @@ impl Processor {
     }
 
     pub fn update_disassembler(&mut self){
-        let mut test: Vec<String> = Vec::new();//= vec!["".to_string(), "0xf3 : MOV B,D".to_string(),"0xf3 : MOV B,D".to_string() ];
+        let mut test: Vec<String> = Vec::new();
         test.push("".to_string());
         for x in 1..48{
-            //test.push("");
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
             test.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", a=(self.program_counter as usize + x), b=bin, c=stri)));
         }
+
         let mut term = disassembler::Term::default();
         term.set_flags(&self.flags);
         term.set_regs(&self.registers);
@@ -136,7 +132,6 @@ impl Processor {
     }
 
     fn mov_op(&mut self){
-
         let to = (self.current_op.byte_val & 0b00111000) >> MOVE_TO;
         let from = (self.current_op.byte_val & 0b00000111) >> MOVE_FROM;
         let val = self.get_reg(from);
@@ -223,7 +218,7 @@ impl Processor {
             _ => panic!("Should be an impossible match"),
         };
         let res = operand1 & operand2;
-        self.set_flags_CZSP(false, res);
+        self.set_flags_cszp(false, res);
         self.set_reg(A_REG, res);
     }
 
@@ -242,7 +237,7 @@ impl Processor {
         };
 
         let res = operand1 | operand2;
-        self.set_flags_CZSP(false, res);
+        self.set_flags_cszp(false, res);
         self.set_reg(A_REG, res);
 
     }
@@ -264,7 +259,7 @@ impl Processor {
         let res = operand1 ^ operand2;
         // REVIEW aux flag should probably alwas be set to false
         self.flags.auxiliary_flag = false;
-        self.set_flags_CZSP(false, res);
+        self.set_flags_cszp(false, res);
         self.set_reg(A_REG, res);
     }
 
@@ -284,7 +279,7 @@ impl Processor {
         let (res, carry) = operand2.overflowing_sub(operand1);
         // REVIEW aux flag should probably be set to false
         self.flags.auxiliary_flag = false;
-        self.set_flags_CZSP(carry, res);
+        self.set_flags_cszp(carry, res);
     }
 
     // Immediate move
@@ -295,7 +290,7 @@ impl Processor {
     }
 
     // Set flags depending on result.
-    pub fn set_flags_CZSP(&mut self, carry: bool, res: u8){
+    pub fn set_flags_cszp(&mut self, carry: bool, res: u8){
         self.flags.carry_flag  = carry;
         self.flags.parity_flag = parity(res);
         self.flags.sign_flag   = sign(res);

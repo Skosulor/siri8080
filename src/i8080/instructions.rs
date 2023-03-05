@@ -3,10 +3,10 @@ use crate::i8080::registers::*;
 #[derive(Clone)]
 pub enum AddressingMode {
     Direct,
-    Pair,
-    StackPointer,
-    ImmediateOneByte,
-    ImmediateTwoBytes,
+    // Pair,
+    // StackPointer,
+    // ImmediateOneByte,
+    // ImmediateTwoBytes,
     Unknown,
 }
 
@@ -40,22 +40,20 @@ pub enum InstructionTypes {
 pub struct Instruction {
     pub byte_val: u8,
     name: String,
-    cycles: u8,
+    // cycles: u8,
     adress_mode: AddressingMode,
     pub inst_type: InstructionTypes,
     pub byte1: Option<u8>,
     pub byte2: Option<u8>,
-    //argument: u8,
-    //result_locaton: u8
 }
 
 impl Instruction{
 
     pub fn new() -> Instruction{
-        let mut ins = Instruction {
+        let ins = Instruction {
             byte_val: 0,
             name: "_".to_string(),
-            cycles: 1,
+            // cycles: 1,
             adress_mode: AddressingMode::Unknown,
             inst_type: InstructionTypes::Unknown,
             byte1: None,

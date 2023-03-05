@@ -1,14 +1,11 @@
-use termion::event::*;
-use termion::raw::IntoRawMode;
-use std::io::{stdin, stdout, Write};
-use termion::event::Key;
+use std::io::{stdin, Write};
 use termion::input::TermRead;
 mod i8080;
 mod disassembler;
 
 fn main() {
     println!("Hello, world!");
-    let mut test: u8 = 0x3e;
+    let test: u8 = 0x3e;
     let o: u8 = 0x3e;
     let (test, overflow) = test.overflowing_sub(o);
     println!("{}, {}", test, overflow);
@@ -18,21 +15,14 @@ fn main() {
     }
 
     let mut p = i8080::Processor::from(
-        "/home/ohman/projects/siri8080/rom/space_invaders".to_string(),
+        "/Users/ohman/projects/siri8080/roms/cpudiag.bin".to_string(),
     );
-
-    // println!("{}", i8080::parity(0b11110000));
-    // println!("{}", i8080::parity(0b01110000));
-
-    // for x in 1..100{
-    //     println!("");
-    // }
 
     let mut stdin = termion::async_stdin().keys();
     let mut run = false;
     let mut bp_set = false;
     let mut bp = 0;
-    let mut pc = 0;
+    let mut pc;
     let mut iteration = 0;
     const PRINT_INTERVAL: usize = 20;
 
@@ -45,8 +35,9 @@ fn main() {
             match key {
                 termion::event::Key::Char('s') => {
                     run = false;
-                    p.clock(true);
+                    p.clock();
                     clear();
+                    p.update_disassembler();
                 },
                 termion::event::Key::Char('q') => {break;},
                 termion::event::Key::Char('r') => { clear(); p.reset_pc();},
@@ -71,10 +62,9 @@ fn main() {
                 p.update_disassembler();
                 iteration = 0;
             }
-            p.clock(true);
+            p.clock();
             clear();
         }else{
-            p.update_disassembler();
         }
     }
 
@@ -85,7 +75,7 @@ pub fn clear(){
             std::io::stdout(),
             "{}",
             termion::clear::All
-        );
+        ).expect("Error clearing screen!");
 }
 
 
@@ -93,9 +83,9 @@ pub fn get_breakpoint() -> usize{
     print!("BreakPoint:");
     let mut s = String::new();
     let stdin = stdin();
-    std::io::stdout().flush();
-    stdin.read_line(&mut s);
-    std::io::stdout().flush();
+    std::io::stdout().flush().expect("Failed to flush stdout");
+    stdin.read_line(&mut s).expect("Failed to read line");
+    std::io::stdout().flush().expect("Failed to flush stdout");
     //s.parse::<i32>().unwrap()
     println!("{}",s);
     let r: usize = s.trim().parse().unwrap() ;

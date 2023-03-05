@@ -10,7 +10,6 @@ pub const MEM_REF: u8 = 0b110;
 pub const MOVE_TO: u8 = 3;
 pub const MOVE_FROM: u8 = 0;
 pub const ARITHMETIC_WITH: u8 = 0;
-pub const MOVE_I_TO: u8 = 4;
 
 pub struct Registers {
   pub accumulator: u8,
