@@ -4,8 +4,8 @@ mod i8080;
 mod disassembler;
 use std::env;
 
-fn main() {
-
+fn main() 
+{
     let args: Vec<String> = env::args().collect();
     let mut rom = "".to_string();
 
@@ -33,6 +33,7 @@ fn main() {
     const PRINT_INTERVAL: usize = 20;
 
     clear();
+    p.update_disassembler();
     loop
     {
         iteration += 1;
