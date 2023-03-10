@@ -103,13 +103,15 @@ impl Processor
         {
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
-            test.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", a=(self.program_counter as usize + x), b=bin, c=stri)));
+            test.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", 
+                                           a=(self.program_counter as usize + x), b=bin, c=stri)));
         }
 
         let mut term = disassembler::Term::default();
         term.set_flags(&self.flags);
         term.set_regs(&self.registers);
         term.update_instructions(test);
+        term.set_pc(self.program_counter);
         term.test_tui()
     }
 

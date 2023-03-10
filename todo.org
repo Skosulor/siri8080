@@ -27,6 +27,12 @@
 
 *Due to a unfixed issue, type a space before typing the line number.
 
+* General
+** [ ] Update instruction counter based on type of instruction
+** [ ] Acutally set aux flag
+** [ ] Add Program counter to debugger
+** [ ] Add cycle count to debugger
+
 * Implement Op Codes
 TODO Op codes needed for space invaders
 ** [8/8] Arithmetic
@@ -69,6 +75,3 @@ TODO Op codes needed for space invaders
 *** [ ] XCHG
 *** [ ] EI
 
-* General
-** [ ] Update instruction counter based on type of instruction
-** [ ] Acutally set aux flag

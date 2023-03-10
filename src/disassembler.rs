@@ -13,10 +13,11 @@ use crate::i8080::flags::StatusFlags;
 
 pub struct Term<'a>
 {
-    mem: Vec<Vec<&'a str>>,
-    inst: Vec<String>,
+    mem:   Vec<Vec<&'a str>>,
+    inst:  Vec<String>,
     flags: Vec<Vec<&'a str>>,
-    regs: Vec<Vec<String>>,
+    regs:  Vec<Vec<String>>,
+    pc:    Vec<Vec<String>>,
 }
 
 impl<'a> Term<'a>
@@ -32,18 +33,23 @@ impl<'a> Term<'a>
                 vec!["0".to_string(), "0".to_string(), "0".to_string()],
                 vec!["".to_string()],
                 vec!["D".to_string(),"E".to_string(), "H".to_string(), "L".to_string()],
-                vec!["0".to_string(), "0".to_string(), "0".to_string(), "0".to_string()],
-            ],
+                vec!["0".to_string(), "0".to_string(), "0".to_string(), "0".to_string()],],
             flags: vec![
                 vec!["Sign", "Zero","Carry"],
                 vec!["0", "0", "0"],
                 vec!["Auxiliary","Parity"],
-                vec!["0", "0"],
-            ],
+                vec!["0", "0"],],
+            pc: vec![
+                vec!["PC".to_string()],
+                vec!["0".to_string()],],
         };
         t
     }
 
+    pub fn set_pc(&mut self, pc: u16)
+    {
+        self.pc[1][0] = pc.to_string();
+    }
 
     pub fn set_regs(&mut self, reg: &Registers)
     {
@@ -96,6 +102,11 @@ impl<'a> Term<'a>
             .iter()
             .map(|i| Row::StyledData(i.iter(), row_style));
 
+        let pc_rows = 
+            self.pc
+            .iter()
+            .map(|i| Row::StyledData(i.iter(), row_style));
+
         let t = Table::new(["Address", "0x0","0x1", "0x2", "0x3", "0x4", "0x5", "0x6", "0x7", "0x8",
                            "0x9", "0xA", "0xB", "0xC", "0xD", "0xE", "0xF"].iter(),mem_rows);
         let table = t
@@ -140,6 +151,15 @@ impl<'a> Term<'a>
                     Constraint::Length(10),
             ]);
 
+        let pc_t = Table::new(header.iter(), pc_rows)
+            .block(Block::default().borders(Borders::NONE).title(""))
+            .highlight_symbol(">> ")
+            .widths(&[
+                    Constraint::Length(15),
+                    Constraint::Length(10),
+                    Constraint::Length(10),
+                    Constraint::Length(10),
+            ]);
 
 
         terminal.draw(|mut f|{
@@ -204,6 +224,7 @@ impl<'a> Term<'a>
                           f.render_widget(table, layout_memory[0]);
 
                           f.render_widget(block, box_multi[0]);
+                          f.render_widget(pc_t, box_multi_in[0]);
 
                           f.render_widget(reg, box_multi[1]);
                           f.render_widget(reg_t, box_multi_in[1]);
