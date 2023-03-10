@@ -24,10 +24,17 @@
 | c       | continue   | run forever                                |
 | s       | step       | stops the loaded program and take one step |
 | b*      | breakpoint | Set a breakpoint and run                   |
+| q       | quit       | Exit emulation                             |
 
 *Due to a unfixed issue, type a space before typing the line number.
 
 * General
+** [ ] Refactor: Break out operations from proc
+*** [ ] Break out operations from proc
+*** [ ] Break out memory from proc
+*** [ ] Brake out debug commands from main
+*** [ ] Add tests
+*** [ ] Give dissasmbler sane variable & function names
 ** [ ] Update instruction counter based on type of instruction
 ** [ ] Acutally set aux flag
 ** [ ] Add Program counter to debugger
