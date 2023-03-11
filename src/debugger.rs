@@ -7,7 +7,6 @@ enum DebuggerCmds
 {
     Run,
     Step,
-    Pause,
     Breakpoint(u16),
     Quit,
     Reset,
@@ -17,15 +16,17 @@ enum DebuggerCmds
 pub struct Debugger
 {
     input: termion::input::Keys<termion::AsyncReader>,
+    breakpoints: Vec<u16>,
 }
 
 impl Debugger
 {
     pub fn default() -> Debugger
     {
-        let mut dgb = Debugger
+        let dgb = Debugger
         {
             input: termion::async_stdin().keys(),
+            breakpoints: Vec::new(),
         };
         return dgb
     }
@@ -36,16 +37,19 @@ impl Debugger
         match cmd 
         {
             DebuggerCmds::Nop => (),
-            DebuggerCmds::Run => println!("Run"),
+            DebuggerCmds::Run => self.run_processor(processor),
             DebuggerCmds::Step => step(processor),
-            DebuggerCmds::Pause => println!("Pause"),
-            DebuggerCmds::Breakpoint(b) => println!("Breakpoint {b}"),
+            DebuggerCmds::Breakpoint(b) => self.add_breakpoint(b),
             DebuggerCmds::Quit => println!("Quit"),
-            DebuggerCmds::Reset => println!("Reset"),
+            DebuggerCmds::Reset => reset_processor(processor),
         }
         // update_disassembler(processor);
     }
 
+    fn add_breakpoint(&mut self, breakpoint: u16)
+    {
+        self.breakpoints.push(breakpoint);
+    }
 
     fn get_debug_command(&mut self) -> DebuggerCmds
     {
@@ -61,7 +65,6 @@ impl Debugger
                 termion::event::Key::Char('q') => {command = DebuggerCmds::Quit;},  
                 termion::event::Key::Char('r') => {command = DebuggerCmds::Reset;},
                 termion::event::Key::Char('c') => {command = DebuggerCmds::Run;}, 
-                termion::event::Key::Char('p') => {command = DebuggerCmds::Pause;}, 
                 termion::event::Key::Char('b') => {command = DebuggerCmds::Breakpoint(get_breakpoint());},
                 _ => (), 
             }
@@ -69,6 +72,21 @@ impl Debugger
         return command
     }
 
+    fn run_processor(&mut self, processor: &mut Processor)
+    {
+        loop
+        {
+            processor.clock();
+            let pc = processor.get_pc();
+            let found = self.breakpoints.contains(&pc);
+            if found 
+            {
+                update_disassembler(processor);
+                break;
+            }
+        }
+        
+    }
 }
 
 
@@ -90,10 +108,14 @@ fn get_breakpoint() -> u16
 fn step(processor: &mut Processor)
 {
     processor.clock();
-    clear();
     update_disassembler(processor);
 }
 
+fn reset_processor(processor: &mut Processor)
+{
+    processor.reset_pc();
+    update_disassembler(processor);
+}
 
 fn clear()
 {
@@ -112,5 +134,7 @@ fn update_disassembler(processor: &mut Processor)
     term.set_regs(&processor.get_registers());
     term.update_instructions(processor.get_instructions());
     term.set_pc(processor.get_pc());
+
+    clear();
     term.update_dissambler()
 }
