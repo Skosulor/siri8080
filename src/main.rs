@@ -24,92 +24,12 @@ fn main()
     }
 
     let mut p = i8080::Processor::from(rom);
+    let mut dgb = debugger::Debugger::default();
 
-    let mut stdin = termion::async_stdin().keys();
-    let mut run = false;
-    let mut bp_set = false;
-    let mut bp: u16 = 0;
-    let mut pc: u16;
-    let mut iteration = 0;
-    const PRINT_INTERVAL: usize = 20;
-
-    
-
-    clear();
-    debugger::execute(&mut p);
+    dgb.execute(&mut p);
     loop
     {
-        iteration += 1;
-        let input = stdin.next();
-        pc = p.get_pc();
-        if let Some(Ok(key)) = input 
-        {
-            match key 
-            {
-                termion::event::Key::Char('s') => 
-                {
-                    run = false;
-                    p.clock();
-                    clear();
-                    debugger::execute(&mut p);
-                },
-                termion::event::Key::Char('q') => {break;},
-                termion::event::Key::Char('r') => { clear(); p.reset_pc();},
-                termion::event::Key::Char('c') => {run = true},
-                termion::event::Key::Char('p') => {run = false},
-                termion::event::Key::Char('b') => 
-                {
-                    std::mem::drop(stdin);
-                    bp = get_breakpoint();
-                    bp_set = true;
-                    clear();
-                    run = true;
-                    stdin = termion::async_stdin().keys();
-                },
-                _ => (),
-            }
-        }
-
-        if bp_set && bp == pc 
-        {
-            run = false;
-        }
-
-        if run
-        {
-            if iteration > PRINT_INTERVAL 
-            {
-                debugger::execute(&mut p);
-                iteration = 0;
-            }
-            p.clock();
-            clear();
-        }
-        else{}
+        dgb.execute(&mut p);
     }
-
 }
 
-pub fn clear()
-{
-        write!(
-            std::io::stdout(),
-            "{}",
-            termion::clear::All
-        ).expect("Error clearing screen!");
-}
-
-
-pub fn get_breakpoint() -> u16
-{
-    print!("BreakPoint:");
-    let mut s = String::new();
-    let stdin = stdin();
-    std::io::stdout().flush().expect("Failed to flush stdout");
-    stdin.read_line(&mut s).expect("Failed to read line");
-    std::io::stdout().flush().expect("Failed to flush stdout");
-    //s.parse::<i32>().unwrap()
-    println!("{}",s);
-    let r: u16 = s.trim().parse().unwrap() ;
-    r
-}
