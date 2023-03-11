@@ -24,10 +24,13 @@ fn main()
     let mut p = i8080::Processor::from(rom);
     let mut dgb = debugger::Debugger::default();
 
-    dgb.execute(&mut p);
     loop
     {
-        dgb.execute(&mut p);
+        match dgb.execute(&mut p)
+        {
+            Some(_) => (),
+            None    => break,
+        }
     }
 }
 

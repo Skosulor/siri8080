@@ -32,9 +32,9 @@
 ** [ ] Refactor: Break out operations from proc
 *** [ ] Break out operations from proc
 *** [ ] Break out memory from proc
-*** [ ] Brake out debug commands from main
-*** [ ] Add tests
+*** [X] Brake out debug commands from main
 *** [X] Give dissasmbler sane variable & function names
+** [ ] Add tests
 ** [ ] Update instruction counter based on type of instruction
 ** [ ] Acutally set aux flag
 ** [ ] Add Program counter to debugger

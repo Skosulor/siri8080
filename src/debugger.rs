@@ -31,19 +31,22 @@ impl Debugger
         return dgb
     }
 
-    pub fn execute(&mut self, processor: &mut Processor)
+    pub fn execute(&mut self, processor: &mut Processor) -> Option<u8>
     {
         let cmd = self.get_debug_command();
+        let mut ret: Option<u8> = Some(0);
+
         match cmd 
         {
             DebuggerCmds::Nop => (),
             DebuggerCmds::Run => self.run_processor(processor),
             DebuggerCmds::Step => step(processor),
             DebuggerCmds::Breakpoint(b) => self.add_breakpoint(b),
-            DebuggerCmds::Quit => println!("Quit"),
+            DebuggerCmds::Quit => ret = None,
             DebuggerCmds::Reset => reset_processor(processor),
         }
         // update_disassembler(processor);
+        return ret
     }
 
     fn add_breakpoint(&mut self, breakpoint: u16)
