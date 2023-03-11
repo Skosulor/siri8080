@@ -110,11 +110,11 @@ impl<'a> Term<'a>
             .block(Block::default().title(""))
             .header_style(Style::default().fg(Color::Yellow))
             .widths(&[Constraint::Length(10), Constraint::Length(4),
-            Constraint::Length(4), Constraint::Length(4), Constraint::Length(4),
-            Constraint::Length(4), Constraint::Length(4), Constraint::Length(4),
-            Constraint::Length(4), Constraint::Length(4), Constraint::Length(4),
-            Constraint::Length(4), Constraint::Length(4), Constraint::Length(4),
-            Constraint::Length(4), Constraint::Length(4),Constraint::Length(4)])
+            Constraint::Length(3), Constraint::Length(3), Constraint::Length(3),
+            Constraint::Length(3), Constraint::Length(3), Constraint::Length(3),
+            Constraint::Length(3), Constraint::Length(3), Constraint::Length(3),
+            Constraint::Length(3), Constraint::Length(3), Constraint::Length(3),
+            Constraint::Length(3), Constraint::Length(3),Constraint::Length(3)])
             .style(Style::default().fg(Color::White))
             .column_spacing(1);
 
@@ -143,9 +143,9 @@ impl<'a> Term<'a>
             .highlight_symbol(">> ")
             .widths(&[
                     Constraint::Length(15),
-                    Constraint::Length(10),
-                    Constraint::Length(10),
-                    Constraint::Length(10),
+                    Constraint::Length(5),
+                    Constraint::Length(5),
+                    Constraint::Length(5),
             ]);
 
         let pc_values = Table::new(header.iter(), pc_rows)

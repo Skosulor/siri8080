@@ -34,7 +34,7 @@
 *** [ ] Break out memory from proc
 *** [ ] Brake out debug commands from main
 *** [ ] Add tests
-*** [ ] Give dissasmbler sane variable & function names
+*** [X] Give dissasmbler sane variable & function names
 ** [ ] Update instruction counter based on type of instruction
 ** [ ] Acutally set aux flag
 ** [ ] Add Program counter to debugger
