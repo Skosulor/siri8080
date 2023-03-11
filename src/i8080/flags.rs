@@ -1,3 +1,4 @@
+#[derive(Copy, Clone)]
 pub struct StatusFlags 
 {
     pub carry_flag: bool,

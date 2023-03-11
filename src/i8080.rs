@@ -90,29 +90,33 @@ impl Processor
         self.program_counter += 1;
     }
 
-    pub fn get_pc(&self) -> usize 
+    pub fn get_flags(&self) -> StatusFlags
     {
-        return self.program_counter as usize;
+        return self.flags
     }
 
-    pub fn update_disassembler(&mut self)
+    pub fn get_registers(&self) -> Registers
     {
-        let mut test: Vec<String> = Vec::new();
-        test.push("".to_string());
+        return self.registers
+    }
+
+    pub fn get_pc(&self) -> u16 
+    {
+        return self.program_counter;
+    }
+
+    pub fn get_instructions(&mut self) -> Vec<String>
+    {
+        let mut instructions: Vec<String> = Vec::new();
+        instructions.push("".to_string());
         for x in 1..48
         {
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
-            test.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", 
+            instructions.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", 
                                            a=(self.program_counter as usize + x), b=bin, c=stri)));
         }
-
-        let mut term = disassembler::Term::default();
-        term.set_flags(&self.flags);
-        term.set_regs(&self.registers);
-        term.update_instructions(test);
-        term.set_pc(self.program_counter);
-        term.update_dissambler()
+        return instructions
     }
 
     // Set register to value

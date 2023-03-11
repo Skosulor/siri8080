@@ -2,6 +2,7 @@ use std::io::{stdin, Write};
 use termion::input::TermRead;
 mod i8080;
 mod disassembler;
+mod debugger;
 use std::env;
 
 fn main() 
@@ -27,13 +28,15 @@ fn main()
     let mut stdin = termion::async_stdin().keys();
     let mut run = false;
     let mut bp_set = false;
-    let mut bp = 0;
-    let mut pc;
+    let mut bp: u16 = 0;
+    let mut pc: u16;
     let mut iteration = 0;
     const PRINT_INTERVAL: usize = 20;
 
+    
+
     clear();
-    p.update_disassembler();
+    debugger::execute(&mut p);
     loop
     {
         iteration += 1;
@@ -48,7 +51,7 @@ fn main()
                     run = false;
                     p.clock();
                     clear();
-                    p.update_disassembler();
+                    debugger::execute(&mut p);
                 },
                 termion::event::Key::Char('q') => {break;},
                 termion::event::Key::Char('r') => { clear(); p.reset_pc();},
@@ -76,7 +79,7 @@ fn main()
         {
             if iteration > PRINT_INTERVAL 
             {
-                p.update_disassembler();
+                debugger::execute(&mut p);
                 iteration = 0;
             }
             p.clock();
@@ -97,7 +100,7 @@ pub fn clear()
 }
 
 
-pub fn get_breakpoint() -> usize
+pub fn get_breakpoint() -> u16
 {
     print!("BreakPoint:");
     let mut s = String::new();
@@ -107,6 +110,6 @@ pub fn get_breakpoint() -> usize
     std::io::stdout().flush().expect("Failed to flush stdout");
     //s.parse::<i32>().unwrap()
     println!("{}",s);
-    let r: usize = s.trim().parse().unwrap() ;
+    let r: u16 = s.trim().parse().unwrap() ;
     r
 }
