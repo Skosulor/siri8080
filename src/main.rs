@@ -1,5 +1,3 @@
-use std::io::{stdin, Write};
-use termion::input::TermRead;
 mod i8080;
 mod disassembler;
 mod debugger;

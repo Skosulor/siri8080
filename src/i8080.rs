@@ -2,7 +2,6 @@ mod instructions;
 pub mod registers;
 pub mod flags;
 
-use crate::disassembler;
 use std::fs::File;
 use std::io::Read;
 use instructions::*;

@@ -53,7 +53,6 @@ impl Debugger
 
     fn get_debug_command(&mut self) -> DebuggerCmds
     {
-        // let mut stdin = termion::async_stdin().keys();
         let input = self.input.next();
         let mut command: DebuggerCmds = DebuggerCmds::Nop;
 
