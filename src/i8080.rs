@@ -112,7 +112,7 @@ impl Processor
         term.set_regs(&self.registers);
         term.update_instructions(test);
         term.set_pc(self.program_counter);
-        term.test_tui()
+        term.update_dissambler()
     }
 
     // Set register to value

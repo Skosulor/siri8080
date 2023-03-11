@@ -2,9 +2,9 @@ use std::io;
 use termion::raw::IntoRawMode;
 use tui::backend::TermionBackend;
 use tui::layout::{Constraint, Direction, Layout, Rect};
-use tui::widgets::{Row, Block, Borders, List , Text, Table };
+use tui::widgets::{Row, Block, Borders, List , Text, Table};
 use tui::style::{Style, Color};
-use tui::{Terminal};
+use tui::Terminal;
 use crate::i8080::registers::Registers;
 use crate::i8080::flags::StatusFlags;
 
@@ -81,23 +81,20 @@ impl<'a> Term<'a>
         }
     }
 
-    pub fn test_tui(&self) 
+    pub fn update_dissambler(&self) 
     {
         // Initiate
         let stdout       = io::stdout().into_raw_mode().expect("IO error");
         let backend      = TermionBackend::new(stdout);
         let mut terminal = Terminal::new(backend).expect("Failed to create new Terminal (Tui)");
 
-        // List widget
-        let i     = self.inst.clone();
-        let items = i.iter().map(|i| Text::raw(i));
-        let list  = List::new(items);
-        let list  = list.style(Style::default());
+        let instructions_text = self.inst.iter().map(|i| Text::raw(i));
+        let instructions  = List::new(instructions_text).style(Style::default());
 
-        // Table
+        // memory_values
         let row_style = Style::default().fg(Color::White);
 
-        // Mem Table
+        // Mem memory_values
         let mem_rows = self.mem
             .iter()
             .map(|i| Row::StyledData(i.iter(), row_style));
@@ -109,7 +106,7 @@ impl<'a> Term<'a>
 
         let t = Table::new(["Address", "0x0","0x1", "0x2", "0x3", "0x4", "0x5", "0x6", "0x7", "0x8",
                            "0x9", "0xA", "0xB", "0xC", "0xD", "0xE", "0xF"].iter(),mem_rows);
-        let table = t
+        let memory_values = t
             .block(Block::default().title(""))
             .header_style(Style::default().fg(Color::Yellow))
             .widths(&[Constraint::Length(10), Constraint::Length(4),
@@ -121,13 +118,13 @@ impl<'a> Term<'a>
             .style(Style::default().fg(Color::White))
             .column_spacing(1);
 
-        // Flags Table
+        // Flags memory_values
         let header = ["", ""];
         let flag_rows = self.flags
             .iter()
             .map(|i| Row::StyledData(i.iter(), row_style));
 
-        let t = Table::new(header.iter(), flag_rows)
+        let flag_values = Table::new(header.iter(), flag_rows)
             .block(Block::default().borders(Borders::NONE).title(""))
             .highlight_symbol(">> ")
             .widths(&[
@@ -141,7 +138,7 @@ impl<'a> Term<'a>
             .iter()
             .map(|i| Row::StyledData(i.iter(), row_style));
 
-        let reg_t = Table::new(header.iter(), reg_rows)
+        let register_values = Table::new(header.iter(), reg_rows)
             .block(Block::default().borders(Borders::NONE).title(""))
             .highlight_symbol(">> ")
             .widths(&[
@@ -151,7 +148,7 @@ impl<'a> Term<'a>
                     Constraint::Length(10),
             ]);
 
-        let pc_t = Table::new(header.iter(), pc_rows)
+        let pc_values = Table::new(header.iter(), pc_rows)
             .block(Block::default().borders(Borders::NONE).title(""))
             .highlight_symbol(">> ")
             .widths(&[
@@ -160,83 +157,82 @@ impl<'a> Term<'a>
                     Constraint::Length(10),
                     Constraint::Length(10),
             ]);
+
+
+        let box_layout = Layout::default()
+            .direction(Direction::Vertical)
+            .margin(1)
+            .constraints([Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25)].as_ref());
+
+        let box_layout_inst = Layout::default()
+            .direction(Direction::Vertical)
+            .margin(1)
+            .constraints([Constraint::Percentage(30)].as_ref());
+
+
+        let mem_pc_border = Block::default().title("Memory").borders(Borders::ALL);
+        let pc_border = Block::default().title("PC").borders(Borders::ALL);
+        let unknown_border = Block::default().title("Uknown").borders(Borders::ALL);
+        let registers_border = Block::default().title("Registers").borders(Borders::ALL);
+        let flags_border = Block::default().title("Flags").borders(Borders::ALL);
+        let instructions_border = Block::default().title("Instructions").borders(Borders::ALL);
 
 
         terminal.draw(|mut f|{
-                          let rect = f.size();
-                          let y = rect.top();
-                          let x = rect.left();
-                          let width = rect.right();
-                          let height = rect.bottom();
 
-                          let mem_rect = Rect::new(y, x, width/2, height);
-                          let inst_rect = Rect::new(y+width/2+width/4, x, width/4, height);
-                          let rect = Rect::new(y+width/2, x, width/4, height);
-                          let rect_in = Rect::new(y+width/2, x, width/4, height);
+            let rect = f.size();
+            let y = rect.top();
+            let x = rect.left();
+            let width = rect.right();
+            let height = rect.bottom();
 
+            let mem_rect = Rect::new(y, x, width/2, height);
+            let inst_rect = Rect::new(y+width/2+width/4, x, width/4, height);
+            let rect = Rect::new(y+width/2, x, width/4, height);
+            let rect_in = Rect::new(y+width/2, x, width/4, height);
 
-                          let box_layout = Layout::default()
-                              .direction(Direction::Vertical)
-                              .margin(1)
-                              .constraints([Constraint::Percentage(25),
-                              Constraint::Percentage(25),
-                              Constraint::Percentage(25),
-                              Constraint::Percentage(25)].as_ref());
+            let box_multi = box_layout.clone().split(rect);
+            let box_multi_in = box_layout.margin(1).horizontal_margin(3).clone().split(rect_in);
 
-                          let box_layout_inst = Layout::default()
-                              .direction(Direction::Vertical)
-                              .margin(1)
-                              .constraints([Constraint::Percentage(30)].as_ref());
+            // Right box
+            let box_inst = box_layout_inst.clone().split(inst_rect);
+            let box_inst_in = box_layout_inst.horizontal_margin(2).vertical_margin(1).split(inst_rect);
 
 
-                          // For middle boxes
-                          let box_multi = box_layout.clone().split(rect);
-                          let box_multi_in = box_layout.margin(1).horizontal_margin(3).clone().split(rect_in);
+            let box_layout_memory = Layout::default()
+                .direction(Direction::Vertical)
+                .margin(1)
+                .constraints([Constraint::Percentage(30)].as_ref())
+                .split(mem_rect);
 
-                          // Right box
-                          let box_inst = box_layout_inst.clone().split(inst_rect);
-                          let box_inst_in = box_layout_inst.horizontal_margin(2).vertical_margin(1).split(inst_rect);
+            let layout_memory = Layout::default()
+                .direction(Direction::Horizontal)
+                .vertical_margin(3)
+                .horizontal_margin(2)
+                .constraints([Constraint::Percentage(100)].as_ref())
+                .split(mem_rect);
 
+            // left: memory
+            f.render_widget(mem_pc_border, box_layout_memory[0]);
+            f.render_widget(memory_values, layout_memory[0]);
 
-                          let box_layout_memory = Layout::default()
-                              .direction(Direction::Vertical)
-                              .margin(1)
-                              .constraints([Constraint::Percentage(30)].as_ref())
-                              .split(mem_rect);
+            f.render_widget(pc_border, box_multi[0]);
+            f.render_widget(pc_values, box_multi_in[0]);
 
-                          let layout_memory = Layout::default()
-                              .direction(Direction::Horizontal)
-                              .vertical_margin(3)
-                              .horizontal_margin(2)
-                              .constraints([Constraint::Percentage(100)].as_ref())
-                              .split(mem_rect);
+            f.render_widget(registers_border, box_multi[1]);
+            f.render_widget(register_values, box_multi_in[1]);
 
-                          let test5 = list.clone();
+            f.render_widget(flags_border, box_multi[2]);
+            f.render_widget(flag_values, box_multi_in[2]);
 
-                          let mem_block = Block::default().title("Memory").borders(Borders::ALL);
-                          let block = Block::default().title("Unkown").borders(Borders::ALL);
-                          let reg = Block::default().title("Registers").borders(Borders::ALL);
-                          let flags = Block::default().title("Flags").borders(Borders::ALL);
-                          let ins = Block::default().title("Instructions").borders(Borders::ALL);
-
-                          // left: memory
-                          f.render_widget(mem_block, box_layout_memory[0]);
-                          f.render_widget(table, layout_memory[0]);
-
-                          f.render_widget(block, box_multi[0]);
-                          f.render_widget(pc_t, box_multi_in[0]);
-
-                          f.render_widget(reg, box_multi[1]);
-                          f.render_widget(reg_t, box_multi_in[1]);
-
-                          f.render_widget(flags, box_multi[2]);
-                          f.render_widget(t, box_multi_in[2]);
-
-                          f.render_widget(block, box_multi[3]);
+            f.render_widget(unknown_border, box_multi[3]);
 
                           //Right: instructions
-                          f.render_widget(ins, box_inst[0]);
-                          f.render_widget(test5, box_inst_in[0]);
+                          f.render_widget(instructions_border, box_inst[0]);
+                          f.render_widget(instructions, box_inst_in[0]);
 
                       }).expect("Failed to draw!");
     }
