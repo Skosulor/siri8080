@@ -95,8 +95,8 @@ impl Instruction
                 self.inst_type = InstructionTypes::MOV;
                 self.byte1 = Some((b >> MOVE_TO) & 0b111);
                 self.byte2 = Some((b >> MOVE_FROM) & 0b111);
-                let temp = format!("MOV {},{} ", Registers::translate_to_reg(self.byte1.unwrap()), Registers::translate_to_reg(self.byte2.unwrap()));
-                self.name = temp;
+                let name = format!("MOV {},{} ", Registers::translate_to_reg(self.byte1.unwrap()), Registers::translate_to_reg(self.byte2.unwrap()));
+                self.name = name;
                 (); // HLT instruction
                 return
             },
@@ -113,53 +113,53 @@ impl Instruction
                     0b10000000 =>
                     {
                         self.inst_type = InstructionTypes::ADD;
-                        let temp = format!("ADD {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("ADD {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     },
                     // ADC
                     0b10001000 =>
                     {
                         self.inst_type = InstructionTypes::ADC;
-                        let temp = format!("ADC {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("ADC {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     },
                     //SUB
                     0b10010000 =>
                     {
                         self.inst_type = InstructionTypes::SUB;
-                        let temp = format!("SUB {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("SUB {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     },
                     //SBB
                     0b10011000 =>
                     {
                         self.inst_type = InstructionTypes::SBB;
-                        let temp = format!("SBB {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("SBB {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     },
                     0b10100000 =>
                     {
                         self.inst_type = InstructionTypes::ANA;
-                        let temp = format!("ANA {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("ANA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     }
                     0b10101000 =>
                     {
                         self.inst_type = InstructionTypes::XRA;
-                        let temp = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     }
                     0b10110000 =>
                     {
                         self.inst_type = InstructionTypes::ORA;
-                        let temp = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     }
                     0b10111000 =>
                     {
                         self.inst_type = InstructionTypes::CMP;
-                        let temp = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
-                        self.name = temp;
+                        let name = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        self.name = name;
                     }
                     _ => panic!("Arithemtic does not exist!: {:X}", self.byte_val),
                 }
@@ -169,16 +169,15 @@ impl Instruction
             {
                 match b & 0b00001111 
                 {
-                    0b0000 => self.name = "__".to_string(), // TODO more than one op
+                    0b0000 => self.name = "RNZ".to_string(), // TODO more than one op
                     0b0001 => self.name = "POP".to_string(),
-                    0b0010 => self.name = "__".to_string(), // TODO more than one op
-                    0b0011 => self.name = "__".to_string(), // TODO more than one op
-                    0b0100 => self.name = "__".to_string(), // TODO more than one op
+                    0b0010 => self.name = "JNZ".to_string(), // TODO more than one op
                     0b0011 => 
                     {
                         self.name = "JMP".to_string();
                         self.inst_type = InstructionTypes::JMP;
                     }
+                    0b0100 => self.name = "CNZ".to_string(), // TODO more than one op
                     0b0101 => self.name = "PUSH".to_string(),
                     // 6 | E
                     0b0110 | 0b1110 =>
@@ -186,12 +185,12 @@ impl Instruction
                         self.name = "immediate".to_string();
                         self.byte_to_immediate_op();
                     },
-                    0b0111 => self.name = "RST".to_string(),
-                    0b1000 => self.name = "__".to_string(), // TODO more than one op
-                    0b1001 => self.name = "__".to_string(), // TODO more than one op
-                    0b1010 => self.name = "__".to_string(),  // TODO more than one op
-                    0b1011 => self.name = "__".to_string(), // TODO more than one op
-                    0b1100 => self.name = "__".to_string(), // TODO more than one op
+                    0b0111 => self.name = "RST 0".to_string(),
+                    0b1000 => self.name = "RZ".to_string(), // TODO more than one op
+                    0b1001 => self.name = "RET".to_string(), // TODO more than one op
+                    0b1010 => self.name = "JZ".to_string(),  // TODO more than one op
+                    0b1011 => self.name = "??".to_string(), // TODO more than one op
+                    0b1100 => self.name = "CZ".to_string(), // TODO more than one op
                     0b1101 => self.name = "CALL".to_string(),
                     //
                     0b1111 => self.name = "RST".to_string(),
@@ -271,8 +270,8 @@ impl Instruction
                     self.byte1 = Some(((self.byte_val & 0x30) >> 3) + 0x01);
                 }
 
-                let temp = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
-                self.name = temp;
+                let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
+                self.name = name;
                 (); // HLT instruction
                 return
             },
@@ -301,80 +300,3 @@ impl Instruction
     }
 }
 
- // ADD,
- // SUB,
- // POP,
- // PUSH,
- // LXI,
- // STAX,
- // SHLD,
- // STA,
- // INX,
- // INR,
- // DCR,
- // MVI,
- // RLC,
- // RAL,
- // DAA,
- // STC,
- // DAD,
- // LDAX,
- // LHLD,
- // LDA,
- // DCX,
- // PRC,
- // RAR,
- // CMA,
- // CMC,
- // ANA,
- // XRA,
- // ORA,
- // CMP,
- // RNZ,
- // RNC,
- // RPO,
- // RP,
- // JNZ,
- // JNC,
- // JPO,
- // JP,
- // JMP,
- // OUT,
- // XTHL,
- // DI,
- // CNZ,
- // CNC,
- // CPO,
- // CP,
- // PUSH_PSW,
- // SUI,
- // ADI,
- // ANI,
- // ORI,
- // RST,
- // RZ,
- // RC,
- // RPE,
- // RM,
- // RET,
- // PCHL,
- // SPHL,
- // JZ,
- // JC,
- // JPE,
- // JM,
- // IN,
- // XCHG,
- // EI,
- // CZ,
- // CC,
- // CPE,
- // CM,
- // CALL,
- // ACI,
- // SBI,
- // XRI,
- // CPI,
- // Nop,
- // Unknown,
- // Data,

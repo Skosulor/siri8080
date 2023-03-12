@@ -45,7 +45,6 @@ impl Debugger
             DebuggerCmds::Quit => ret = None,
             DebuggerCmds::Reset => reset_processor(processor),
         }
-        // update_disassembler(processor);
         return ret
     }
 

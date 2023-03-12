@@ -31,7 +31,6 @@
 * General
 ** [ ] Refactor: Break out operations from proc
 *** [ ] Break out operations from proc
-*** [ ] Break out memory from proc
 *** [X] Brake out debug commands from main
 *** [X] Give dissasmbler sane variable & function names
 ** [ ] Add tests
