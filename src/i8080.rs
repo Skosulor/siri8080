@@ -80,7 +80,7 @@ impl Processor
             InstructionTypes::XRI => self.xra_op(),
             InstructionTypes::ORI => self.ora_op(),
             InstructionTypes::CPI => self.cmp_op(),
-            _ => (),
+            InstructionTypes::Unknown => (),
         }
     }
 
