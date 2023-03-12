@@ -181,15 +181,18 @@ impl Processor
 
 
         // Either add with or wihtout the carry bit
-        let (res, carry ) = if with_carry 
-        {
-            let c = if self.flags.carry_flag {1} else {0};
-            operand2.overflowing_add(operand1 + c)
-        }
-        else
-        {
-            operand2.overflowing_add(operand1)
-        };
+        let (res, carry ) = 
+            if with_carry 
+            {
+                let c = if self.flags.carry_flag {1} else {0};
+                let (r, ca) = operand1.overflowing_add(c);
+                let (r, c) = operand2.overflowing_add(r);
+                (r, c | ca)
+            }
+            else
+            {
+                operand2.overflowing_add(operand1)
+            };
 
         self.flags.carry_flag = carry;
         self.flags.parity_flag = parity(res);
