@@ -109,7 +109,7 @@ impl Processor
     {
         let mut instructions: Vec<String> = Vec::new();
         instructions.push("".to_string());
-        for x in 1..48
+        for x in 0..48
         {
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
@@ -148,7 +148,6 @@ impl Processor
             MEM_REF => self.memory[self.stack_pointer as usize] ,
             A_REG   => self.registers.accumulator,
             _ => panic!("No register {}", reg)
-
         }
     }
 
