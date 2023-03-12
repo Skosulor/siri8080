@@ -80,6 +80,7 @@ impl Processor
             InstructionTypes::XRI => self.xra_op(),
             InstructionTypes::ORI => self.ora_op(),
             InstructionTypes::CPI => self.cmp_op(),
+            InstructionTypes::JMP => self.jmp_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -342,6 +343,15 @@ impl Processor
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
         self.set_reg(self.current_op.byte1.unwrap(), result);
+    }
+
+    fn jmp_op(&mut self)
+    {
+        let pc       = self.program_counter as usize;
+        let msb_addr = self.memory[pc + 1] as u16;
+        let lsb_addr = self.memory[pc + 2] as u16;
+        let addr     = (lsb_addr << 8) + msb_addr;
+        self.program_counter = addr - 1;
     }
 
     // Set flags depending on result.

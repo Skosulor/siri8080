@@ -35,6 +35,7 @@ pub enum InstructionTypes
     ORI,
     XRI,
     CPI,
+    JMP,
     Unknown,
 }
 
@@ -173,6 +174,11 @@ impl Instruction
                     0b0010 => self.name = "__".to_string(), // TODO more than one op
                     0b0011 => self.name = "__".to_string(), // TODO more than one op
                     0b0100 => self.name = "__".to_string(), // TODO more than one op
+                    0b0011 => 
+                    {
+                        self.name = "JMP".to_string();
+                        self.inst_type = InstructionTypes::JMP;
+                    }
                     0b0101 => self.name = "PUSH".to_string(),
                     // 6 | E
                     0b0110 | 0b1110 =>
