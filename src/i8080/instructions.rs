@@ -36,6 +36,14 @@ pub enum InstructionTypes
     XRI,
     CPI,
     JMP,
+    JNZ,
+    JZ,
+    JNC,
+    JC,
+    JPO,
+    JPE,
+    JP,
+    JM,
     Unknown,
 }
 
@@ -167,33 +175,69 @@ impl Instruction
             // Misc instructions
             0b11000000 => 
             {
-                match b & 0b00001111 
+                match b & 0b00111111 
                 {
-                    0b0000 => self.name = "RNZ".to_string(), // TODO more than one op
-                    0b0001 => self.name = "POP".to_string(),
-                    0b0010 => self.name = "JNZ".to_string(), // TODO more than one op
-                    0b0011 => 
+                    0b000000 => self.name = "RNZ".to_string(), 
+                    0b000001 => self.name = "POP".to_string(),
+                    0b000010 => 
+                    {
+                        self.name = "JNZ".to_string();
+                        self.inst_type = InstructionTypes::JNZ;
+                    }
+                    0b000011 => 
                     {
                         self.name = "JMP".to_string();
                         self.inst_type = InstructionTypes::JMP;
                     }
-                    0b0100 => self.name = "CNZ".to_string(), // TODO more than one op
-                    0b0101 => self.name = "PUSH".to_string(),
-                    // 6 | E
-                    0b0110 | 0b1110 =>
+                    0b000100 => self.name = "CNZ".to_string(),
+                    0b000101 => self.name = "PUSH".to_string(),
+                    0b000110 | 0b1110 =>
                     {
                         self.name = "immediate".to_string();
                         self.byte_to_immediate_op();
                     },
-                    0b0111 => self.name = "RST 0".to_string(),
-                    0b1000 => self.name = "RZ".to_string(), // TODO more than one op
-                    0b1001 => self.name = "RET".to_string(), // TODO more than one op
-                    0b1010 => self.name = "JZ".to_string(),  // TODO more than one op
-                    0b1011 => self.name = "??".to_string(), // TODO more than one op
-                    0b1100 => self.name = "CZ".to_string(), // TODO more than one op
-                    0b1101 => self.name = "CALL".to_string(),
-                    //
-                    0b1111 => self.name = "RST".to_string(),
+                    0b000111 => self.name = "RST 0".to_string(),
+                    0b001000 => self.name = "RZ".to_string(), 
+                    0b001001 => self.name = "RET".to_string(), 
+                    0b001010 => 
+                    {
+                        self.name = "JZ".to_string();
+                        self.inst_type = InstructionTypes::JZ;
+                    }
+                    0b001011 => self.name = "??".to_string(), 
+                    0b001100 => self.name = "CZ".to_string(), 
+                    0b001101 => self.name = "CALL".to_string(),
+                    0b001111 => self.name = "RST".to_string(),
+                    0b010010 => 
+                    {
+                        self.name = "JNC".to_string();
+                        self.inst_type = InstructionTypes::JNC;
+                    }
+                    0b011010 => 
+                    {
+                        self.name = "JC".to_string();
+                        self.inst_type = InstructionTypes::JC;
+                    }
+                    0b100010 => 
+                    {
+                        self.name = "JPO".to_string();
+                        self.inst_type = InstructionTypes::JPO;
+                    }
+                    0b101010 => 
+                    {
+                        self.name = "JPE".to_string();
+                        self.inst_type = InstructionTypes::JPE;
+                    }
+                    0b110010 => 
+                    {
+                        self.name = "JP".to_string();
+                        self.inst_type = InstructionTypes::JP;
+                    }
+                    0b111010 => 
+                    {
+                        self.name = "JM".to_string();
+                        self.inst_type = InstructionTypes::JM;
+                    }
                     _ => panic!("Misc should not exist!"),
                 }
             },
@@ -204,7 +248,7 @@ impl Instruction
                 {
                     0b0000 => self.name = "NOP".to_string(),
                     0b0001 => self.name = "LXI".to_string(),
-                    0b0010 => self.name = "__".to_string(), // TODO more than one OP
+                    0b0010 => self.name = "__".to_string(), 
                     0b0011 => self.name = "INX".to_string(),
                     0b0100 => self.name = "INR".to_string(),
                     0b0101 => self.name = "DCR".to_string(),
@@ -217,12 +261,12 @@ impl Instruction
                     0b0111 => self.name = "__".to_string(),
                     0b1000 => self.name = "NOP".to_string(),
                     0b1001 => self.name = "DAD".to_string(),
-                    0b1010 => self.name = "__".to_string(), // TODO more than one OP
+                    0b1010 => self.name = "__".to_string(), 
                     0b1011 => self.name = "DCX".to_string(),
                     0b1100 => self.name = "INR".to_string(),
                     0b1101 => self.name = "DCR".to_string(),
                     //
-                    0b1111 => self.name = "__".to_string(), // TODO more than one op
+                    0b1111 => self.name = "__".to_string(), 
                     _ => panic!("Misc should not exist!"),
                 }
             },

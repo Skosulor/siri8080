@@ -81,6 +81,14 @@ impl Processor
             InstructionTypes::ORI => self.ora_op(),
             InstructionTypes::CPI => self.cmp_op(),
             InstructionTypes::JMP => self.jmp_op(),
+            InstructionTypes::JC  => self.jc_op(),
+            InstructionTypes::JNC => self.jnc_op(),
+            InstructionTypes::JZ  => self.jz_op(),
+            InstructionTypes::JNZ => self.jnz_op(),
+            InstructionTypes::JPE => self.jpe_op(),
+            InstructionTypes::JPO => self.jpo_op(),
+            InstructionTypes::JP  => self.jp_op(),
+            InstructionTypes::JM  => self.jm_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -351,6 +359,102 @@ impl Processor
         let lsb_addr = self.memory[pc + 2] as u16;
         let addr     = (lsb_addr << 8) + msb_addr;
         self.program_counter = addr - 1;
+    }
+    
+    fn jnz_op(&mut self)
+    {
+        if !self.flags.zero_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jz_op(&mut self)
+    {
+        if self.flags.zero_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jnc_op(&mut self)
+    {
+        if !self.flags.carry_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jc_op(&mut self)
+    {
+        if self.flags.carry_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jpo_op(&mut self)
+    {
+        if !self.flags.parity_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jpe_op(&mut self)
+    {
+        if self.flags.parity_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jp_op(&mut self)
+    {
+        if !self.flags.sign_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn jm_op(&mut self)
+    {
+        if self.flags.sign_flag
+        {
+            self.jmp_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
     }
 
     // Set flags depending on result.
