@@ -208,37 +208,108 @@ impl Instruction
                     0b001100 => self.name = "CZ".to_string(), 
                     0b001101 => self.name = "CALL".to_string(),
                     0b001111 => self.name = "RST".to_string(),
+                    0b010000 => self.name = "RNC".to_string(),
+                    0b010001 => self.name = "POP".to_string(),
                     0b010010 => 
                     {
                         self.name = "JNC".to_string();
                         self.inst_type = InstructionTypes::JNC;
                     }
+                    0b010011 => self.name = "OUT".to_string(),
+                    0b010100 => self.name = "CNC".to_string(),
+                    0b010101 => self.name = "PUSH".to_string(),
+                    0b010110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b010111 => self.name = "RST".to_string(),
+                    0b011000 => self.name = "RC".to_string(),
+                    0b011001 => self.name = "??".to_string(),
                     0b011010 => 
                     {
                         self.name = "JC".to_string();
                         self.inst_type = InstructionTypes::JC;
                     }
+                    0b011011 => self.name = "IN".to_string(),
+                    0b011100 => self.name = "CC".to_string(),
+                    0b011101 => self.name = "??".to_string(),
+                    0b011110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b011111 => self.name = "RST".to_string(),
+                    0b100000 => self.name = "RPO".to_string(),
+                    0b100001 => self.name = "POP".to_string(),
                     0b100010 => 
                     {
                         self.name = "JPO".to_string();
                         self.inst_type = InstructionTypes::JPO;
                     }
+                    0b100011 => self.name = "XTHL".to_string(),
+                    0b100100 => self.name = "CPO".to_string(),
+                    0b100101 => self.name = "PUSH".to_string(),
+                    0b100110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    }
+                    0b100111 => self.name = "RST".to_string(),
+                    0b101000 => self.name = "RPE".to_string(),
+                    0b101001 => self.name = "PCHL".to_string(),
                     0b101010 => 
                     {
                         self.name = "JPE".to_string();
                         self.inst_type = InstructionTypes::JPE;
                     }
+                    0b101011 => self.name = "XCHG".to_string(),
+                    0b101100 => self.name = "CPE".to_string(),
+                    0b101101 => self.name = "??".to_string(),
+                    0b101110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b101111 => self.name = "RST".to_string(),
+                    0b110000 => self.name = "RP".to_string(),
+                    0b110001 => self.name = "POP".to_string(),
+
                     0b110010 => 
                     {
                         self.name = "JP".to_string();
                         self.inst_type = InstructionTypes::JP;
                     }
+                    0b110011 => self.name = "DI".to_string(),
+                    0b110100 => self.name = "CP".to_string(),
+                    0b110101 => self.name = "PUSH".to_string(),
+                    0b110110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b110111 => self.name = "RST".to_string(),
+                    0b111000 => self.name = "RM".to_string(),
+                    0b111001 => self.name = "SPHL".to_string(),
                     0b111010 => 
                     {
                         self.name = "JM".to_string();
                         self.inst_type = InstructionTypes::JM;
                     }
-                    _ => panic!("Misc should not exist!"),
+                    0b111011 => self.name = "EI".to_string(),
+                    0b111100 => self.name = "CM".to_string(),
+                    0b111101 => self.name = "??".to_string(),
+                    0b111110 =>
+                    {
+                        self.name = "immediate".to_string();
+                        self.byte_to_immediate_op();
+                    },
+                    0b111111 => self.name = "RST".to_string(),
+                    _ => 
+                    {
+                        println!("Byte: {:02X}", b);
+                        panic!("Should not exist!");
+                    }
                 }
             },
 
