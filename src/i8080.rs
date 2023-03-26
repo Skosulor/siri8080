@@ -357,8 +357,12 @@ impl Processor
         let pc       = self.program_counter as usize;
         let msb_addr = self.memory[pc + 1] as u16;
         let lsb_addr = self.memory[pc + 2] as u16;
-        let addr     = (lsb_addr << 8) + msb_addr;
-        self.program_counter = addr - 1;
+        let mut addr     = (lsb_addr << 8) + msb_addr;
+        if addr > 0
+        {
+            addr = addr - 1;
+        }
+        self.program_counter = addr; 
     }
     
     fn jnz_op(&mut self)
