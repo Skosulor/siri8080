@@ -30,13 +30,13 @@
 
 * General
 ** [ ] Refactor: Break out operations from proc
-*** [ ] Break out operations from proc
+*** [/] Break out operations from proc
 *** [X] Brake out debug commands from main
 *** [X] Give dissasmbler sane variable & function names
 ** [ ] Add tests
 ** [ ] Update instruction counter based on type of instruction
 ** [ ] Acutally set aux flag
-** [ ] Add Program counter to debugger
+** [X] Add Program counter to debugger
 ** [ ] Add cycle count to debugger
 
 * Implement Op Codes
@@ -61,7 +61,7 @@ TODO Op codes needed for space invaders
 *** [X] XRI
 *** [X] CPI
 *** [X] MVI
-** [0/17] Misc
+** [2/17] Misc
 *** [ ] LXI
 *** [ ] DCR
 *** [ ] DAD
@@ -70,8 +70,8 @@ TODO Op codes needed for space invaders
 *** [ ] LXI
 *** [ ] STA
 *** [ ] LDA
-*** [ ] JNZ
-*** [ ] JMP
+*** [X] JNZ
+*** [X] JMP
 *** [ ] PUSH
 *** [ ] RET
 *** [ ] CALL
@@ -80,4 +80,5 @@ TODO Op codes needed for space invaders
 *** [ ] PUSH
 *** [ ] XCHG
 *** [ ] EI
+
 
