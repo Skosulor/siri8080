@@ -33,6 +33,7 @@
 *** [/] Break out operations from proc
 *** [X] Brake out debug commands from main
 *** [X] Give dissasmbler sane variable & function names
+** [ ] Make rename byte1 & byte2 in instructions to Registers & give them an enum type?
 ** [ ] Add tests
 ** [ ] Update instruction counter based on type of instruction
 ** [ ] Acutally set aux flag
@@ -62,7 +63,7 @@ TODO Op codes needed for space invaders
 *** [X] CPI
 *** [X] MVI
 ** [2/17] Misc
-*** [ ] LXI
+*** [X] LXI
 *** [ ] DCR
 *** [ ] DAD
 *** [ ] RRC

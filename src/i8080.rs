@@ -89,6 +89,7 @@ impl Processor
             InstructionTypes::JPO => self.jpo_op(),
             InstructionTypes::JP  => self.jp_op(),
             InstructionTypes::JM  => self.jm_op(),
+            InstructionTypes::LXI  => self.lxi_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -486,6 +487,16 @@ impl Processor
         {
             self.program_counter += 2;
         }
+    }
+
+    fn lxi_op(&mut self)
+    {
+        let pc        = self.program_counter as usize;
+        let lsb_value = self.memory[pc + 1];
+        let msb_value = self.memory[pc + 2];
+        let reg_pair  = self.current_op.byte1.unwrap();
+        self.set_reg_pair(reg_pair, msb_value, lsb_value);
+        self.program_counter += 2;
     }
 
     pub fn set_flags_cszp(&mut self, carry: bool, res: u8)

@@ -25,7 +25,6 @@ pub enum InstructionTypes
     XRA,
     ORA,
     CMP,
-    // Immediate
     MVI,
     ADI,
     ACI,
@@ -44,6 +43,7 @@ pub enum InstructionTypes
     JPE,
     JP,
     JM,
+    LXI,
     Unknown,
 }
 
@@ -252,7 +252,7 @@ impl Instruction
                 match b & 0b00111111 
                 {
                     0x00                      => self.name = "NOP".to_string(),
-                    0x01 | 0x11 | 0x21 | 0x31 => self.name = "LXI".to_string(),
+                    0x01 | 0x11 | 0x21 | 0x31 => self.decode_lxi(),
                     0x02 | 0x12               => self.name = "STAX".to_string(),
                     0x03 | 0x13 | 0x23 | 0x33 => self.name = "INX".to_string(),
                     0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C        => self.name = "INR".to_string(),
@@ -280,6 +280,13 @@ impl Instruction
 
         }
 
+    }
+
+    fn decode_lxi(&mut self)
+    {
+        self.adress_mode = AddressingMode::Direct;
+        self.set_instuction(InstructionTypes::LXI);
+        self.byte1 = Some(self.byte_val & 0x30);
     }
 
     fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes)
