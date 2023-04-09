@@ -127,7 +127,7 @@ impl Processor
         return instructions
     }
 
-    // Set register to value
+
     fn set_reg(&mut self, reg:u8, val: u8)
     {
         match reg & 0b111
@@ -143,7 +143,8 @@ impl Processor
             _ => panic!("No register {}", reg)
         }
     }
-    // Get current value from register
+
+
     fn get_reg(&self, reg: u8) -> u8
     {
         match reg & 0b111{
@@ -158,6 +159,32 @@ impl Processor
             _ => panic!("No register {}", reg)
         }
     }
+
+
+    fn set_reg_pair(&mut self, reg: u8, msb_val: u8, lsb_val: u8)
+    {
+        match reg
+        {
+            BC_PAIR_REG => 
+            {
+                self.registers.b = lsb_val;
+                self.registers.c = msb_val;
+            }
+            DE_PAIR_REG => 
+            {
+                self.registers.d = lsb_val;
+                self.registers.e = msb_val;
+            }
+            HL_PAIR_REG => 
+            {
+                self.registers.h = lsb_val;
+                self.registers.l = msb_val;
+            }
+            SP_REG => self.stack_pointer = ((msb_val as u16) << 8) | lsb_val as u16,
+            _ => panic!("No register pair {}", reg)
+        }
+    }
+
 
     fn mov_op(&mut self)
     {
@@ -461,7 +488,6 @@ impl Processor
         }
     }
 
-    // Set flags depending on result.
     pub fn set_flags_cszp(&mut self, carry: bool, res: u8)
     {
         self.flags.carry_flag  = carry;
