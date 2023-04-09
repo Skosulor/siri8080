@@ -89,7 +89,8 @@ impl Processor
             InstructionTypes::JPO => self.jpo_op(),
             InstructionTypes::JP  => self.jp_op(),
             InstructionTypes::JM  => self.jm_op(),
-            InstructionTypes::LXI  => self.lxi_op(),
+            InstructionTypes::LXI => self.lxi_op(),
+            InstructionTypes::DCR => self.dcr_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -497,6 +498,14 @@ impl Processor
         let reg_pair  = self.current_op.byte1.unwrap();
         self.set_reg_pair(reg_pair, msb_value, lsb_value);
         self.program_counter += 2;
+    }
+
+    fn dcr_op(&mut self)
+    {
+        let reg = self.current_op.byte1.unwrap();
+        let (res, carry) = self.get_reg(reg).overflowing_sub(1);
+        self.set_flags_cszp(carry, res);
+        self.set_reg(reg, res);
     }
 
     pub fn set_flags_cszp(&mut self, carry: bool, res: u8)
