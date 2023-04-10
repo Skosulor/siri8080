@@ -292,14 +292,14 @@ impl Instruction
     fn decode_dad(&mut self)
     {
         self.set_instuction(InstructionTypes::DAD);
-        self.byte1 = Some(self.byte_val & 0x30);
+        self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_lxi(&mut self)
     {
         self.adress_mode = AddressingMode::Direct;
         self.set_instuction(InstructionTypes::LXI);
-        self.byte1 = Some(self.byte_val & 0x30);
+        self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
 
@@ -339,16 +339,7 @@ impl Instruction
             0x00 | 0x10 | 0x20 | 0x30 =>
             {
                 self.inst_type = InstructionTypes::MVI;
-                // "Convert" register byte to format that set_reg(reg) uses.
-                if self.byte_val & 0x0F == 0x06
-                {
-                    self.byte1 = Some((self.byte_val & 0x30) >> 3);
-                }
-                else
-                {
-                    self.byte1 = Some(((self.byte_val & 0x30) >> 3) + 0x01);
-                }
-
+                self.byte1 = Some((self.byte_val & 0x38) >> 3);
                 let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
                 self.name = name;
                 (); // HLT instruction

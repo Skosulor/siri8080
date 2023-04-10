@@ -182,7 +182,7 @@ impl Processor
             DE_PAIR_REG => (self.registers.d, self.registers.e),
             HL_PAIR_REG => (self.registers.h, self.registers.l),
             SP_REG => ((self.stack_pointer >> 8) as u8, (self.stack_pointer & 0xFF) as u8),
-            _ => panic!("No register pair {}", reg)
+            _ => panic!("No register pair {}, PC at {}", reg, self.program_counter)
         }
     }
 
@@ -206,7 +206,7 @@ impl Processor
                 self.registers.l = msb_val;
             }
             SP_REG => self.stack_pointer = ((msb_val as u16) << 8) | lsb_val as u16,
-            _ => panic!("No register pair {}", reg)
+            _ => panic!("No register pair {}, PC at {}", reg, self.program_counter)
         }
     }
 
