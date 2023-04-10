@@ -93,6 +93,7 @@ impl Processor
             InstructionTypes::DCR => self.dcr_op(),
             InstructionTypes::DAD => self.dad_op(),
             InstructionTypes::RRC => self.rrc_op(),
+            InstructionTypes::RLC => self.rlc_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -534,6 +535,15 @@ impl Processor
         let res               = accumulator.rotate_right(1);
         self.set_reg(A_REG, res);
     }
+
+    fn rlc_op(&mut self)
+    {
+        let accumulator       = self.get_reg(A_REG);
+        self.flags.carry_flag = (accumulator & 0x80) == 0x80;
+        let res               = accumulator.rotate_left(1);
+        self.set_reg(A_REG, res);
+    }
+
     fn dcr_op(&mut self)
     {
         let reg = self.current_op.byte1.unwrap();
