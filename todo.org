@@ -64,8 +64,8 @@ TODO Op codes needed for space invaders
 *** [X] MVI
 ** [2/17] Misc
 *** [X] LXI
-*** [ ] DCR
-*** [ ] DAD
+*** [X] DCR
+*** [X] DAD
 *** [ ] RRC
 *** [ ] INX
 *** [ ] LXI

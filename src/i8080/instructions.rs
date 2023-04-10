@@ -45,6 +45,7 @@ pub enum InstructionTypes
     JM,
     LXI,
     DCR,
+    DAD,
     Unknown,
 }
 
@@ -260,7 +261,7 @@ impl Instruction
                     0x05 | 0x0D | 0x0A | 0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
                     0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E        => self.byte_to_immediate_op(),
                     0x07 | 0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__".to_string(),
-                    0x09 | 0x19 | 0x29 | 0x39 => self.name = "DAD".to_string(),
+                    0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
                     0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX".to_string(),
                     0x0F => self.name = "RRC".to_string(), 
                     0x17 => self.name = "RAL".to_string(),
@@ -283,6 +284,11 @@ impl Instruction
 
     }
 
+    fn decode_dad(&mut self)
+    {
+        self.set_instuction(InstructionTypes::DAD);
+        self.byte1 = Some(self.byte_val & 0x30);
+    }
 
     fn decode_lxi(&mut self)
     {

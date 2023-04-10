@@ -91,6 +91,7 @@ impl Processor
             InstructionTypes::JM  => self.jm_op(),
             InstructionTypes::LXI => self.lxi_op(),
             InstructionTypes::DCR => self.dcr_op(),
+            InstructionTypes::DAD => self.dad_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -162,6 +163,17 @@ impl Processor
         }
     }
 
+    fn get_reg_pair(&mut self, reg: u8) -> (u8, u8)
+    {
+        match reg
+        {
+            BC_PAIR_REG => (self.registers.b, self.registers.c),
+            DE_PAIR_REG => (self.registers.d, self.registers.e),
+            HL_PAIR_REG => (self.registers.h, self.registers.l),
+            SP_REG => ((self.stack_pointer >> 8) as u8, (self.stack_pointer & 0xFF) as u8),
+            _ => panic!("No register pair {}", reg)
+        }
+    }
 
     fn set_reg_pair(&mut self, reg: u8, msb_val: u8, lsb_val: u8)
     {
@@ -500,6 +512,19 @@ impl Processor
         self.program_counter += 2;
     }
 
+    fn dad_op(&mut self)
+    {
+        let reg_pair = self.current_op.byte1.unwrap();
+
+        let (msb, lsb)   = self.get_reg_pair(reg_pair);
+        let num1: u16    = ((msb as u16) << 8) + lsb as u16;
+        let (msb, lsb)   = self.get_reg_pair(HL_PAIR_REG);
+        let num2: u16    = ((msb as u16) << 8) + lsb as u16;
+        let (res, carry) = num1.overflowing_add(num2);
+
+        self.set_reg_pair(HL_PAIR_REG, (res >> 8) as u8, num1 as u8);
+        self.flags.carry_flag = carry;
+    }
     fn dcr_op(&mut self)
     {
         let reg = self.current_op.byte1.unwrap();
