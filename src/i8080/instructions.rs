@@ -48,6 +48,8 @@ pub enum InstructionTypes
     DAD,
     RRC,
     RLC,
+    RAL,
+    RAR,
     Unknown,
 }
 
@@ -267,9 +269,9 @@ impl Instruction
                     0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
                     0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX".to_string(),
                     0x0F => self.set_instuction(InstructionTypes::RRC),
-                    0x17 => self.name = "RAL".to_string(),
+                    0x17 => self.set_instuction(InstructionTypes::RAL),
                     0x1A => self.name = "LDAX".to_string(),
-                    0x1F => self.name = "RAR".to_string(),
+                    0x1F => self.set_instuction(InstructionTypes::RAR),
                     0x22 => self.name = "SHLD".to_string(),
                     0x27 => self.name = "DAA".to_string(),
                     0x2A => self.name = "LHLD".to_string(),
