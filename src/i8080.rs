@@ -4,6 +4,8 @@ pub mod flags;
 
 use std::fs::File;
 use std::io::Read;
+use std::process::exit;
+use std::u16;
 use instructions::*;
 use registers::*;
 use flags::*;
@@ -100,6 +102,11 @@ impl Processor
 
     fn update_program_counter(&mut self)
     {
+        if self.program_counter == u16::MAX
+        {
+            println!("Reached end of program memory, shutting down.");
+            exit(0);
+        }
         self.program_counter += 1;
     }
 
