@@ -98,6 +98,7 @@ impl Processor
             InstructionTypes::RLC => self.rlc_op(),
             InstructionTypes::RAL => self.ral_op(),
             InstructionTypes::RAR => self.rar_op(),
+            InstructionTypes::INX => self.inx_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -577,6 +578,17 @@ impl Processor
         let mut res           = accumulator.rotate_right(1);
         res                   = res | ((self.flags.carry_flag as u8) << 7);
         self.set_reg(A_REG, res);
+    }
+
+    fn inx_op(&mut self)
+    {
+        let reg_pair   = self.current_op.byte1.unwrap();
+        let (msb, lsb) = self.get_reg_pair(reg_pair);
+        let num: u16   = ((msb as u16) << 8) + lsb as u16;
+        let (res, carry)   = num.overflowing_add(1);
+
+        self.flags.carry_flag = carry;
+        self.set_reg_pair(reg_pair, (res >> 8) as u8, res as u8);
     }
 
     pub fn set_flags_cszp(&mut self, carry: bool, res: u8)

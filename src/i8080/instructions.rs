@@ -50,6 +50,7 @@ pub enum InstructionTypes
     RLC,
     RAL,
     RAR,
+    INX,
     Unknown,
 }
 
@@ -111,7 +112,6 @@ impl Instruction
                 self.byte2 = Some((b >> MOVE_FROM) & 0b111);
                 let name = format!("MOV {},{} ", Registers::translate_to_reg(self.byte1.unwrap()), Registers::translate_to_reg(self.byte2.unwrap()));
                 self.name = name;
-                (); // HLT instruction
                 return
             },
             // Arithmetic Instruction
@@ -260,7 +260,7 @@ impl Instruction
                     0x00                      => self.name = "NOP".to_string(),
                     0x01 | 0x11 | 0x21 | 0x31 => self.decode_lxi(),
                     0x02 | 0x12               => self.name = "STAX".to_string(),
-                    0x03 | 0x13 | 0x23 | 0x33 => self.name = "INX".to_string(),
+                    0x03 | 0x13 | 0x23 | 0x33 => self.decode_inx(),
                     0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C        => self.name = "INR".to_string(),
                     0x05 | 0x0D | 0x0A | 0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
                     0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E        => self.byte_to_immediate_op(),
@@ -287,6 +287,12 @@ impl Instruction
 
         }
 
+    }
+
+    fn decode_inx(&mut self)
+    {
+        self.set_instuction(InstructionTypes::INX);
+        self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_dad(&mut self)
@@ -342,7 +348,6 @@ impl Instruction
                 self.byte1 = Some((self.byte_val & 0x38) >> 3);
                 let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
                 self.name = name;
-                (); // HLT instruction
                 return
             },
             // ADI, ACI
