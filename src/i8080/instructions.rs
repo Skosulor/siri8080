@@ -46,6 +46,7 @@ pub enum InstructionTypes
     LXI,
     DCR,
     DAD,
+    RRC,
     Unknown,
 }
 
@@ -263,7 +264,7 @@ impl Instruction
                     0x07 | 0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__".to_string(),
                     0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
                     0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX".to_string(),
-                    0x0F => self.name = "RRC".to_string(), 
+                    0x0F => self.set_instuction(InstructionTypes::RRC),
                     0x17 => self.name = "RAL".to_string(),
                     0x1A => self.name = "LDAX".to_string(),
                     0x1F => self.name = "RAR".to_string(),

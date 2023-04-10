@@ -92,6 +92,7 @@ impl Processor
             InstructionTypes::LXI => self.lxi_op(),
             InstructionTypes::DCR => self.dcr_op(),
             InstructionTypes::DAD => self.dad_op(),
+            InstructionTypes::RRC => self.rrc_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -524,6 +525,14 @@ impl Processor
 
         self.set_reg_pair(HL_PAIR_REG, (res >> 8) as u8, num1 as u8);
         self.flags.carry_flag = carry;
+    }
+
+    fn rrc_op(&mut self)
+    {
+        let accumulator       = self.get_reg(A_REG);
+        self.flags.carry_flag = (accumulator & 0x01) == 0x01;
+        let res               = accumulator.rotate_right(1);
+        self.set_reg(A_REG, res);
     }
     fn dcr_op(&mut self)
     {
