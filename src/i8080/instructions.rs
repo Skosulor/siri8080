@@ -13,6 +13,7 @@ pub enum AddressingMode
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[derive(PartialEq)]
 pub enum InstructionTypes 
 {
     MOV,

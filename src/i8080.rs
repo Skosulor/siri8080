@@ -1,4 +1,4 @@
-mod instructions;
+pub mod instructions;
 pub mod registers;
 pub mod flags;
 
