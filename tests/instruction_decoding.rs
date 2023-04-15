@@ -443,4 +443,69 @@ mod tests
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
         assert_eq!(inst.byte1.unwrap(), A_REG);
     }
+
+    #[test]
+    fn decode_cmp_b()
+    {
+        let inst = Instruction::from_byte(0xB8);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), B_REG);
+    }
+
+    #[test]
+    fn decode_cmp_c()
+    {
+        let inst = Instruction::from_byte(0xB9);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), C_REG);
+    }
+
+    #[test]
+    fn decode_cmp_d()
+    {
+        let inst = Instruction::from_byte(0xBA);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), D_REG);
+    }
+
+    #[test]
+    fn decode_cmp_e()
+    {
+        let inst = Instruction::from_byte(0xBB);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), E_REG);
+    }
+
+    #[test]
+    fn decode_cmp_h()
+    {
+        let inst = Instruction::from_byte(0xBC);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), H_REG);
+    }
+
+    #[test]
+    fn decode_cmp_l()
+    {
+        let inst = Instruction::from_byte(0xBD);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), L_REG);
+    }
+
+    #[test]
+    fn decode_cmp_m()
+    {
+        let inst = Instruction::from_byte(0xBE);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+    }
+
+    #[test]
+    fn decode_cmp_a()
+    {
+        let inst = Instruction::from_byte(0xBF);
+        assert_eq!(inst.inst_type, InstructionTypes::CMP);
+        assert_eq!(inst.byte1.unwrap(), A_REG);
+    }
+
 }
