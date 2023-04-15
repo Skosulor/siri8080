@@ -398,7 +398,6 @@ impl Processor
         self.set_flags_cszp(carry, res);
     }
 
-    // Immediate move
     fn mvi_op(&mut self)
     {
         self.program_counter += 1;
