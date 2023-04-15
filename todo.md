@@ -68,7 +68,7 @@ TODO Op codes needed for space invaders
     - [X] RRC
     - [X] INX
     - [X] LXI
-    - [ ] STA
+    - [X] STA
     - [X] LDA
     - [X] JNZ
     - [X] JMP

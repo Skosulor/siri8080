@@ -54,6 +54,7 @@ pub enum InstructionTypes
     INX,
     LDA,
     LDAX,
+    STA,
     Unknown,
 }
 
@@ -279,7 +280,7 @@ impl Instruction
                     0x27 => self.name = "DAA".to_string(),
                     0x2A => self.name = "LHLD".to_string(),
                     0x2F => self.name = "CMA".to_string(),
-                    0x32 => self.name = "STA".to_string(),
+                    0x32 => self.set_instuction(InstructionTypes::STA),
                     0x37 => self.name = "STC".to_string(),
                     0x3A => self.set_instuction(InstructionTypes::LDA),
                     0x3F => self.name = "CMC".to_string(),

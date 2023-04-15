@@ -101,6 +101,7 @@ impl Processor
             InstructionTypes::INX => self.inx_op(),
             InstructionTypes::LDA => self.lda_op(),
             InstructionTypes::LDAX => self.ldax_op(),
+            InstructionTypes::STA => self.sta_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -611,6 +612,13 @@ impl Processor
         }
         let address = (msb as u16) << 8 | lsb as u16;
         self.set_reg(A_REG, self.memory[address as usize]);
+    }
+
+    fn sta_op(&mut self)
+    {
+        let addr = self.get_direct_address();
+        let value = self.get_reg(A_REG);
+        self.memory[addr as usize] = value;
     }
 
     fn get_direct_address(&mut self) -> u16
