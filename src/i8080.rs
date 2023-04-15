@@ -100,6 +100,7 @@ impl Processor
             InstructionTypes::RAR => self.rar_op(),
             InstructionTypes::INX => self.inx_op(),
             InstructionTypes::LDA => self.lda_op(),
+            InstructionTypes::LDAX => self.ldax_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -595,6 +596,22 @@ impl Processor
         self.set_reg(A_REG, value);
     }
 
+    fn ldax_op(&mut self)
+    {
+        let lsb;
+        let msb;
+
+        if self.current_op.byte1.unwrap() & 0x10 == 0x10
+        {
+            (msb, lsb) = self.get_reg_pair(DE_PAIR_REG);
+        }
+        else
+        {
+            (msb, lsb) = self.get_reg_pair(BC_PAIR_REG);
+        }
+        let address = (msb as u16) << 8 | lsb as u16;
+        self.set_reg(A_REG, self.memory[address as usize]);
+    }
 
     fn get_direct_address(&mut self) -> u16
     {

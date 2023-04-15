@@ -53,6 +53,7 @@ pub enum InstructionTypes
     RAR,
     INX,
     LDA,
+    LDAX,
     Unknown,
 }
 
@@ -264,7 +265,7 @@ impl Instruction
                     0x02 | 0x12               => self.name = "STAX".to_string(),
                     0x03 | 0x13 | 0x23 | 0x33 => self.decode_inx(),
                     0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C        => self.name = "INR".to_string(),
-                    0x05 | 0x0D | 0x0A | 0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
+                    0x05 | 0x0D |  0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
                     0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E        => self.byte_to_immediate_op(),
                     0x07 => self.set_instuction(InstructionTypes::RLC),
                     0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__".to_string(),
@@ -272,7 +273,7 @@ impl Instruction
                     0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX".to_string(),
                     0x0F => self.set_instuction(InstructionTypes::RRC),
                     0x17 => self.set_instuction(InstructionTypes::RAL),
-                    0x1A => self.name = "LDAX".to_string(),
+                    0x1A | 0x0A => self.set_instuction(InstructionTypes::LDAX),
                     0x1F => self.set_instuction(InstructionTypes::RAR),
                     0x22 => self.name = "SHLD".to_string(),
                     0x27 => self.name = "DAA".to_string(),
