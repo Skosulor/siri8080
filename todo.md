@@ -66,10 +66,10 @@ TODO Op codes needed for space invaders
     - [X] DCR
     - [X] DAD
     - [X] RRC
-    - [ ] INX
-    - [ ] LXI
+    - [X] INX
+    - [X] LXI
     - [ ] STA
-    - [ ] LDA
+    - [X] LDA
     - [X] JNZ
     - [X] JMP
     - [ ] PUSH

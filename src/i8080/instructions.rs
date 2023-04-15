@@ -52,6 +52,7 @@ pub enum InstructionTypes
     RAL,
     RAR,
     INX,
+    LDA,
     Unknown,
 }
 
@@ -279,7 +280,7 @@ impl Instruction
                     0x2F => self.name = "CMA".to_string(),
                     0x32 => self.name = "STA".to_string(),
                     0x37 => self.name = "STC".to_string(),
-                    0x3A => self.name = "LDA".to_string(),
+                    0x3A => self.set_instuction(InstructionTypes::LDA),
                     0x3F => self.name = "CMC".to_string(),
                     _ => panic!("Misc should not exist!"),
                 }

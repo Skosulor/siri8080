@@ -99,6 +99,7 @@ impl Processor
             InstructionTypes::RAL => self.ral_op(),
             InstructionTypes::RAR => self.rar_op(),
             InstructionTypes::INX => self.inx_op(),
+            InstructionTypes::LDA => self.lda_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -407,10 +408,7 @@ impl Processor
 
     fn jmp_op(&mut self)
     {
-        let pc       = self.program_counter as usize;
-        let msb_addr = self.memory[pc + 1] as u16;
-        let lsb_addr = self.memory[pc + 2] as u16;
-        let mut addr     = (lsb_addr << 8) + msb_addr;
+        let mut addr = self.get_direct_address();
         if addr > 0
         {
             addr = addr - 1;
@@ -589,6 +587,24 @@ impl Processor
 
         self.flags.carry_flag = carry;
         self.set_reg_pair(reg_pair, (res >> 8) as u8, res as u8);
+    }
+
+    fn lda_op(&mut self)
+    {
+        let addr = self.get_direct_address();
+        let value = self.memory[addr as usize]; 
+        self.set_reg(A_REG, value);
+    }
+
+
+    fn get_direct_address(&mut self) -> u16
+    {
+        let pc        = self.program_counter as usize;
+        let lsb_value = self.memory[pc + 1];
+        let msb_value = self.memory[pc + 2];
+        let addr: u16 = (msb_value as u16) << 8 | lsb_value as u16;
+        self.program_counter += 2;
+        return addr;
     }
 
     pub fn set_flags_cszp(&mut self, carry: bool, res: u8)
