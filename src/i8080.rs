@@ -209,18 +209,18 @@ impl Processor
         {
             BC_PAIR_REG => 
             {
-                self.registers.b = lsb_val;
-                self.registers.c = msb_val;
+                self.registers.b = msb_val;
+                self.registers.c = lsb_val;
             }
             DE_PAIR_REG => 
             {
-                self.registers.d = lsb_val;
-                self.registers.e = msb_val;
+                self.registers.d = msb_val;
+                self.registers.e = lsb_val;
             }
             HL_PAIR_REG => 
             {
-                self.registers.h = lsb_val;
-                self.registers.l = msb_val;
+                self.registers.h = msb_val;
+                self.registers.l = lsb_val;
             }
             SP_REG =>
             {
@@ -557,7 +557,7 @@ impl Processor
         let num2: u16    = ((msb as u16) << 8) + lsb as u16;
         let (res, carry) = num1.overflowing_add(num2);
 
-        self.set_reg_pair(HL_PAIR_REG, (res >> 8) as u8, num1 as u8);
+        self.set_reg_pair(HL_PAIR_REG, (res << 8) as u8, num1 as u8);
         self.flags.carry_flag = carry;
     }
 
@@ -611,7 +611,7 @@ impl Processor
         let (res, carry)   = num.overflowing_add(1);
 
         self.flags.carry_flag = carry;
-        self.set_reg_pair(reg_pair, (res >> 8) as u8, res as u8);
+        self.set_reg_pair(reg_pair, (res << 8) as u8, res as u8);
     }
 
     fn lda_op(&mut self)
@@ -655,8 +655,8 @@ impl Processor
 
     fn pop_op(&mut self)
     {
-        let msb = self.memory[(self.stack_pointer + 0) as usize];
-        let lsb = self.memory[(self.stack_pointer + 1) as usize];
+        let lsb = self.memory[(self.stack_pointer + 0) as usize];
+        let msb = self.memory[(self.stack_pointer + 1) as usize];
         self.set_reg_pair(self.current_op.byte1.unwrap(), msb, lsb);
     }
 
