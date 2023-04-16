@@ -3,6 +3,27 @@ mod tests
 {
     use siri8080::i8080::instructions::{InstructionTypes, Instruction};
     use siri8080::i8080::registers::*;
+    use siri8080::i8080::flags::*;
+
+    #[test]
+    fn set_get_flags()
+    {
+        let mut flag = StatusFlags::new();
+
+        for i in 0..0x20
+        {
+            flag.set_flags_u8(i);
+            assert_eq!(flag.get_flags_u8(), i);
+        }
+
+        assert_eq!(flag.carry_flag, true);
+        assert_eq!(flag.auxiliary_flag, true);
+        assert_eq!(flag.sign_flag, true);
+        assert_eq!(flag.zero_flag, true);
+        assert_eq!(flag.parity_flag, true);
+
+    }
+
     #[test]
     fn decode_add_b()
     {

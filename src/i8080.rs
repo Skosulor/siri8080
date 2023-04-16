@@ -102,6 +102,8 @@ impl Processor
             InstructionTypes::LDA => self.lda_op(),
             InstructionTypes::LDAX => self.ldax_op(),
             InstructionTypes::STA => self.sta_op(),
+            InstructionTypes::PUSH => self.push_op(),
+            InstructionTypes::POP => self.pop_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -185,7 +187,18 @@ impl Processor
             BC_PAIR_REG => (self.registers.b, self.registers.c),
             DE_PAIR_REG => (self.registers.d, self.registers.e),
             HL_PAIR_REG => (self.registers.h, self.registers.l),
-            SP_REG => ((self.stack_pointer >> 8) as u8, (self.stack_pointer & 0xFF) as u8),
+            SP_REG => 
+            {
+                // In the case of POP/PUSH, the matched REG_PAIR for 0b11 is PSW (flags and accumulator)
+                if self.current_op.inst_type == InstructionTypes::POP  || self.current_op.inst_type == InstructionTypes::PUSH
+                {
+                    (self.flags.get_flags_u8(), self.registers.accumulator)
+                }
+                else
+                {
+                    ((self.stack_pointer >> 8) as u8, (self.stack_pointer & 0xFF) as u8)
+                }
+            }
             _ => panic!("No register pair {}, PC at {}", reg, self.program_counter)
         }
     }
@@ -209,7 +222,18 @@ impl Processor
                 self.registers.h = lsb_val;
                 self.registers.l = msb_val;
             }
-            SP_REG => self.stack_pointer = ((msb_val as u16) << 8) | lsb_val as u16,
+            SP_REG =>
+            {
+                if self.current_op.inst_type == InstructionTypes::POP  || self.current_op.inst_type == InstructionTypes::PUSH
+                {
+                    self.flags.set_flags_u8(lsb_val);
+                    self.registers.accumulator = msb_val;
+                }
+                else
+                {
+                    self.stack_pointer = ((msb_val as u16) << 8) | lsb_val as u16;
+                }
+            }
             _ => panic!("No register pair {}, PC at {}", reg, self.program_counter)
         }
     }
@@ -619,6 +643,21 @@ impl Processor
         let addr = self.get_direct_address();
         let value = self.get_reg(A_REG);
         self.memory[addr as usize] = value;
+    }
+
+    fn push_op(&mut self)
+    {
+        let (msb, lsb) = self.get_reg_pair(self.current_op.byte1.unwrap());
+        self.memory[(self.stack_pointer - 1) as usize] = lsb;
+        self.memory[(self.stack_pointer - 2) as usize] = msb;
+        self.stack_pointer -= 2;
+    }
+
+    fn pop_op(&mut self)
+    {
+        let msb = self.memory[(self.stack_pointer + 0) as usize];
+        let lsb = self.memory[(self.stack_pointer + 1) as usize];
+        self.set_reg_pair(self.current_op.byte1.unwrap(), msb, lsb);
     }
 
     fn get_direct_address(&mut self) -> u16

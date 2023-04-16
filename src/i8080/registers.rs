@@ -12,6 +12,7 @@ pub const DE_PAIR_REG: u8 = 0b01;
 pub const HL_PAIR_REG: u8 = 0b10;
 pub const SP_REG:      u8 = 0b11;
 
+
 pub const MOVE_TO: u8 = 3;
 pub const MOVE_FROM: u8 = 0;
 pub const ARITHMETIC_WITH: u8 = 0;

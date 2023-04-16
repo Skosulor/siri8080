@@ -55,6 +55,8 @@ pub enum InstructionTypes
     LDA,
     LDAX,
     STA,
+    PUSH,
+    POP,
     Unknown,
 }
 
@@ -188,12 +190,11 @@ impl Instruction
                 match b 
                 {
                     0xC0 => self.name = "RNZ".to_string(),
-                    // Match all pop instructions
-                    0xC1 | 0xD1 | 0xE1 | 0xF1 => self.name = "POP".to_string(),
+                    0xC1 | 0xD1 | 0xE1 | 0xF1 => self.decode_pop(),
                     0xC2 => self.set_instuction(InstructionTypes::JNZ),
                     0xC3 => self.set_instuction(InstructionTypes::JMP),
                     0xC4 => self.name = "CNZ".to_string(),
-                    0xC5 => self.name = "PUSH".to_string(),
+                    0xC5 | 0xD5 | 0xE5 | 0xF5 => self.decode_push(),
                     0xC6 => self.byte_to_immediate_op(),
                     0xC7 => self.name = "RST 0".to_string(),
                     0xC8 => self.name = "RZ".to_string(),
@@ -208,7 +209,6 @@ impl Instruction
                     0xD2 => self.set_instuction(InstructionTypes::JNC),
                     0xD3 => self.name = "OUT".to_string(),
                     0xD4 => self.name = "CNC".to_string(),
-                    0xD5 => self.name = "PUSH".to_string(),
                     0xD6 => self.byte_to_immediate_op(),
                     0xD7 => self.name = "RST".to_string(),
                     0xD8 => self.name = "RC".to_string(),
@@ -223,7 +223,6 @@ impl Instruction
                     0xE2 => self.set_instuction(InstructionTypes::JPO),
                     0xE3 => self.name = "XTHL".to_string(),
                     0xE4 => self.name = "CPO".to_string(),
-                    0xE5 => self.name = "PUSH".to_string(),
                     0xE6 => self.byte_to_immediate_op(),
                     0xE7 => self.name = "RST".to_string(),
                     0xE8 => self.name = "RPE".to_string(),
@@ -238,7 +237,6 @@ impl Instruction
                     0xF2 => self.set_instuction(InstructionTypes::JP),
                     0xF3 => self.name = "DI".to_string(),
                     0xF4 => self.name = "CP".to_string(),
-                    0xF5 => self.name = "PUSH".to_string(),
                     0xF6 => self.byte_to_immediate_op(),
                     0xF7 => self.name = "RST".to_string(),
                     0xF8 => self.name = "RM".to_string(),
@@ -291,6 +289,20 @@ impl Instruction
 
         }
 
+    }
+
+    fn decode_pop(&mut self)
+    {
+        self.name = format!("POP {}", Registers::translate_to_reg(self.byte1.unwrap()));
+        self.inst_type = InstructionTypes::POP;
+        self.byte1 = Some(self.byte_val & 0x30);
+    }
+
+    fn decode_push(&mut self)
+    {
+        self.name = format!("PUSH {}", Registers::translate_to_reg(self.byte1.unwrap()));
+        self.inst_type = InstructionTypes::PUSH;
+        self.byte1 = Some(self.byte_val & 0x30);
     }
 
     fn decode_inx(&mut self)
