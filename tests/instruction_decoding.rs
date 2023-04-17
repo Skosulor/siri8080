@@ -10,10 +10,10 @@ mod tests
     {
         let mut flag = StatusFlags::new();
 
-        for i in 0..0x20
+        for i in 0..=0xFF
         {
             flag.set_flags_u8(i);
-            assert_eq!(flag.get_flags_u8(), i);
+            assert_eq!(flag.get_flags_u8(), (i | 0x2) & 0b11010111);
         }
 
         assert_eq!(flag.carry_flag, true);
