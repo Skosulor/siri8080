@@ -165,6 +165,10 @@ impl Processor
         return instructions
     }
 
+    pub fn set_all_registers(&mut self, reg: Registers)
+    {
+        self.registers = reg;
+    }
 
     fn set_reg(&mut self, reg:u8, val: u8)
     {
@@ -256,6 +260,15 @@ impl Processor
         }
     }
 
+    pub fn get_memory_at(&self, addr: u16) -> u8
+    {
+        return self.memory[addr as usize];
+    }
+
+    pub fn set_memory_at(&mut self, addr: u16, val: u8)
+    {
+        self.memory[addr as usize] = val;
+    }
 
     fn mov_op(&mut self)
     {
