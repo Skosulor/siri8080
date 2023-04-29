@@ -180,7 +180,11 @@ impl Processor
             E_REG   => self.registers.e = val,
             H_REG   => self.registers.h = val,
             L_REG   => self.registers.l = val,
-            MEM_REF => self.memory[self.stack_pointer as usize] = val,
+            MEM_REF => 
+            {
+                let addr = (self.registers.h as usize) << 8 | (self.registers.l as usize);
+                self.memory[addr] = val;
+            },
             A_REG   => self.registers.accumulator = val,
             _ => panic!("No register {}", reg)
         }
@@ -196,7 +200,11 @@ impl Processor
             E_REG   => self.registers.e,
             H_REG   => self.registers.h,
             L_REG   => self.registers.l,
-            MEM_REF => self.memory[self.stack_pointer as usize] ,
+            MEM_REF => 
+            {
+                let addr = (self.registers.h as usize) << 8 | (self.registers.l as usize);
+                return self.memory[addr] 
+            },
             A_REG   => self.registers.accumulator,
             _ => panic!("No register {}", reg)
         }
@@ -461,7 +469,16 @@ impl Processor
     {
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
-        self.set_reg(self.current_op.byte1.unwrap(), result);
+
+        if self.current_op.byte1.unwrap() == MEM_REF
+        {
+            let addr = (self.registers.h as usize) << 8 | (self.registers.l as usize);
+            self.memory[addr] = result;
+        }
+        else
+        {
+            self.set_reg(self.current_op.byte1.unwrap(), result);
+        }
     }
 
     fn jmp_op(&mut self)
