@@ -1,9 +1,7 @@
 mod tests
 
 {
-    // use siri8080::i8080::instructions::{InstructionTypes, Instruction};
     use siri8080::i8080::registers::*;
-    // use siri8080::i8080::flags::*;
     use siri8080::i8080::Processor;
     use rand::Rng;
 
