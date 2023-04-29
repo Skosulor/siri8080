@@ -8,7 +8,7 @@ mod tests
     use rand::Rng;
 
     #[test]
-    fn all_mvi_d8() 
+    fn mvi_d8() 
     {
         let mut rng = rand::thread_rng();
         let randoms = (0..8)
@@ -39,14 +39,14 @@ mod tests
     }
 
     #[test]
-    fn all_mov_a()
+    fn mov_a()
     {
         let mut rng = rand::thread_rng();
-        let randoms = (0..7)
+        let randoms = (0..8)
             .map(|_| rng.gen_range(0..255))
             .collect::<Vec<u8>>();
 
-        let mem: Vec<u8> = vec![0x7F, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D];
+        let mem: Vec<u8> = vec![0x7F, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E];
         let mut cpu = Processor::from_bytes(mem);
         let regs = Registers {
             accumulator: randoms[0],
@@ -58,15 +58,83 @@ mod tests
             l: randoms[6],
         };
 
+        let addr = (regs.h as u16) << 8 | (regs.l as u16);
+        cpu.set_memory_at(addr, randoms[7]);
         cpu.set_all_registers(regs);
 
-        for i in 0..=6 
+        for i in 0..=7 
         {
             cpu.clock();
             let regs = cpu.get_registers();
-            println!("{} {}", regs.accumulator, randoms[i]);
-            assert!(regs.accumulator == randoms[i]);
+            assert_eq!(regs.accumulator, randoms[i]);
         }
+    }
+
+    #[test]
+    fn mov_b()
+    {
+        let mut rng = rand::thread_rng();
+        let randoms = (0..8)
+            .map(|_| rng.gen_range(0..255))
+            .collect::<Vec<u8>>();
+
+        let mem: Vec<u8> = vec![0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47];
+        let mut cpu = Processor::from_bytes(mem);
+        let regs = Registers {
+            b: randoms[0],
+            c: randoms[1],
+            d: randoms[2],
+            e: randoms[3],
+            h: randoms[4],
+            l: randoms[5],
+            accumulator: randoms[7],
+        };
+
+        let addr = (regs.h as u16) << 8 | (regs.l as u16);
+        cpu.set_memory_at(addr, randoms[6]);
+        cpu.set_all_registers(regs);
+
+        for i in 0..=7
+        {
+            cpu.clock();
+            let regs = cpu.get_registers();
+            assert_eq!(regs.b, randoms[i]);
+        }
+    }
+
+
+    #[test]
+    fn mov_c()
+    {
+        let mut rng = rand::thread_rng();
+        let randoms = (0..8)
+            .map(|_| rng.gen_range(0..255))
+            .collect::<Vec<u8>>();
+
+        let mem: Vec<u8> = vec![0x49, 0x48 , 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F];
+        let mut cpu = Processor::from_bytes(mem);
+        let regs = Registers {
+            b: randoms[1],
+            c: randoms[0],
+            d: randoms[2],
+            e: randoms[3],
+            h: randoms[4],
+            l: randoms[5],
+            accumulator: randoms[7],
+        };
+
+        let addr = (regs.h as u16) << 8 | (regs.l as u16);
+        cpu.set_memory_at(addr, randoms[6]);
+        cpu.set_all_registers(regs);
+
+        for i in 0..=7
+        {
+            cpu.clock();
+            let regs = cpu.get_registers();
+            println!("{} {} {}", regs.c, randoms[i], i);
+            assert_eq!(regs.c, randoms[i]);
+        }
+
     }
 }
 
