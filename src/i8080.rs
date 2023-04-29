@@ -25,11 +25,10 @@ pub struct Processor
 
 impl Processor 
 {
-    pub fn from(p: String) -> Processor 
+    pub fn from_file(p: String) -> Processor 
     {
         let mut proc = Processor 
         {
-            // clock_freq: 0.0,
             stack_pointer: 0x20,
             program_counter: 0,
             memory: [0; MEMORY_SIZE],
@@ -40,6 +39,25 @@ impl Processor
 
         let mut file = File::open(p).expect("No such file");
         file.read(&mut proc.memory).expect("opsie");
+        proc
+    }
+
+    pub fn from_bytes(bytes: Vec<u8>) -> Processor 
+    {
+        let mut proc = Processor 
+        {
+            stack_pointer: 0x20,
+            program_counter: 0,
+            memory: [0; MEMORY_SIZE],
+            flags: StatusFlags::new(),
+            current_op: Instruction::new(),
+            registers: Registers::new(),
+        };
+
+        for (i, byte) in bytes.iter().enumerate()
+        {
+            proc.memory[i] = *byte;
+        }
         proc
     }
 

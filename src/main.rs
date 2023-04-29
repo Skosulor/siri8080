@@ -20,7 +20,7 @@ fn main()
         return;
     }
 
-    let mut p = i8080::Processor::from(rom);
+    let mut p = i8080::Processor::from_file(rom);
     let mut dgb = debugger::Debugger::default();
 
     loop
