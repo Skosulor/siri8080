@@ -212,7 +212,8 @@ impl Processor
             SP_REG => 
             {
                 // In the case of POP/PUSH, the matched REG_PAIR for 0b11 is PSW (flags and accumulator)
-                if self.current_op.inst_type == InstructionTypes::POP  || self.current_op.inst_type == InstructionTypes::PUSH
+                if self.current_op.inst_type == InstructionTypes::POP  
+                    || self.current_op.inst_type == InstructionTypes::PUSH
                 {
                     (self.flags.get_flags_u8(), self.registers.accumulator)
                 }
@@ -246,7 +247,8 @@ impl Processor
             }
             SP_REG =>
             {
-                if self.current_op.inst_type == InstructionTypes::POP  || self.current_op.inst_type == InstructionTypes::PUSH
+                if self.current_op.inst_type == InstructionTypes::POP  
+                    || self.current_op.inst_type == InstructionTypes::PUSH
                 {
                     self.flags.set_flags_u8(lsb_val);
                     self.registers.accumulator = msb_val;
