@@ -191,57 +191,57 @@ impl Instruction
                 {
                     0xC0 => self.name = "RNZ".to_string(),
                     0xC1 | 0xD1 | 0xE1 | 0xF1 => self.decode_pop(),
-                    0xC2 => self.set_instuction(InstructionTypes::JNZ),
-                    0xC3 => self.set_instuction(InstructionTypes::JMP),
+                    0xC2 => self.set_instruction(InstructionTypes::JNZ),
+                    0xC3 => self.set_instruction(InstructionTypes::JMP),
                     0xC4 => self.name = "CNZ".to_string(),
                     0xC5 | 0xD5 | 0xE5 | 0xF5 => self.decode_push(),
                     0xC6 => self.byte_to_immediate_op(),
                     0xC7 => self.name = "RST 0".to_string(),
                     0xC8 => self.name = "RZ".to_string(),
                     0xC9 => self.name = "RET".to_string(),
-                    0xCA => self.set_instuction(InstructionTypes::JZ),
+                    0xCA => self.set_instruction(InstructionTypes::JZ),
                     0xCB => self.name = "??".to_string(),
                     0xCC => self.name = "CZ".to_string(),
                     0xCD => self.name = "CALL".to_string(),
                     0xCE => self.byte_to_immediate_op(),
                     0xCF => self.name = "RST".to_string(),
                     0xD0 => self.name = "RNC".to_string(),
-                    0xD2 => self.set_instuction(InstructionTypes::JNC),
+                    0xD2 => self.set_instruction(InstructionTypes::JNC),
                     0xD3 => self.name = "OUT".to_string(),
                     0xD4 => self.name = "CNC".to_string(),
                     0xD6 => self.byte_to_immediate_op(),
                     0xD7 => self.name = "RST".to_string(),
                     0xD8 => self.name = "RC".to_string(),
                     0xD9 => self.name = "??".to_string(),
-                    0xDA => self.set_instuction(InstructionTypes::JC),
+                    0xDA => self.set_instruction(InstructionTypes::JC),
                     0xDB => self.name = "IN".to_string(),
                     0xDC => self.name = "CC".to_string(),
                     0xDD => self.name = "??".to_string(),
                     0xDE => self.byte_to_immediate_op(),
                     0xDF => self.name = "RST".to_string(),
                     0xE0 => self.name = "RPO".to_string(),
-                    0xE2 => self.set_instuction(InstructionTypes::JPO),
+                    0xE2 => self.set_instruction(InstructionTypes::JPO),
                     0xE3 => self.name = "XTHL".to_string(),
                     0xE4 => self.name = "CPO".to_string(),
                     0xE6 => self.byte_to_immediate_op(),
                     0xE7 => self.name = "RST".to_string(),
                     0xE8 => self.name = "RPE".to_string(),
                     0xE9 => self.name = "PCHL".to_string(),
-                    0xEA => self.set_instuction(InstructionTypes::JPE),
+                    0xEA => self.set_instruction(InstructionTypes::JPE),
                     0xEB => self.name = "XCHG".to_string(),
                     0xEC => self.name = "CPE".to_string(),
                     0xED => self.name = "??".to_string(),
                     0xEE => self.byte_to_immediate_op(),
                     0xEF => self.name = "RST".to_string(),
                     0xF0 => self.name = "RP".to_string(),
-                    0xF2 => self.set_instuction(InstructionTypes::JP),
+                    0xF2 => self.set_instruction(InstructionTypes::JP),
                     0xF3 => self.name = "DI".to_string(),
                     0xF4 => self.name = "CP".to_string(),
                     0xF6 => self.byte_to_immediate_op(),
                     0xF7 => self.name = "RST".to_string(),
                     0xF8 => self.name = "RM".to_string(),
                     0xF9 => self.name = "SPHL".to_string(),
-                    0xFA => self.set_instuction(InstructionTypes::JM),
+                    0xFA => self.set_instruction(InstructionTypes::JM),
                     0xFB => self.name = "EI".to_string(),
                     0xFC => self.name = "CM".to_string(),
                     0xFD => self.name = "??".to_string(),
@@ -266,21 +266,21 @@ impl Instruction
                     0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C        => self.name = "INR".to_string(),
                     0x05 | 0x0D |  0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
                     0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E        => self.byte_to_immediate_op(),
-                    0x07 => self.set_instuction(InstructionTypes::RLC),
+                    0x07 => self.set_instruction(InstructionTypes::RLC),
                     0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__".to_string(),
                     0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
                     0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX".to_string(),
-                    0x0F => self.set_instuction(InstructionTypes::RRC),
-                    0x17 => self.set_instuction(InstructionTypes::RAL),
-                    0x1A | 0x0A => self.set_instuction(InstructionTypes::LDAX),
-                    0x1F => self.set_instuction(InstructionTypes::RAR),
+                    0x0F => self.set_instruction(InstructionTypes::RRC),
+                    0x17 => self.set_instruction(InstructionTypes::RAL),
+                    0x1A | 0x0A => self.set_instruction(InstructionTypes::LDAX),
+                    0x1F => self.set_instruction(InstructionTypes::RAR),
                     0x22 => self.name = "SHLD".to_string(),
                     0x27 => self.name = "DAA".to_string(),
                     0x2A => self.name = "LHLD".to_string(),
                     0x2F => self.name = "CMA".to_string(),
-                    0x32 => self.set_instuction(InstructionTypes::STA),
+                    0x32 => self.set_instruction(InstructionTypes::STA),
                     0x37 => self.name = "STC".to_string(),
-                    0x3A => self.set_instuction(InstructionTypes::LDA),
+                    0x3A => self.set_instruction(InstructionTypes::LDA),
                     0x3F => self.name = "CMC".to_string(),
                     _ => panic!("Misc should not exist!"),
                 }
@@ -307,20 +307,20 @@ impl Instruction
 
     fn decode_inx(&mut self)
     {
-        self.set_instuction(InstructionTypes::INX);
+        self.set_instruction(InstructionTypes::INX);
         self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_dad(&mut self)
     {
-        self.set_instuction(InstructionTypes::DAD);
+        self.set_instruction(InstructionTypes::DAD);
         self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_lxi(&mut self)
     {
         self.adress_mode = AddressingMode::Direct;
-        self.set_instuction(InstructionTypes::LXI);
+        self.set_instruction(InstructionTypes::LXI);
         self.byte1 = Some((self.byte_val & 0x30) >> 4);
     }
 
@@ -389,7 +389,7 @@ impl Instruction
             _ => (),
         }
     }
-    fn set_instuction(&mut self, inst: InstructionTypes)
+    fn set_instruction(&mut self, inst: InstructionTypes)
     {
         self.name = Self::instruction_to_string(inst.clone());
         self.inst_type = inst;
