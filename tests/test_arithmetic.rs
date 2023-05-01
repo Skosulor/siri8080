@@ -37,8 +37,12 @@ mod tests
             cpu.clock();
             let accumulator = cpu.get_registers().accumulator;
             (sum, carry)  = sum.overflowing_add(numbers[i]);
+            let zero = sum == 0;
+            let sign: bool = ((sum >> 7) & 0x1) == 0x1;
             let flags = cpu.get_flags();
+            assert_eq!(flags.sign_flag, sign);
             assert_eq!(flags.carry_flag, carry);
+            assert_eq!(flags.zero_flag, zero);
             assert_eq!(accumulator, sum);
         }
     }
