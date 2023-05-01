@@ -72,12 +72,11 @@ TODO Op codes needed for space invaders
     - [X] LDA
     - [X] JNZ
     - [X] JMP
-    - [ ] PUSH
+    - [X] PUSH
     - [ ] RET
     - [ ] CALL
-    - [ ] POP
+    - [X] POP
     - [ ] OUT
-    - [ ] PUSH
     - [ ] XCHG
     - [ ] EI
 
