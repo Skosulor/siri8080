@@ -469,16 +469,7 @@ impl Processor
     {
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
-
-        if self.current_op.byte1.unwrap() == MEM_REF
-        {
-            let addr = (self.registers.h as usize) << 8 | (self.registers.l as usize);
-            self.memory[addr] = result;
-        }
-        else
-        {
-            self.set_reg(self.current_op.byte1.unwrap(), result);
-        }
+        self.set_reg(self.current_op.byte1.unwrap(), result);
     }
 
     fn jmp_op(&mut self)
