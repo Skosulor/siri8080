@@ -355,11 +355,11 @@ impl Processor
         let (res, carry ) = if with_carry 
         {
             let c = if self.flags.carry_flag {1} else {0};
-            operand2.overflowing_add(operand1 + c)
+            operand1.overflowing_sub(operand2 + c)
         }
         else
         {
-            operand2.overflowing_sub(operand1)
+            operand1.overflowing_sub(operand2)
         };
 
         self.flags.carry_flag = carry;
