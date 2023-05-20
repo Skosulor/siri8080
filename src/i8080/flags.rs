@@ -81,10 +81,10 @@ pub fn parity(b: u8) -> bool
 {
     if b.count_ones() % 2 == 0
     {
-        return true
+        return false
     }
     else
     {
-        return false
+        return true
     }
 }
