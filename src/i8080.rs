@@ -124,6 +124,7 @@ impl Processor
             InstructionTypes::POP => self.pop_op(),
             InstructionTypes::CALL => self.call_op(), 
             InstructionTypes::NOP => (), 
+            InstructionTypes::RET => self.ret_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -717,7 +718,15 @@ impl Processor
         self.program_counter = addr - 1;
     }
 
+    fn ret_op(&mut self)
+    {
+        let lsb_addr = self.memory[self.stack_pointer as usize];
+        let msb_addr = self.memory[(self.stack_pointer + 1) as usize];
 
+        let addr: u16 = ((msb_addr as u16) << 8) + lsb_addr as u16;
+        println!("you");
+        self.program_counter = addr - 1;
+    }
 
     fn get_direct_address(&mut self) -> u16
     {

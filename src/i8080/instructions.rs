@@ -59,6 +59,7 @@ pub enum InstructionTypes
     POP,
     CALL,
     NOP,
+    RET,
     Unknown,
 }
 
@@ -200,7 +201,7 @@ impl Instruction
                     0xC6 => self.byte_to_immediate_op(),
                     0xC7 => self.name = "RST 0".to_string(),
                     0xC8 => self.name = "RZ".to_string(),
-                    0xC9 => self.name = "RET".to_string(),
+                    0xC9 => self.set_instruction(InstructionTypes::RET),
                     0xCA => self.set_instruction(InstructionTypes::JZ),
                     0xCB => self.name = "??".to_string(),
                     0xCC => self.name = "CZ".to_string(),
