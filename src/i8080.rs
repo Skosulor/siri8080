@@ -125,6 +125,7 @@ impl Processor
             InstructionTypes::CALL => self.call_op(), 
             InstructionTypes::NOP => (), 
             InstructionTypes::RET => self.ret_op(),
+            InstructionTypes::XCHG => self.xchg_op(),
             InstructionTypes::Unknown => (),
         }
     }
@@ -726,6 +727,16 @@ impl Processor
         let addr: u16 = ((msb_addr as u16) << 8) + lsb_addr as u16;
         println!("you");
         self.program_counter = addr - 1;
+    }
+
+
+    fn xchg_op(&mut self)
+    {
+        let regs = self.get_registers();
+        self.set_reg(D_REG, regs.h);
+        self.set_reg(H_REG, regs.d);
+        self.set_reg(E_REG, regs.l);
+        self.set_reg(L_REG, regs.e);
     }
 
     fn get_direct_address(&mut self) -> u16

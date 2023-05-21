@@ -60,6 +60,7 @@ pub enum InstructionTypes
     CALL,
     NOP,
     RET,
+    XCHG,
     Unknown,
 }
 
@@ -231,7 +232,7 @@ impl Instruction
                     0xE8 => self.name = "RPE".to_string(),
                     0xE9 => self.name = "PCHL".to_string(),
                     0xEA => self.set_instruction(InstructionTypes::JPE),
-                    0xEB => self.name = "XCHG".to_string(),
+                    0xEB => self.set_instruction(InstructionTypes::XCHG),
                     0xEC => self.name = "CPE".to_string(),
                     0xED => self.name = "??".to_string(),
                     0xEE => self.byte_to_immediate_op(),
