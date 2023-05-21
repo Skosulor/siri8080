@@ -89,8 +89,8 @@ mod tests
             let zero     = sum == 0;
             let sign     = ((sum >> 7) & 0x1) == 0x1;
             let flags    = cpu.get_flags();
-            let r        = cpu.get_registers();
-            println!("{} {} {} {} {} {}", r.accumulator, r.b, r.c, r.d, r.e, r.h);
+            let parity      = sum.count_ones() % 2 != 0;
+            assert_eq!(flags.parity_flag, parity);
             assert_eq!(flags.sign_flag, sign);
             assert_eq!(flags.carry_flag, carry);
             assert_eq!(flags.zero_flag, zero);
@@ -132,7 +132,9 @@ mod tests
             let flags       = cpu.get_flags();
             let zero        = sum == 0;
             let sign: bool  = ((sum >> 7) & 0x1) == 0x1;
+            let parity      = sum.count_ones() % 2 != 0;
 
+            assert_eq!(flags.parity_flag, parity);
             assert_eq!(sum, regs.accumulator);
             assert_eq!(zero, flags.zero_flag);
             assert_eq!(carry, flags.carry_flag);
