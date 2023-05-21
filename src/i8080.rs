@@ -122,6 +122,7 @@ impl Processor
             InstructionTypes::STA => self.sta_op(),
             InstructionTypes::PUSH => self.push_op(),
             InstructionTypes::POP => self.pop_op(),
+            InstructionTypes::CALL => self.call_op(), 
             InstructionTypes::Unknown => (),
         }
     }
@@ -700,6 +701,20 @@ impl Processor
         let msb = self.memory[(self.stack_pointer + 1) as usize];
         self.set_reg_pair(self.current_op.byte1.unwrap(), msb, lsb);
     }
+
+    fn call_op(&mut self)
+    {
+        let addr: u16         = self.get_direct_address();
+        let next_addr: u16    = self.program_counter + 1;
+        let lsb_next_addr: u8 = (next_addr & 0x00FF) as u8;
+        let msb_next_addr: u8 = ((next_addr & 0xFF00) >> 8) as u8;
+
+        self.memory[( self.stack_pointer - 1 ) as usize] = lsb_next_addr;
+        self.memory[( self.stack_pointer - 2 ) as usize] = msb_next_addr;
+        self.program_counter = addr - 1;
+    }
+
+
 
     fn get_direct_address(&mut self) -> u16
     {

@@ -57,6 +57,7 @@ pub enum InstructionTypes
     STA,
     PUSH,
     POP,
+    CALL,
     Unknown,
 }
 
@@ -202,7 +203,7 @@ impl Instruction
                     0xCA => self.set_instruction(InstructionTypes::JZ),
                     0xCB => self.name = "??".to_string(),
                     0xCC => self.name = "CZ".to_string(),
-                    0xCD => self.name = "CALL".to_string(),
+                    0xCD => self.set_instruction(InstructionTypes::CALL),
                     0xCE => self.byte_to_immediate_op(),
                     0xCF => self.name = "RST".to_string(),
                     0xD0 => self.name = "RNC".to_string(),
