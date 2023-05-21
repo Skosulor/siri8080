@@ -70,8 +70,8 @@ pub struct Instruction
     // cycles: u8,
     adress_mode: AddressingMode,
     pub inst_type: InstructionTypes,
-    pub byte1: Option<u8>,
-    pub byte2: Option<u8>,
+    pub low_byte: Option<u8>,
+    pub high_byte: Option<u8>,
 }
 
 impl Instruction
@@ -86,8 +86,8 @@ impl Instruction
             // cycles: 1,
             adress_mode: AddressingMode::Unknown,
             inst_type: InstructionTypes::Unknown,
-            byte1: None,
-            byte2: None,
+            low_byte: None,
+            high_byte: None,
         };
         ins
     }
@@ -110,24 +110,24 @@ impl Instruction
         match b & 0b11000000
         {
             // Move Instructions
-            // byte1 should hold destination register
-            // byte2 should hould source register
+            // low_byte should hold destination register
+            // high_byte should hould source register
             0b01000000 => 
             {
                 self.adress_mode = AddressingMode::Direct;
                 self.inst_type = InstructionTypes::MOV;
-                self.byte1 = Some((b >> MOVE_TO) & 0b111);
-                self.byte2 = Some((b >> MOVE_FROM) & 0b111);
-                let name = format!("MOV {},{} ", Registers::translate_to_reg(self.byte1.unwrap()), Registers::translate_to_reg(self.byte2.unwrap()));
+                self.low_byte = Some((b >> MOVE_TO) & 0b111);
+                self.high_byte = Some((b >> MOVE_FROM) & 0b111);
+                let name = format!("MOV {},{} ", Registers::translate_to_reg(self.low_byte.unwrap()), Registers::translate_to_reg(self.high_byte.unwrap()));
                 self.name = name;
                 return
             },
             // Arithmetic Instruction
-            // byte1 should hold source register
-            // byte2 is unused
+            // low_byte should hold source register
+            // high_byte is unused
             0b10000000 =>
             {
-                self.byte1 = Some((b >> ARITHMETIC_WITH) & 0b111);
+                self.low_byte = Some((b >> ARITHMETIC_WITH) & 0b111);
                 self.adress_mode = AddressingMode::Direct;
                 match b & 0b10111000
                 {
@@ -135,52 +135,52 @@ impl Instruction
                     0b10000000 =>
                     {
                         self.inst_type = InstructionTypes::ADD;
-                        let name = format!("ADD {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("ADD {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     },
                     // ADC
                     0b10001000 =>
                     {
                         self.inst_type = InstructionTypes::ADC;
-                        let name = format!("ADC {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("ADC {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     },
                     //SUB
                     0b10010000 =>
                     {
                         self.inst_type = InstructionTypes::SUB;
-                        let name = format!("SUB {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("SUB {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     },
                     //SBB
                     0b10011000 =>
                     {
                         self.inst_type = InstructionTypes::SBB;
-                        let name = format!("SBB {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("SBB {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     },
                     0b10100000 =>
                     {
                         self.inst_type = InstructionTypes::ANA;
-                        let name = format!("ANA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("ANA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     }
                     0b10101000 =>
                     {
                         self.inst_type = InstructionTypes::XRA;
-                        let name = format!("XRA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("XRA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     }
                     0b10110000 =>
                     {
                         self.inst_type = InstructionTypes::ORA;
-                        let name = format!("ORA {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("ORA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     }
                     0b10111000 =>
                     {
                         self.inst_type = InstructionTypes::CMP;
-                        let name = format!("CMP {}", Registers::translate_to_reg(self.byte1.unwrap()));
+                        let name = format!("CMP {}", Registers::translate_to_reg(self.low_byte.unwrap()));
                         self.name = name;
                     }
                     _ => panic!("Arithemtic does not exist!: {:X}", self.byte_val),
@@ -295,35 +295,35 @@ impl Instruction
 
     fn decode_pop(&mut self)
     {
-        self.name = format!("POP {}", Registers::translate_to_reg(self.byte1.unwrap()));
+        self.name = format!("POP {}", Registers::translate_to_reg(self.low_byte.unwrap()));
         self.inst_type = InstructionTypes::POP;
-        self.byte1 = Some(self.byte_val & 0x30);
+        self.low_byte = Some(self.byte_val & 0x30);
     }
 
     fn decode_push(&mut self)
     {
-        self.name = format!("PUSH {}", Registers::translate_to_reg(self.byte1.unwrap()));
+        self.name = format!("PUSH {}", Registers::translate_to_reg(self.low_byte.unwrap()));
         self.inst_type = InstructionTypes::PUSH;
-        self.byte1 = Some(self.byte_val & 0x30);
+        self.low_byte = Some(self.byte_val & 0x30);
     }
 
     fn decode_inx(&mut self)
     {
         self.set_instruction(InstructionTypes::INX);
-        self.byte1 = Some((self.byte_val & 0x30) >> 4);
+        self.low_byte = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_dad(&mut self)
     {
         self.set_instruction(InstructionTypes::DAD);
-        self.byte1 = Some((self.byte_val & 0x30) >> 4);
+        self.low_byte = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_lxi(&mut self)
     {
         self.adress_mode = AddressingMode::Direct;
         self.set_instruction(InstructionTypes::LXI);
-        self.byte1 = Some((self.byte_val & 0x30) >> 4);
+        self.low_byte = Some((self.byte_val & 0x30) >> 4);
     }
 
 
@@ -331,8 +331,8 @@ impl Instruction
     {
         self.adress_mode = AddressingMode::Direct;
         self.inst_type = InstructionTypes::DCR;
-        self.byte1 = Some(self.byte_val & 0x30);
-        self.name = format!("DCR {}", Registers::translate_to_reg(self.byte1.unwrap()));
+        self.low_byte = Some(self.byte_val & 0x30);
+        self.name = format!("DCR {}", Registers::translate_to_reg(self.low_byte.unwrap()));
     }
 
     fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes)
@@ -363,8 +363,8 @@ impl Instruction
             0x00 | 0x10 | 0x20 | 0x30 =>
             {
                 self.inst_type = InstructionTypes::MVI;
-                self.byte1 = Some((self.byte_val & 0x38) >> 3);
-                let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.byte1.unwrap()));
+                self.low_byte = Some((self.byte_val & 0x38) >> 3);
+                let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.low_byte.unwrap()));
                 self.name = name;
                 return
             },

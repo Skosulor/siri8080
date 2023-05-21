@@ -8,8 +8,8 @@
 3. set the following:
    + self.adress_mode
    + self.inst_type
-   + self.byte1 (optionally)
-   + self.byte2 (optionally)
+   + self.low_byte (optionally)
+   + self.high_byte (optionally)
    + self.name
 4. create function _[name]_op_ in _i8080.rs_ which sets flags and executes OP function
 5. In file _i8080.rs_ match the instruction type in function
@@ -32,7 +32,7 @@
 - [ ] Refactor: Break out operations from proc
     - [X] Brake out debug commands from main
     - [X] Give dissasmbler sane variable & function names
-- [ ] Make rename byte1 & byte2 in instructions to Registers & give them an enum type?
+- [ ] Make rename low_byte & high_byte in instructions to Registers & give them an enum type?
 - [ ] Add tests
 - [ ] Update instruction counter based on type of instruction
 - [ ] Acutally set aux flag

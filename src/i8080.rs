@@ -300,7 +300,7 @@ impl Processor
         {
             InstructionTypes::ADD | InstructionTypes::ADC => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::ADI | InstructionTypes::ACI => 
             {
@@ -343,7 +343,7 @@ impl Processor
         {
             InstructionTypes::SUB | InstructionTypes::SBB => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::SUI | InstructionTypes::SBI => 
             {
@@ -381,7 +381,7 @@ impl Processor
         {
             InstructionTypes::ANA => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::ANI => 
             {
@@ -403,7 +403,7 @@ impl Processor
         {
             InstructionTypes::ORA => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::ORI => 
             {
@@ -427,7 +427,7 @@ impl Processor
         {
             InstructionTypes::XRA => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::XRI => 
             {
@@ -452,7 +452,7 @@ impl Processor
         {
             InstructionTypes::CMP => 
             {
-                self.get_reg(self.current_op.byte1.unwrap())
+                self.get_reg(self.current_op.low_byte.unwrap())
             }
             InstructionTypes::CPI => 
             {
@@ -471,7 +471,7 @@ impl Processor
     {
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
-        self.set_reg(self.current_op.byte1.unwrap(), result);
+        self.set_reg(self.current_op.low_byte.unwrap(), result);
     }
 
     fn jmp_op(&mut self)
@@ -585,14 +585,14 @@ impl Processor
         let pc        = self.program_counter as usize;
         let lsb_value = self.memory[pc + 1];
         let msb_value = self.memory[pc + 2];
-        let reg_pair  = self.current_op.byte1.unwrap();
+        let reg_pair  = self.current_op.low_byte.unwrap();
         self.set_reg_pair(reg_pair, msb_value, lsb_value);
         self.program_counter += 2;
     }
 
     fn dad_op(&mut self)
     {
-        let reg_pair = self.current_op.byte1.unwrap();
+        let reg_pair = self.current_op.low_byte.unwrap();
 
         let (msb, lsb)   = self.get_reg_pair(reg_pair);
         let num1: u16    = ((msb as u16) << 8) + lsb as u16;
@@ -622,7 +622,7 @@ impl Processor
 
     fn dcr_op(&mut self)
     {
-        let reg = self.current_op.byte1.unwrap();
+        let reg = self.current_op.low_byte.unwrap();
         let (res, carry) = self.get_reg(reg).overflowing_sub(1);
         self.set_flags_cszp(carry, res);
         self.set_reg(reg, res);
@@ -648,7 +648,7 @@ impl Processor
 
     fn inx_op(&mut self)
     {
-        let reg_pair   = self.current_op.byte1.unwrap();
+        let reg_pair   = self.current_op.low_byte.unwrap();
         let (msb, lsb) = self.get_reg_pair(reg_pair);
         let num: u16   = ((msb as u16) << 8) + lsb as u16;
         let (res, carry)   = num.overflowing_add(1);
@@ -669,7 +669,7 @@ impl Processor
         let lsb;
         let msb;
 
-        if self.current_op.byte1.unwrap() & 0x10 == 0x10
+        if self.current_op.low_byte.unwrap() & 0x10 == 0x10
         {
             (msb, lsb) = self.get_reg_pair(DE_PAIR_REG);
         }
@@ -690,9 +690,9 @@ impl Processor
 
     fn push_op(&mut self)
     {
-        let (msb, lsb) = self.get_reg_pair(self.current_op.byte1.unwrap());
         self.memory[(self.stack_pointer - 1) as usize] = lsb;
         self.memory[(self.stack_pointer - 2) as usize] = msb;
+        let (msb, lsb) = self.get_reg_pair(self.current_op.low_byte.unwrap());
         self.stack_pointer -= 2;
     }
 
@@ -700,7 +700,7 @@ impl Processor
     {
         let lsb = self.memory[(self.stack_pointer + 0) as usize];
         let msb = self.memory[(self.stack_pointer + 1) as usize];
-        self.set_reg_pair(self.current_op.byte1.unwrap(), msb, lsb);
+        self.set_reg_pair(self.current_op.low_byte.unwrap(), msb, lsb);
     }
 
     fn call_op(&mut self)
@@ -710,8 +710,10 @@ impl Processor
         let lsb_next_addr: u8 = (next_addr & 0x00FF) as u8;
         let msb_next_addr: u8 = ((next_addr & 0xFF00) >> 8) as u8;
 
-        self.memory[( self.stack_pointer - 1 ) as usize] = lsb_next_addr;
-        self.memory[( self.stack_pointer - 2 ) as usize] = msb_next_addr;
+        self.memory[( self.stack_pointer - 1 ) as usize] = msb_next_addr;
+        self.memory[( self.stack_pointer - 2 ) as usize] = lsb_next_addr;
+
+        self.stack_pointer = self.stack_pointer - 2;
         self.program_counter = addr - 1;
     }
 

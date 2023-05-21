@@ -29,7 +29,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x80);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -37,7 +37,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x81);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -45,7 +45,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x82);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -53,7 +53,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x83);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -61,7 +61,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x84);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -69,7 +69,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x85);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -77,7 +77,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x86);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -85,7 +85,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x87);
         assert_eq!(inst.inst_type, InstructionTypes::ADD);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -93,7 +93,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x88);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -101,7 +101,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x89);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x8A);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -117,7 +117,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x8B);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -125,7 +125,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x8C);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -133,7 +133,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x8D);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -141,7 +141,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x8E);
         assert_eq!(inst.inst_type, InstructionTypes::ADC);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -149,7 +149,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x90);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -157,7 +157,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x91);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -165,7 +165,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x92);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -173,7 +173,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x93);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x94);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -189,7 +189,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x95);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x96);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -205,7 +205,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x97);
         assert_eq!(inst.inst_type, InstructionTypes::SUB);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -213,7 +213,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x98);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -221,7 +221,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x99);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -229,7 +229,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9A);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -237,7 +237,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9B);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -245,7 +245,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9C);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -253,7 +253,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9D);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -261,7 +261,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9E);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -269,7 +269,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0x9F);
         assert_eq!(inst.inst_type, InstructionTypes::SBB);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -277,7 +277,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA0);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -285,7 +285,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA1);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -293,7 +293,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA2);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
     
     #[test]
@@ -301,7 +301,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA3);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -309,7 +309,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA4);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -317,7 +317,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA5);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -325,7 +325,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA6);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -333,7 +333,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA7);
         assert_eq!(inst.inst_type, InstructionTypes::ANA);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -341,7 +341,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA8);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -349,7 +349,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xA9);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -357,7 +357,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAA);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -365,7 +365,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAB);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -373,7 +373,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAC);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -381,7 +381,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAD);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -389,7 +389,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAE);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
 
@@ -398,7 +398,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xAF);
         assert_eq!(inst.inst_type, InstructionTypes::XRA);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -406,7 +406,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB0);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -414,7 +414,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB1);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -422,7 +422,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB2);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -430,7 +430,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB3);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
     
     #[test]
@@ -438,7 +438,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB4);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -446,7 +446,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB5);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -454,7 +454,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB6);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -462,7 +462,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB7);
         assert_eq!(inst.inst_type, InstructionTypes::ORA);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
     #[test]
@@ -470,7 +470,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB8);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), B_REG);
+        assert_eq!(inst.low_byte.unwrap(), B_REG);
     }
 
     #[test]
@@ -478,7 +478,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xB9);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), C_REG);
+        assert_eq!(inst.low_byte.unwrap(), C_REG);
     }
 
     #[test]
@@ -486,7 +486,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBA);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), D_REG);
+        assert_eq!(inst.low_byte.unwrap(), D_REG);
     }
 
     #[test]
@@ -494,7 +494,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBB);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), E_REG);
+        assert_eq!(inst.low_byte.unwrap(), E_REG);
     }
 
     #[test]
@@ -502,7 +502,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBC);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), H_REG);
+        assert_eq!(inst.low_byte.unwrap(), H_REG);
     }
 
     #[test]
@@ -510,7 +510,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBD);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), L_REG);
+        assert_eq!(inst.low_byte.unwrap(), L_REG);
     }
 
     #[test]
@@ -518,7 +518,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBE);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), MEM_REF);
+        assert_eq!(inst.low_byte.unwrap(), MEM_REF);
     }
 
     #[test]
@@ -526,7 +526,7 @@ mod tests
     {
         let inst = Instruction::from_byte(0xBF);
         assert_eq!(inst.inst_type, InstructionTypes::CMP);
-        assert_eq!(inst.byte1.unwrap(), A_REG);
+        assert_eq!(inst.low_byte.unwrap(), A_REG);
     }
 
 }
