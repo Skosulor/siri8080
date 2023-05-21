@@ -58,6 +58,7 @@ pub enum InstructionTypes
     PUSH,
     POP,
     CALL,
+    NOP,
     Unknown,
 }
 
@@ -260,7 +261,7 @@ impl Instruction
             {
                 match b & 0b00111111 
                 {
-                    0x00                      => self.name = "NOP".to_string(),
+                    0x00                      => self.set_instruction(InstructionTypes::NOP),
                     0x01 | 0x11 | 0x21 | 0x31 => self.decode_lxi(),
                     0x02 | 0x12               => self.name = "STAX".to_string(),
                     0x03 | 0x13 | 0x23 | 0x33 => self.decode_inx(),

@@ -123,6 +123,7 @@ impl Processor
             InstructionTypes::PUSH => self.push_op(),
             InstructionTypes::POP => self.pop_op(),
             InstructionTypes::CALL => self.call_op(), 
+            InstructionTypes::NOP => (), 
             InstructionTypes::Unknown => (),
         }
     }
