@@ -73,11 +73,11 @@ TODO Op codes needed for space invaders
     - [X] JNZ
     - [X] JMP
     - [X] PUSH
-    - [ ] RET
-    - [ ] CALL
+    - [X] RET
+    - [X] CALL
     - [X] POP
     - [ ] OUT
-    - [ ] XCHG
+    - [X] XCHG
     - [ ] EI
 
 
