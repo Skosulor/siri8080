@@ -63,7 +63,7 @@ impl Processor
 
     pub fn clock(&mut self) 
     {
-        self.next_instruction();
+        self.fetch_instruction();
         self.execute_instruction();
         self.update_program_counter();
      }
@@ -73,7 +73,7 @@ impl Processor
         self.program_counter = 0;
     }
 
-    fn next_instruction(&mut self)  
+    fn fetch_instruction(&mut self)  
     {
         self.current_op.byte_to_op(self.memory[self.program_counter as usize]);
     }
