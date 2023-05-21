@@ -690,9 +690,9 @@ impl Processor
 
     fn push_op(&mut self)
     {
-        self.memory[(self.stack_pointer - 1) as usize] = lsb;
-        self.memory[(self.stack_pointer - 2) as usize] = msb;
         let (msb, lsb) = self.get_reg_pair(self.current_op.low_byte.unwrap());
+        self.memory[(self.stack_pointer - 1) as usize] = msb;
+        self.memory[(self.stack_pointer - 2) as usize] = lsb;
         self.stack_pointer -= 2;
     }
 
