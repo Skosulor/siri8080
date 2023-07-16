@@ -1,6 +1,8 @@
+// mod i8080;
+
 use std::env;
-use siri8080::i8080;
-use siri8080::debugger;
+
+use siri8080::*;
 
 fn main() 
 {

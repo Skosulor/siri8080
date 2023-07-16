@@ -6,9 +6,10 @@ use std::fs::File;
 use std::io::Read;
 use std::process::exit;
 use std::u16;
-use instructions::*;
-use registers::*;
-use flags::*;
+
+use crate::i8080::instructions::*;
+use crate::i8080::flags::*;
+use crate::i8080::registers::*;
 
 const MEMORY_SIZE: usize = 0xFFFFF;
 
