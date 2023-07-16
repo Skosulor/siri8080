@@ -1,5 +1,6 @@
 use crate::i8080::Processor;
-use crate::disassembler;
+
+mod disassembler;
 use std::io::{stdin, Write};
 use termion::input::TermRead;
 
