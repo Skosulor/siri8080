@@ -1,5 +1,3 @@
-// mod i8080;
-
 use std::env;
 
 use siri8080::*;
