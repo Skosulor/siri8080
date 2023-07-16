@@ -22,6 +22,7 @@ pub struct Processor
     flags: StatusFlags,
     current_op: Instruction,
     out : u8, 
+    interrupts_enabled: bool,
 }
 
 impl Processor 
@@ -37,6 +38,7 @@ impl Processor
             current_op: Instruction::new(),
             registers: Registers::new(),
             out: 0,
+            interrupts_enabled: false,
         };
 
         let mut file = File::open(p).expect("No such file");
@@ -55,6 +57,7 @@ impl Processor
             current_op: Instruction::new(),
             registers: Registers::new(),
             out: 0,
+            interrupts_enabled: false,
         };
 
         for (i, byte) in bytes.iter().enumerate()
@@ -129,6 +132,8 @@ impl Processor
             InstructionTypes::RET  => self.ret_op(),
             InstructionTypes::XCHG => self.xchg_op(),
             InstructionTypes::OUT  => self.out_op(),
+            InstructionTypes::EI   => self.ei_op(),
+            InstructionTypes::DI   => self.di_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -746,6 +751,16 @@ impl Processor
     fn out_op(&mut self)
     {
         self.out = self.get_reg(A_REG);
+    }
+
+    fn ei_op(&mut self)
+    {
+        self.interrupts_enabled = true;
+    }
+
+    fn di_op(&mut self)
+    {
+        self.interrupts_enabled = false;
     }
 
     fn get_direct_address(&mut self) -> u16

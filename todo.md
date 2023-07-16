@@ -33,7 +33,7 @@
     - [X] Brake out debug commands from main
     - [X] Give dissasmbler sane variable & function names
 - [ ] Rename low_byte & high_byte in instructions to Registers & give them an enum type?
-- [X] Add tests. Kinda ongoing
+- [j] Add tests
 - [ ] Update instruction counter based on type of instruction
 - [ ] Acutally set aux flag
 - [X] Add Program counter to debugger
@@ -61,7 +61,7 @@ TODO Op codes needed for space invaders
     - [X] XRI
     - [X] CPI
     - [X] MVI
-- [ ] Misc
+- [X] Misc
     - [X] LXI
     - [X] DCR
     - [X] DAD
@@ -78,6 +78,6 @@ TODO Op codes needed for space invaders
     - [X] POP
     - [X] OUT
     - [X] XCHG
-    - [ ] EI
+    - [X] EI
 
 
