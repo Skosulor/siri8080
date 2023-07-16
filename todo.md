@@ -32,8 +32,8 @@
 - [ ] Refactor: Break out operations from proc
     - [X] Brake out debug commands from main
     - [X] Give dissasmbler sane variable & function names
-- [ ] Make rename low_byte & high_byte in instructions to Registers & give them an enum type?
-- [ ] Add tests
+- [ ] Rename low_byte & high_byte in instructions to Registers & give them an enum type?
+- [X] Add tests. Kinda ongoing
 - [ ] Update instruction counter based on type of instruction
 - [ ] Acutally set aux flag
 - [X] Add Program counter to debugger
@@ -76,7 +76,7 @@ TODO Op codes needed for space invaders
     - [X] RET
     - [X] CALL
     - [X] POP
-    - [ ] OUT
+    - [X] OUT
     - [X] XCHG
     - [ ] EI
 

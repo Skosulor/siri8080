@@ -21,6 +21,7 @@ pub struct Processor
     registers: Registers,
     flags: StatusFlags,
     current_op: Instruction,
+    out : u8, 
 }
 
 impl Processor 
@@ -35,6 +36,7 @@ impl Processor
             flags: StatusFlags::new(),
             current_op: Instruction::new(),
             registers: Registers::new(),
+            out: 0,
         };
 
         let mut file = File::open(p).expect("No such file");
@@ -52,6 +54,7 @@ impl Processor
             flags: StatusFlags::new(),
             current_op: Instruction::new(),
             registers: Registers::new(),
+            out: 0,
         };
 
         for (i, byte) in bytes.iter().enumerate()
@@ -82,50 +85,51 @@ impl Processor
     {
         match self.current_op.inst_type
         {
-            InstructionTypes::MOV => self.mov_op(),
-            InstructionTypes::ADD => self.add_op(false),
-            InstructionTypes::ADC => self.add_op(true),
-            InstructionTypes::SUB => self.sub_op(false),
-            InstructionTypes::SBB => self.sub_op(true),
-            InstructionTypes::MVI => self.mvi_op(),
-            InstructionTypes::ANA => self.ana_op(),
-            InstructionTypes::ORA => self.ora_op(),
-            InstructionTypes::XRA => self.xra_op(),
-            InstructionTypes::CMP => self.cmp_op(),
-            InstructionTypes::ADI => self.add_op(false),
-            InstructionTypes::ACI => self.add_op(true),
-            InstructionTypes::SUI => self.sub_op(false),
-            InstructionTypes::SBI => self.sub_op(true),
-            InstructionTypes::ANI => self.ana_op(),
-            InstructionTypes::XRI => self.xra_op(),
-            InstructionTypes::ORI => self.ora_op(),
-            InstructionTypes::CPI => self.cmp_op(),
-            InstructionTypes::JMP => self.jmp_op(),
-            InstructionTypes::JC  => self.jc_op(),
-            InstructionTypes::JNC => self.jnc_op(),
-            InstructionTypes::JZ  => self.jz_op(),
-            InstructionTypes::JNZ => self.jnz_op(),
-            InstructionTypes::JPE => self.jpe_op(),
-            InstructionTypes::JPO => self.jpo_op(),
-            InstructionTypes::JP  => self.jp_op(),
-            InstructionTypes::JM  => self.jm_op(),
-            InstructionTypes::LXI => self.lxi_op(),
-            InstructionTypes::DCR => self.dcr_op(),
-            InstructionTypes::DAD => self.dad_op(),
-            InstructionTypes::RRC => self.rrc_op(),
-            InstructionTypes::RLC => self.rlc_op(),
-            InstructionTypes::RAL => self.ral_op(),
-            InstructionTypes::RAR => self.rar_op(),
-            InstructionTypes::INX => self.inx_op(),
-            InstructionTypes::LDA => self.lda_op(),
+            InstructionTypes::MOV  => self.mov_op(),
+            InstructionTypes::ADD  => self.add_op(false),
+            InstructionTypes::ADC  => self.add_op(true),
+            InstructionTypes::SUB  => self.sub_op(false),
+            InstructionTypes::SBB  => self.sub_op(true),
+            InstructionTypes::MVI  => self.mvi_op(),
+            InstructionTypes::ANA  => self.ana_op(),
+            InstructionTypes::ORA  => self.ora_op(),
+            InstructionTypes::XRA  => self.xra_op(),
+            InstructionTypes::CMP  => self.cmp_op(),
+            InstructionTypes::ADI  => self.add_op(false),
+            InstructionTypes::ACI  => self.add_op(true),
+            InstructionTypes::SUI  => self.sub_op(false),
+            InstructionTypes::SBI  => self.sub_op(true),
+            InstructionTypes::ANI  => self.ana_op(),
+            InstructionTypes::XRI  => self.xra_op(),
+            InstructionTypes::ORI  => self.ora_op(),
+            InstructionTypes::CPI  => self.cmp_op(),
+            InstructionTypes::JMP  => self.jmp_op(),
+            InstructionTypes::JC   => self.jc_op(),
+            InstructionTypes::JNC  => self.jnc_op(),
+            InstructionTypes::JZ   => self.jz_op(),
+            InstructionTypes::JNZ  => self.jnz_op(),
+            InstructionTypes::JPE  => self.jpe_op(),
+            InstructionTypes::JPO  => self.jpo_op(),
+            InstructionTypes::JP   => self.jp_op(),
+            InstructionTypes::JM   => self.jm_op(),
+            InstructionTypes::LXI  => self.lxi_op(),
+            InstructionTypes::DCR  => self.dcr_op(),
+            InstructionTypes::DAD  => self.dad_op(),
+            InstructionTypes::RRC  => self.rrc_op(),
+            InstructionTypes::RLC  => self.rlc_op(),
+            InstructionTypes::RAL  => self.ral_op(),
+            InstructionTypes::RAR  => self.rar_op(),
+            InstructionTypes::INX  => self.inx_op(),
+            InstructionTypes::LDA  => self.lda_op(),
             InstructionTypes::LDAX => self.ldax_op(),
-            InstructionTypes::STA => self.sta_op(),
+            InstructionTypes::STA  => self.sta_op(),
             InstructionTypes::PUSH => self.push_op(),
-            InstructionTypes::POP => self.pop_op(),
-            InstructionTypes::CALL => self.call_op(), 
-            InstructionTypes::NOP => (), 
-            InstructionTypes::RET => self.ret_op(),
+            InstructionTypes::POP  => self.pop_op(),
+            InstructionTypes::CALL => self.call_op(),
+            InstructionTypes::RET  => self.ret_op(),
             InstructionTypes::XCHG => self.xchg_op(),
+            InstructionTypes::OUT  => self.out_op(),
+            InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
     }
@@ -737,6 +741,11 @@ impl Processor
         self.set_reg(H_REG, regs.d);
         self.set_reg(E_REG, regs.l);
         self.set_reg(L_REG, regs.e);
+    }
+
+    fn out_op(&mut self)
+    {
+        self.out = self.get_reg(A_REG);
     }
 
     fn get_direct_address(&mut self) -> u16

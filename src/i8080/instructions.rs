@@ -61,6 +61,7 @@ pub enum InstructionTypes
     NOP,
     RET,
     XCHG,
+    OUT,
     Unknown,
 }
 
@@ -211,7 +212,7 @@ impl Instruction
                     0xCF => self.name = "RST".to_string(),
                     0xD0 => self.name = "RNC".to_string(),
                     0xD2 => self.set_instruction(InstructionTypes::JNC),
-                    0xD3 => self.name = "OUT".to_string(),
+                    0xD3 => self.set_instruction(InstructionTypes::OUT),
                     0xD4 => self.name = "CNC".to_string(),
                     0xD6 => self.byte_to_immediate_op(),
                     0xD7 => self.name = "RST".to_string(),
