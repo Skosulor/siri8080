@@ -81,7 +81,6 @@ pub struct Instruction
 
 impl Instruction
 {
-
     pub fn new() -> Instruction
     {
         let ins = Instruction 
@@ -96,16 +95,19 @@ impl Instruction
         };
         ins
     }
+
     pub fn from_byte(b: u8) -> Instruction 
     {
         let mut ins = Instruction::new();
         ins.byte_to_op(b);
         ins
     }
+
     pub fn get_name_byte(self) -> (u8, String) 
     {
         (self.byte_val, self.name.clone())
     }
+
     pub fn byte_to_op(&mut self, b: u8) 
     {
         self.byte_val = b;
@@ -396,6 +398,7 @@ impl Instruction
             _ => (),
         }
     }
+
     fn set_instruction(&mut self, inst: InstructionTypes)
     {
         self.name = Self::instruction_to_string(inst.clone());
