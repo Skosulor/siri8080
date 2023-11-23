@@ -474,9 +474,10 @@ impl Processor
             }
             _ => panic!("Should be an impossible match"),
         };
-        let (res, carry) = operand2.overflowing_sub(operand1);
+        let (res, carry) = operand1.overflowing_sub(operand2);
         // REVIEW aux flag should probably be set to false
         self.flags.auxiliary_flag = false;
+
         self.set_flags_cszp(carry, res);
     }
 
