@@ -619,16 +619,16 @@ impl Processor
     fn rrc_op(&mut self)
     {
         let accumulator       = self.get_reg(A_REG);
-        self.flags.carry_flag = (accumulator & 0x01) == 0x01;
         let res               = accumulator.rotate_right(1);
+        self.flags.carry_flag = (accumulator & 0x80) == 0x80;
         self.set_reg(A_REG, res);
     }
 
     fn rlc_op(&mut self)
     {
         let accumulator       = self.get_reg(A_REG);
-        self.flags.carry_flag = (accumulator & 0x80) == 0x80;
         let res               = accumulator.rotate_left(1);
+        self.flags.carry_flag = (accumulator & 0x01) == 0x01;
         self.set_reg(A_REG, res);
     }
 
@@ -643,18 +643,20 @@ impl Processor
     fn ral_op(&mut self)
     {
         let accumulator       = self.get_reg(A_REG);
+        let carry             = self.flags.carry_flag;
         self.flags.carry_flag = (accumulator & 0x80) == 0x80;
-        let mut res           = accumulator.rotate_left(1);
-        res                   = res | (self.flags.carry_flag as u8);
+        let mut res           = accumulator << 1;
+        res                   = res | (carry as u8);
         self.set_reg(A_REG, res);
     }
 
     fn rar_op(&mut self)
     {
         let accumulator       = self.get_reg(A_REG);
+        let carry             = self.flags.carry_flag;
         self.flags.carry_flag = (accumulator & 0x01) == 0x01;
-        let mut res           = accumulator.rotate_right(1);
-        res                   = res | ((self.flags.carry_flag as u8) << 7);
+        let mut res           = accumulator >> 1;
+        res                   = res | ((carry as u8) << 7);
         self.set_reg(A_REG, res);
     }
 
