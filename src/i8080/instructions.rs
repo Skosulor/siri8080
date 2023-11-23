@@ -17,8 +17,7 @@ pub enum AddressingMode
 pub enum InstructionTypes 
 {
     MOV,
-    // Arithemtic
-    ADD,
+    ADD, 
     ADC,
     SUB,
     SBB,
@@ -67,6 +66,23 @@ pub enum InstructionTypes
     Unknown,
 }
 
+const MOVE_ARITHMETIC_LOGICAL_INSTRUCTION_GROUP : u8 = 0x0;
+const MOVE_INSTRUCTION_GROUP                    : u8 = 0x40;
+const ARITHMETIC_LOGICAL_INSTRUCTION_GROUP      : u8 = 0x80;
+const BRANCH_STACK_INSTRUCTION_GROUP            : u8 = 0xC0;
+
+const ARITHMETIC_LOGICAL_GROUP_MASK: u8 = 0b10111000;
+const OP_CODE_GROUP_MASK:            u8 = 0xC0;
+
+const ADD_GROUP: u8 = 0b10000000;
+const ADC_GROUP: u8 = 0b10001000;
+const SUB_GROUP: u8 = 0b10010000;
+const SBB_GROUP: u8 = 0b10011000;
+const ANA_GROUP: u8 = 0b10100000;
+const XRA_GROUP: u8 = 0b10101000;
+const ORA_GROUP: u8 = 0b10110000;
+const CMP_GROUP: u8 = 0b10111000;
+
 #[derive(Clone)]
 pub struct Instruction 
 {
@@ -74,9 +90,9 @@ pub struct Instruction
     name: String,
     // cycles: u8,
     adress_mode: AddressingMode,
-    pub inst_type: InstructionTypes,
-    pub low_byte: Option<u8>,
-    pub high_byte: Option<u8>,
+    pub instruction_type: InstructionTypes,
+    pub low_nibble: Option<u8>,
+    pub high_nibble: Option<u8>,
 }
 
 impl Instruction
@@ -89,9 +105,9 @@ impl Instruction
             name: "_".to_string(),
             // cycles: 1,
             adress_mode: AddressingMode::Unknown,
-            inst_type: InstructionTypes::Unknown,
-            low_byte: None,
-            high_byte: None,
+            instruction_type: InstructionTypes::Unknown,
+            low_nibble: None,
+            high_nibble: None,
         };
         ins
     }
@@ -114,87 +130,81 @@ impl Instruction
         *self = Instruction::new();
         self.byte_val = b;
 
-        match b & 0b11000000
+        match b & OP_CODE_GROUP_MASK
         {
             // Move Instructions
-            // low_byte should hold destination register
-            // high_byte should hould source register
-            0b01000000 => 
+            // low_nibble holds the destination register
+            // high_nibble holds the source register
+            MOVE_INSTRUCTION_GROUP => 
             {
                 self.adress_mode = AddressingMode::Direct;
-                self.inst_type = InstructionTypes::MOV;
-                self.low_byte = Some((b >> MOVE_TO) & 0b111);
-                self.high_byte = Some((b >> MOVE_FROM) & 0b111);
-                let name = format!("MOV {},{} ", Registers::translate_to_reg(self.low_byte.unwrap()), Registers::translate_to_reg(self.high_byte.unwrap()));
+                self.instruction_type = InstructionTypes::MOV;
+                self.low_nibble = Some((b >> MOVE_TO) & REGISTER_MASK);
+                self.high_nibble = Some((b >> MOVE_FROM) & REGISTER_MASK);
+                let name = format!("MOV {},{} ", Registers::translate_to_reg(self.low_nibble.unwrap()), Registers::translate_to_reg(self.high_nibble.unwrap()));
                 self.name = name;
                 return
             },
-            // Arithmetic Instruction
-            // low_byte should hold source register
-            // high_byte is unused
-            0b10000000 =>
+            // low_nibble holds the source register
+            // high_nibble is unused
+            ARITHMETIC_LOGICAL_INSTRUCTION_GROUP =>
             {
-                self.low_byte = Some((b >> ARITHMETIC_WITH) & 0b111);
+                self.low_nibble = Some((b >> ARITHMETIC_WITH) & REGISTER_MASK);
                 self.adress_mode = AddressingMode::Direct;
-                match b & 0b10111000
+                match b & ARITHMETIC_LOGICAL_GROUP_MASK
                 {
-                    // ADD
-                    0b10000000 =>
+                    ADD_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::ADD;
-                        let name = format!("ADD {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::ADD;
+                        let name = format!("ADD {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     },
-                    // ADC
-                    0b10001000 =>
+                    ADC_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::ADC;
-                        let name = format!("ADC {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::ADC;
+                        let name = format!("ADC {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     },
-                    //SUB
-                    0b10010000 =>
+                    SUB_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::SUB;
-                        let name = format!("SUB {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::SUB;
+                        let name = format!("SUB {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     },
-                    //SBB
-                    0b10011000 =>
+                    SBB_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::SBB;
-                        let name = format!("SBB {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::SBB;
+                        let name = format!("SBB {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     },
-                    0b10100000 =>
+                    ANA_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::ANA;
-                        let name = format!("ANA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::ANA;
+                        let name = format!("ANA {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     }
-                    0b10101000 =>
+                    XRA_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::XRA;
-                        let name = format!("XRA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::XRA;
+                        let name = format!("XRA {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     }
-                    0b10110000 =>
+                    ORA_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::ORA;
-                        let name = format!("ORA {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::ORA;
+                        let name = format!("ORA {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     }
-                    0b10111000 =>
+                    CMP_GROUP =>
                     {
-                        self.inst_type = InstructionTypes::CMP;
-                        let name = format!("CMP {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+                        self.instruction_type = InstructionTypes::CMP;
+                        let name = format!("CMP {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
                         self.name = name;
                     }
                     _ => panic!("Arithemtic does not exist!: {:X}", self.byte_val),
                 }
             },
-            // Misc instructions
-            0b11000000 => 
+            BRANCH_STACK_INSTRUCTION_GROUP => 
             {
                 match b 
                 {
@@ -264,7 +274,7 @@ impl Instruction
                 }
             },
 
-            0b00000000 => 
+            MOVE_ARITHMETIC_LOGICAL_INSTRUCTION_GROUP => 
             {
                 match b & 0b00111111 
                 {
@@ -272,9 +282,9 @@ impl Instruction
                     0x01 | 0x11 | 0x21 | 0x31 => self.decode_lxi(),
                     0x02 | 0x12               => self.name = "STAX".to_string(),
                     0x03 | 0x13 | 0x23 | 0x33 => self.decode_inx(),
-                    0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C        => self.name = "INR".to_string(),
+                    0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C  => self.name = "INR".to_string(),
                     0x05 | 0x0D |  0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
-                    0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E        => self.byte_to_immediate_op(),
+                    0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E  => self.byte_to_immediate_op(),
                     0x07 => self.set_instruction(InstructionTypes::RLC),
                     0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__".to_string(),
                     0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
@@ -302,56 +312,56 @@ impl Instruction
 
     fn decode_pop(&mut self)
     {
-        self.name = format!("POP {}", Registers::translate_to_reg(self.low_byte.unwrap()));
-        self.inst_type = InstructionTypes::POP;
-        self.low_byte = Some(self.byte_val & 0x30);
+        self.name = format!("POP {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
+        self.instruction_type = InstructionTypes::POP;
+        self.low_nibble = Some(self.byte_val & 0x30);
     }
 
     fn decode_push(&mut self)
     {
-        self.name = format!("PUSH {}", Registers::translate_to_reg(self.low_byte.unwrap()));
-        self.inst_type = InstructionTypes::PUSH;
-        self.low_byte = Some(self.byte_val & 0x30);
+        self.name = format!("PUSH {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
+        self.instruction_type = InstructionTypes::PUSH;
+        self.low_nibble = Some(self.byte_val & 0x30);
     }
 
     fn decode_inx(&mut self)
     {
         self.set_instruction(InstructionTypes::INX);
-        self.low_byte = Some((self.byte_val & 0x30) >> 4);
+        self.low_nibble = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_dad(&mut self)
     {
         self.set_instruction(InstructionTypes::DAD);
-        self.low_byte = Some((self.byte_val & 0x30) >> 4);
+        self.low_nibble = Some((self.byte_val & 0x30) >> 4);
     }
 
     fn decode_lxi(&mut self)
     {
         self.adress_mode = AddressingMode::Direct;
         self.set_instruction(InstructionTypes::LXI);
-        self.low_byte = Some((self.byte_val & 0x30) >> 4);
+        self.low_nibble = Some((self.byte_val & 0x30) >> 4);
     }
 
 
     fn decode_dcr(&mut self)
     {
         self.adress_mode = AddressingMode::Direct;
-        self.inst_type = InstructionTypes::DCR;
-        self.low_byte = Some(self.byte_val & 0x30);
-        self.name = format!("DCR {}", Registers::translate_to_reg(self.low_byte.unwrap()));
+        self.instruction_type = InstructionTypes::DCR;
+        self.low_nibble = Some(self.byte_val & 0x30);
+        self.name = format!("DCR {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
     }
 
     fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes)
     {
         if self.byte_val & 0x0F == 0x06
         {
-            self.inst_type = op1;
+            self.instruction_type = op1;
             self.name = name1;
         }
         else if self.byte_val & 0x0F == 0x0E
         {
-            self.inst_type = op2;
+            self.instruction_type = op2;
             self.name = name2;
         }
         else
@@ -369,9 +379,9 @@ impl Instruction
         {
             0x00 | 0x10 | 0x20 | 0x30 =>
             {
-                self.inst_type = InstructionTypes::MVI;
-                self.low_byte = Some((self.byte_val & 0x38) >> 3);
-                let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.low_byte.unwrap()));
+                self.instruction_type = InstructionTypes::MVI;
+                self.low_nibble = Some((self.byte_val & 0x38) >> 3);
+                let name = format!("MVI {},d8 ", Registers::translate_to_reg(self.low_nibble.unwrap()));
                 self.name = name;
                 return
             },
@@ -402,7 +412,7 @@ impl Instruction
     fn set_instruction(&mut self, inst: InstructionTypes)
     {
         self.name = Self::instruction_to_string(inst.clone());
-        self.inst_type = inst;
+        self.instruction_type = inst;
     }
 
     fn instruction_to_string<T: std::fmt::Debug>(e: T) -> String

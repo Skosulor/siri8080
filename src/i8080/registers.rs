@@ -13,9 +13,10 @@ pub const HL_PAIR_REG: u8 = 0b10;
 pub const SP_REG:      u8 = 0b11;
 
 
-pub const MOVE_TO: u8 = 3;
-pub const MOVE_FROM: u8 = 0;
-pub const ARITHMETIC_WITH: u8 = 0;
+pub const REGISTER_MASK   : u8 = 0b111;
+pub const MOVE_TO         : u8 = 3;
+pub const MOVE_FROM       : u8 = 0;
+pub const ARITHMETIC_WITH : u8 = 0;
 
 #[derive(Copy, Clone)]
 pub struct Registers 

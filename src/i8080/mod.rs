@@ -13,6 +13,7 @@ use crate::i8080::registers::*;
 
 const MEMORY_SIZE: usize = 0xFFFFF;
 
+
 pub struct Processor 
 {
     // clock_freq: f32,
@@ -87,7 +88,7 @@ impl Processor
 
     fn execute_instruction(&mut self)
     {
-        match self.current_op.inst_type
+        match self.current_op.instruction_type
         {
             InstructionTypes::MOV  => self.mov_op(),
             InstructionTypes::ADD  => self.add_op(false),
@@ -234,8 +235,8 @@ impl Processor
             SP_REG => 
             {
                 // In the case of POP/PUSH, the matched REG_PAIR for 0b11 is PSW (flags and accumulator)
-                if self.current_op.inst_type == InstructionTypes::POP  
-                    || self.current_op.inst_type == InstructionTypes::PUSH
+                if self.current_op.instruction_type == InstructionTypes::POP  
+                    || self.current_op.instruction_type == InstructionTypes::PUSH
                 {
                     (self.flags.get_flags_u8(), self.registers.accumulator)
                 }
@@ -269,8 +270,8 @@ impl Processor
             }
             SP_REG =>
             {
-                if self.current_op.inst_type == InstructionTypes::POP  
-                    || self.current_op.inst_type == InstructionTypes::PUSH
+                if self.current_op.instruction_type == InstructionTypes::POP  
+                    || self.current_op.instruction_type == InstructionTypes::PUSH
                 {
                     self.flags.set_flags_u8(lsb_val);
                     self.registers.accumulator = msb_val;
@@ -308,11 +309,11 @@ impl Processor
         let operand1 = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::ADD | InstructionTypes::ADC => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::ADI | InstructionTypes::ACI => 
             {
@@ -351,11 +352,11 @@ impl Processor
         let operand1 = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::SUB | InstructionTypes::SBB => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::SUI | InstructionTypes::SBI => 
             {
@@ -389,11 +390,11 @@ impl Processor
     fn ana_op(&mut self)
     {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::ANA => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::ANI => 
             {
@@ -411,11 +412,11 @@ impl Processor
     fn ora_op(&mut self)
     {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::ORA => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::ORI => 
             {
@@ -431,15 +432,15 @@ impl Processor
 
     }
 
-    // Logixal exclusive-OR
+    // Logical exclusive-OR
     fn xra_op(&mut self)
     {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::XRA => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::XRI => 
             {
@@ -460,11 +461,11 @@ impl Processor
     fn cmp_op(&mut self)
     {
         let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.inst_type 
+        let operand2 = match self.current_op.instruction_type 
         {
             InstructionTypes::CMP => 
             {
-                self.get_reg(self.current_op.low_byte.unwrap())
+                self.get_reg(self.current_op.low_nibble.unwrap())
             }
             InstructionTypes::CPI => 
             {
@@ -483,7 +484,7 @@ impl Processor
     {
         self.program_counter += 1;
         let result = self.memory[self.program_counter as usize];
-        self.set_reg(self.current_op.low_byte.unwrap(), result);
+        self.set_reg(self.current_op.low_nibble.unwrap(), result);
     }
 
     fn jmp_op(&mut self)
@@ -597,14 +598,14 @@ impl Processor
         let pc        = self.program_counter as usize;
         let lsb_value = self.memory[pc + 1];
         let msb_value = self.memory[pc + 2];
-        let reg_pair  = self.current_op.low_byte.unwrap();
+        let reg_pair  = self.current_op.low_nibble.unwrap();
         self.set_reg_pair(reg_pair, msb_value, lsb_value);
         self.program_counter += 2;
     }
 
     fn dad_op(&mut self)
     {
-        let reg_pair = self.current_op.low_byte.unwrap();
+        let reg_pair = self.current_op.low_nibble.unwrap();
 
         let (msb, lsb)   = self.get_reg_pair(reg_pair);
         let num1: u16    = ((msb as u16) << 8) + lsb as u16;
@@ -634,7 +635,7 @@ impl Processor
 
     fn dcr_op(&mut self)
     {
-        let reg = self.current_op.low_byte.unwrap();
+        let reg = self.current_op.low_nibble.unwrap();
         let (res, carry) = self.get_reg(reg).overflowing_sub(1);
         self.set_flags_cszp(carry, res);
         self.set_reg(reg, res);
@@ -662,7 +663,7 @@ impl Processor
 
     fn inx_op(&mut self)
     {
-        let reg_pair   = self.current_op.low_byte.unwrap();
+        let reg_pair   = self.current_op.low_nibble.unwrap();
         let (msb, lsb) = self.get_reg_pair(reg_pair);
         let num: u16   = ((msb as u16) << 8) + lsb as u16;
         let (res, carry)   = num.overflowing_add(1);
@@ -683,7 +684,7 @@ impl Processor
         let lsb;
         let msb;
 
-        if self.current_op.low_byte.unwrap() & 0x10 == 0x10
+        if self.current_op.low_nibble.unwrap() & 0x10 == 0x10
         {
             (msb, lsb) = self.get_reg_pair(DE_PAIR_REG);
         }
@@ -704,7 +705,7 @@ impl Processor
 
     fn push_op(&mut self)
     {
-        let (msb, lsb) = self.get_reg_pair(self.current_op.low_byte.unwrap());
+        let (msb, lsb) = self.get_reg_pair(self.current_op.low_nibble.unwrap());
         self.memory[(self.stack_pointer - 1) as usize] = msb;
         self.memory[(self.stack_pointer - 2) as usize] = lsb;
         self.stack_pointer -= 2;
@@ -714,7 +715,7 @@ impl Processor
     {
         let lsb = self.memory[(self.stack_pointer + 0) as usize];
         let msb = self.memory[(self.stack_pointer + 1) as usize];
-        self.set_reg_pair(self.current_op.low_byte.unwrap(), msb, lsb);
+        self.set_reg_pair(self.current_op.low_nibble.unwrap(), msb, lsb);
     }
 
     fn call_op(&mut self)
