@@ -338,12 +338,8 @@ impl Processor
                 operand2.overflowing_add(operand1)
             };
 
-        self.flags.carry_flag = carry;
-        self.flags.parity_flag = parity(res);
-        self.flags.auxiliary_flag = auxiliary();
-        self.flags.sign_flag = sign(res);
-        self.flags.zero_flag = zero(res);
-
+        let aux_flag = (operand1 & 0x0F) + (operand2 & 0x0F) > 0x0F;
+        self.set_flags_cszp(carry, aux_flag, res);
         self.set_reg(A_REG, res);
     }
 
@@ -377,12 +373,8 @@ impl Processor
             operand1.overflowing_sub(operand2)
         };
 
-        self.flags.carry_flag = carry;
-        self.flags.parity_flag = parity(res);
-        self.flags.auxiliary_flag = auxiliary();
-        self.flags.sign_flag = sign(res);
-        self.flags.zero_flag = zero(res);
-
+        let aux_flag = (operand1 & 0x0F) < (operand2 & 0x0F);
+        self.set_flags_cszp(carry, aux_flag, res);
         self.set_reg(A_REG, res);
     }
 
@@ -404,7 +396,7 @@ impl Processor
             _ => panic!("Should be an impossible match"),
         };
         let res = operand1 & operand2;
-        self.set_flags_cszp(false, res);
+        self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
     }
 
@@ -427,7 +419,7 @@ impl Processor
         };
 
         let res = operand1 | operand2;
-        self.set_flags_cszp(false, res);
+        self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
 
     }
@@ -451,9 +443,7 @@ impl Processor
         };
 
         let res = operand1 ^ operand2;
-        // REVIEW aux flag should probably alwas be set to false
-        self.flags.auxiliary_flag = false;
-        self.set_flags_cszp(false, res);
+        self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
     }
 
@@ -475,10 +465,8 @@ impl Processor
             _ => panic!("Should be an impossible match"),
         };
         let (res, carry) = operand1.overflowing_sub(operand2);
-        // REVIEW aux flag should probably be set to false
-        self.flags.auxiliary_flag = false;
-
-        self.set_flags_cszp(carry, res);
+        let aux_flag = (operand1 & 0x0F) < (operand2 & 0x0F);
+        self.set_flags_cszp(carry, aux_flag, res);
     }
 
     fn mvi_op(&mut self)
@@ -636,9 +624,12 @@ impl Processor
 
     fn dcr_op(&mut self)
     {
-        let reg = self.current_op.low_nibble.unwrap();
-        let (res, carry) = self.get_reg(reg).overflowing_sub(1);
-        self.set_flags_cszp(carry, res);
+        let reg                   = self.get_reg(self.current_op.low_nibble.unwrap());
+        let (res, _)              = reg.overflowing_sub(1);
+        self.flags.auxiliary_flag = reg & 0x0F == 0x00;
+        self.flags.parity_flag    = parity(res);
+        self.flags.sign_flag      = sign(res);
+        self.flags.zero_flag      = zero(res);
         self.set_reg(reg, res);
     }
 
@@ -667,9 +658,7 @@ impl Processor
         let reg_pair   = self.current_op.low_nibble.unwrap();
         let (msb, lsb) = self.get_reg_pair(reg_pair);
         let num: u16   = ((msb as u16) << 8) + lsb as u16;
-        let (res, carry)   = num.overflowing_add(1);
-
-        self.flags.carry_flag = carry;
+        let (res, _)   = num.overflowing_add(1);
         self.set_reg_pair(reg_pair, (res << 8) as u8, res as u8);
     }
 
@@ -778,8 +767,9 @@ impl Processor
         return addr;
     }
 
-    pub fn set_flags_cszp(&mut self, carry: bool, res: u8)
+    pub fn set_flags_cszp(&mut self, carry: bool, auxiliary_flag: bool, res: u8)
     {
+        self.flags.auxiliary_flag = auxiliary_flag;
         self.flags.carry_flag  = carry;
         self.flags.parity_flag = parity(res);
         self.flags.sign_flag   = sign(res);
