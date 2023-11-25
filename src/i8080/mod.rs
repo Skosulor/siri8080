@@ -306,10 +306,10 @@ impl Processor
 
     fn add_op(&mut self, with_carry: bool)
     {
-        let operand1 = self.get_reg(A_REG);
+        let accumulator = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.instruction_type 
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::ADD | InstructionTypes::ADC => 
             {
@@ -329,26 +329,26 @@ impl Processor
             if with_carry 
             {
                 let c = if self.flags.carry_flag {1} else {0};
-                let (r, ca) = operand1.overflowing_add(c);
-                let (r, c) = operand2.overflowing_add(r);
+                let (r, ca) = accumulator.overflowing_add(c);
+                let (r, c) = register.overflowing_add(r);
                 (r, c | ca)
             }
             else
             {
-                operand2.overflowing_add(operand1)
+                register.overflowing_add(accumulator)
             };
 
-        let aux_flag = (operand1 & 0x0F) + (operand2 & 0x0F) > 0x0F;
+        let aux_flag = (accumulator & 0x0F) + (register & 0x0F) > 0x0F;
         self.set_flags_cszp(carry, aux_flag, res);
         self.set_reg(A_REG, res);
     }
 
     fn sub_op(&mut self, with_carry: bool)
     {
-        let operand1 = self.get_reg(A_REG);
+        let accumulator = self.get_reg(A_REG);
 
         // Fetch operand from register/memory or immediate
-        let operand2 = match self.current_op.instruction_type 
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::SUB | InstructionTypes::SBB => 
             {
@@ -366,14 +366,14 @@ impl Processor
         let (res, carry ) = if with_carry 
         {
             let c = if self.flags.carry_flag {1} else {0};
-            operand1.overflowing_sub(operand2 + c)
+            accumulator.overflowing_sub(register + c)
         }
         else
         {
-            operand1.overflowing_sub(operand2)
+            accumulator.overflowing_sub(register)
         };
 
-        let aux_flag = (operand1 & 0x0F) < (operand2 & 0x0F);
+        let aux_flag = (accumulator & 0x0F) < (register & 0x0F);
         self.set_flags_cszp(carry, aux_flag, res);
         self.set_reg(A_REG, res);
     }
@@ -381,8 +381,8 @@ impl Processor
     // Logical AND
     fn ana_op(&mut self)
     {
-        let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.instruction_type 
+        let accumulator = self.get_reg(A_REG);
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::ANA => 
             {
@@ -395,7 +395,7 @@ impl Processor
             }
             _ => panic!("Should be an impossible match"),
         };
-        let res = operand1 & operand2;
+        let res = accumulator & register;
         self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
     }
@@ -403,8 +403,8 @@ impl Processor
     // Logaical OR
     fn ora_op(&mut self)
     {
-        let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.instruction_type 
+        let accumulator = self.get_reg(A_REG);
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::ORA => 
             {
@@ -418,7 +418,7 @@ impl Processor
             _ => panic!("Should be an impossible match"),
         };
 
-        let res = operand1 | operand2;
+        let res = accumulator | register;
         self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
 
@@ -427,8 +427,8 @@ impl Processor
     // Logical exclusive-OR
     fn xra_op(&mut self)
     {
-        let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.instruction_type 
+        let accumulator = self.get_reg(A_REG);
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::XRA => 
             {
@@ -442,7 +442,7 @@ impl Processor
             _ => panic!("Should be an impossible match"),
         };
 
-        let res = operand1 ^ operand2;
+        let res = accumulator ^ register;
         self.set_flags_cszp(false, false, res);
         self.set_reg(A_REG, res);
     }
@@ -450,8 +450,8 @@ impl Processor
     // Compare accumelator with reg or memory
     fn cmp_op(&mut self)
     {
-        let operand1 = self.get_reg(A_REG);
-        let operand2 = match self.current_op.instruction_type 
+        let accumulator = self.get_reg(A_REG);
+        let register = match self.current_op.instruction_type 
         {
             InstructionTypes::CMP => 
             {
@@ -464,8 +464,8 @@ impl Processor
             }
             _ => panic!("Should be an impossible match"),
         };
-        let (res, carry) = operand1.overflowing_sub(operand2);
-        let aux_flag = (operand1 & 0x0F) < (operand2 & 0x0F);
+        let (res, carry) = accumulator.overflowing_sub(register);
+        let aux_flag = (accumulator & 0x0F) < (register & 0x0F);
         self.set_flags_cszp(carry, aux_flag, res);
     }
 
