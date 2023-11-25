@@ -136,6 +136,7 @@ impl Processor
             InstructionTypes::OUT  => self.out_op(),
             InstructionTypes::EI   => self.ei_op(),
             InstructionTypes::DI   => self.di_op(),
+            InstructionTypes::INR  => self.inr_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -755,6 +756,18 @@ impl Processor
     fn di_op(&mut self)
     {
         self.interrupts_enabled = false;
+    }
+
+    fn inr_op(&mut self)
+    {
+        let reg                   = self.current_op.low_nibble.unwrap();
+        let reg_value             = self.get_reg(reg);
+        self.flags.auxiliary_flag = reg_value & 0x0F == 0x0F;
+        let (res, _)              = reg_value.overflowing_add(1);
+        self.flags.parity_flag    = parity(res);
+        self.flags.sign_flag      = sign(res);
+        self.flags.zero_flag      = zero(res);
+        self.set_reg(reg, res);
     }
 
     fn get_direct_address(&mut self) -> u16

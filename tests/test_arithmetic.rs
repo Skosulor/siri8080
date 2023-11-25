@@ -437,4 +437,59 @@ mod tests
         }
     }
 
+    #[test]
+    fn inr()
+    {
+        let mut rng = rand::thread_rng();
+        let numbers: Vec<u8> = (0..7)
+            .map(|_| rng.gen_range(1..255))
+            .collect();
+
+        let mut numbers_copy = numbers.clone();
+        let mem     = vec![0x04, 0x0c, 0x14, 0x1c, 0x24, 0x2c, 0x34, 0x3c];
+        let mut cpu = Processor::from_bytes(mem);
+        let reg     = Registers
+        { 
+            accumulator: 0,
+            b: numbers[0].clone(),
+            c: numbers[1],
+            d: numbers[2],
+            e: numbers[3],
+            h: numbers[4],
+            l: numbers[5]
+        };
+
+        cpu.set_all_registers(reg);
+
+        for i in 0..= 6
+        {
+            let reg = cpu.get_registers();
+            let addr = (reg.h as u16) << 8 | (reg.l as u16);
+            cpu.set_memory_at(addr, numbers[6]);
+
+            cpu.clock();
+
+            (numbers_copy[i], _) = numbers[i].overflowing_add(1);
+            let flags      = cpu.get_flags();
+            let zero       = numbers_copy[i] == 0;
+            let sign: bool = ((numbers_copy[i] >> 7) & 0x1) == 0x1;
+            let parity     = numbers_copy[i].count_ones() % 2 != 0;
+            let mem_value  = cpu.get_memory_at(addr);
+
+            let reg = cpu.get_registers();
+            assert_eq!(numbers_copy[0], reg.b);
+            assert_eq!(numbers_copy[1], reg.c);
+            assert_eq!(numbers_copy[2], reg.d);
+            assert_eq!(numbers_copy[3], reg.e);
+            assert_eq!(numbers_copy[4], reg.h);
+            assert_eq!(numbers_copy[5], reg.l);
+            assert_eq!(numbers_copy[5], reg.l);
+            assert_eq!(numbers_copy[6], mem_value);
+
+            assert_eq!(flags.parity_flag, parity);
+            assert_eq!(zero, flags.zero_flag);
+            assert_eq!(sign, flags.sign_flag);
+        }
+    }
+
 }

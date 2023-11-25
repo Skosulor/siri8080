@@ -63,6 +63,7 @@ pub enum InstructionTypes
     OUT,
     EI,
     DI,
+    INR,
     Unknown,
 }
 
@@ -282,7 +283,7 @@ impl Instruction
                     0x01 | 0x11 | 0x21 | 0x31 => self.decode_lxi(),
                     0x02 | 0x12               => self.name = "STAX".to_string(),
                     0x03 | 0x13 | 0x23 | 0x33 => self.decode_inx(),
-                    0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C  => self.name = "INR".to_string(),
+                    0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x34 | 0x3C  => self.decode_inr(),
                     0x05 | 0x0D |  0x15 | 0x1D | 0x25 | 0x2D | 0x35 | 0x3D => self.decode_dcr(),
                     0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x36 | 0x3E  => self.byte_to_immediate_op(),
                     0x07 => self.set_instruction(InstructionTypes::RLC),
@@ -350,6 +351,13 @@ impl Instruction
         self.instruction_type = InstructionTypes::DCR;
         self.low_nibble = Some(self.byte_val & 0x30);
         self.name = format!("DCR {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
+    }
+
+    fn decode_inr(&mut self)
+    {
+        self.instruction_type = InstructionTypes::INR;
+        self.low_nibble = Some((self.byte_val & 0x38) >> 3);
+        self.name = format!("INR {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
     }
 
     fn immediate_op_helper(&mut self, name1: String, op1: InstructionTypes, name2: String, op2: InstructionTypes)
