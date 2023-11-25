@@ -46,13 +46,6 @@ impl StatusFlags
 }
 
 
-pub fn auxiliary() -> bool 
-{
-    // TODO
-    false
-}
-
-
 pub fn sign(b: u8) -> bool 
 {
     if b & 0b10000000 == 0b10000000 
