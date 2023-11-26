@@ -50,7 +50,7 @@ mod tests
 
             let zero        = sum == 0;
             let sign        = ((sum >> 7) & 0x1) == 0x1;
-            let parity      = sum.count_ones() % 2 != 0;
+            let parity      = sum.count_ones() % 2 == 0;
             let flags       = cpu.get_flags();
             assert_eq!(flags.sign_flag, sign);
             assert_eq!(flags.carry_flag, carry);
@@ -107,7 +107,7 @@ mod tests
             let zero     = sum == 0;
             let sign     = ((sum >> 7) & 0x1) == 0x1;
             let flags    = cpu.get_flags();
-            let parity      = sum.count_ones() % 2 != 0;
+            let parity   = sum.count_ones() % 2 == 0;
             assert_eq!(accumulator, sum);
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(flags.sign_flag, sign);
@@ -159,7 +159,7 @@ mod tests
             let flags       = cpu.get_flags();
             let zero        = sum == 0;
             let sign: bool  = ((sum >> 7) & 0x1) == 0x1;
-            let parity      = sum.count_ones() % 2 != 0;
+            let parity      = sum.count_ones() % 2 == 0;
 
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(sum, regs.accumulator);
@@ -213,7 +213,7 @@ mod tests
             let flags       = cpu.get_flags();
             let zero        = sum == 0;
             let sign: bool  = ((sum >> 7) & 0x1) == 0x1;
-            let parity      = sum.count_ones() % 2 != 0;
+            let parity      = sum.count_ones() % 2 == 0;
 
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(sum, regs.accumulator);
@@ -267,7 +267,7 @@ mod tests
             let flags      = cpu.get_flags();
             let zero       = sum == 0;
             let sign: bool = ((sum >> 7) & 0x1) == 0x1;
-            let parity     = sum.count_ones() % 2 != 0;
+            let parity     = sum.count_ones() % 2 == 0;
 
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(sum, regs.accumulator);
@@ -321,7 +321,7 @@ mod tests
             let flags      = cpu.get_flags();
             let zero       = sum == 0;
             let sign: bool = ((sum >> 7) & 0x1) == 0x1;
-            let parity     = sum.count_ones() % 2 != 0;
+            let parity     = sum.count_ones() % 2 == 0;
 
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(sum, regs.accumulator);
@@ -375,7 +375,7 @@ mod tests
             let flags      = cpu.get_flags();
             let zero       = sum == 0;
             let sign: bool = ((sum >> 7) & 0x1) == 0x1;
-            let parity     = sum.count_ones() % 2 != 0;
+            let parity     = sum.count_ones() % 2 == 0;
 
             assert_eq!(sum, regs.accumulator);
             assert_eq!(flags.parity_flag, parity);
@@ -428,7 +428,7 @@ mod tests
             let flags      = cpu.get_flags();
             let zero       = tmp == 0;
             let sign: bool = ((tmp >> 7) & 0x1) == 0x1;
-            let parity     = tmp.count_ones() % 2 != 0;
+            let parity     = tmp.count_ones() % 2 == 0;
 
             assert_eq!(flags.parity_flag, parity);
             assert_eq!(zero, flags.zero_flag);
@@ -473,7 +473,7 @@ mod tests
             let flags      = cpu.get_flags();
             let zero       = numbers_copy[i] == 0;
             let sign: bool = ((numbers_copy[i] >> 7) & 0x1) == 0x1;
-            let parity     = numbers_copy[i].count_ones() % 2 != 0;
+            let parity     = numbers_copy[i].count_ones() % 2 == 0;
             let mem_value  = cpu.get_memory_at(addr);
 
             let reg = cpu.get_registers();

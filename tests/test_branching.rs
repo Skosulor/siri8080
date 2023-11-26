@@ -157,13 +157,14 @@ mod test
 
         let mut cpu = Processor::from_bytes(mem);
 
-        cpu.set_flags_cszp(false, false, 0);
+        // Parity is odd -> Jump
+        cpu.set_flags_cszp(false, false, 1);
         cpu.clock();
         println!("flags = {:?}", cpu.get_flags());
         let pc = cpu.get_pc();
         assert_eq!(0x1337, pc);
 
-        cpu.set_flags_cszp(false, true, 1);
+        cpu.set_flags_cszp(false, true, 0);
         cpu.clock();
         let pc = cpu.get_pc();
         assert_eq!(0x133A, pc);
@@ -182,12 +183,14 @@ mod test
 
         let mut cpu = Processor::from_bytes(mem);
 
-        cpu.set_flags_cszp(false, true, 1);
+        // Parity is Even -> Jump
+        cpu.set_flags_cszp(false, true, 0);
         cpu.clock();
         let pc = cpu.get_pc();
         assert_eq!(0x1337, pc);
 
-        cpu.set_flags_cszp(false, false, 0);
+        // Parity is Odd -> Don't Jump
+        cpu.set_flags_cszp(false, false, 1);
         cpu.clock();
         let pc = cpu.get_pc();
         assert_eq!(0x133A, pc);
