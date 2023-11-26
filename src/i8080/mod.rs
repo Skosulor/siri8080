@@ -137,6 +137,7 @@ impl Processor
             InstructionTypes::EI   => self.ei_op(),
             InstructionTypes::DI   => self.di_op(),
             InstructionTypes::INR  => self.inr_op(),
+            InstructionTypes::CP   => self.cp_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -724,6 +725,19 @@ impl Processor
         self.stack_pointer = self.stack_pointer - 2;
         self.program_counter = addr - 1;
     }
+
+    fn cp_op(&mut self)
+    {
+        if self.flags.sign_flag == false
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
 
     fn ret_op(&mut self)
     {

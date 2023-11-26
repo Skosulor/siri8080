@@ -12,7 +12,6 @@ pub const DE_PAIR_REG: u8 = 0b01;
 pub const HL_PAIR_REG: u8 = 0b10;
 pub const SP_REG:      u8 = 0b11;
 
-
 pub const REGISTER_MASK   : u8 = 0b111;
 pub const MOVE_TO         : u8 = 3;
 pub const MOVE_FROM       : u8 = 0;
@@ -32,7 +31,6 @@ pub struct Registers
 
 impl Registers
 {
-
     pub fn new() -> Registers
     {
         let reg = Registers
@@ -46,6 +44,17 @@ impl Registers
             l: 0,
         };
         reg
+    }
+
+    pub fn translate_to_reg_pair(reg: u8) -> String
+    {
+        match reg & 0b11{
+            BC_PAIR_REG => String::from("BC"),
+            DE_PAIR_REG => String::from("DE"),
+            HL_PAIR_REG => String::from("HL"),
+            SP_REG      => String::from("SP"),
+            _ => panic!("No register pair {}", reg)
+        }
     }
 
     pub fn translate_to_reg(reg: u8) -> String

@@ -64,6 +64,7 @@ pub enum InstructionTypes
     EI,
     DI,
     INR,
+    CP,
     Unknown,
 }
 
@@ -256,7 +257,7 @@ impl Instruction
                     0xF0 => self.name = "RP".to_string(),
                     0xF2 => self.set_instruction(InstructionTypes::JP),
                     0xF3 => self.set_instruction(InstructionTypes::DI),
-                    0xF4 => self.name = "CP".to_string(),
+                    0xF4 => self.set_instruction(InstructionTypes::CP),
                     0xF6 => self.byte_to_immediate_op(),
                     0xF7 => self.name = "RST".to_string(),
                     0xF8 => self.name = "RM".to_string(),
@@ -313,15 +314,15 @@ impl Instruction
 
     fn decode_pop(&mut self)
     {
-        self.low_nibble = Some(self.byte_val & 0x30);
-        self.name = format!("POP {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
+        self.low_nibble = Some(( self.byte_val & 0x30 ) >> 4);
+        self.name = format!("POP {}", Registers::translate_to_reg_pair(self.low_nibble.unwrap()));
         self.instruction_type = InstructionTypes::POP;
     }
 
     fn decode_push(&mut self)
     {
-        self.low_nibble = Some(self.byte_val & 0x30);
-        self.name = format!("PUSH {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
+        self.low_nibble = Some(( self.byte_val & 0x30 ) >> 4);
+        self.name = format!("PUSH {}", Registers::translate_to_reg_pair(self.low_nibble.unwrap()));
         self.instruction_type = InstructionTypes::PUSH;
     }
 
