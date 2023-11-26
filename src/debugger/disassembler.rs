@@ -1,4 +1,5 @@
 use std::io;
+use std::io::Write;
 use termion::raw::IntoRawMode;
 use tui::backend::TermionBackend;
 use tui::layout::{Constraint, Direction, Layout, Rect};
@@ -40,15 +41,29 @@ impl<'a> Term<'a>
                 vec!["Auxiliary","Parity"],
                 vec!["0", "0"],],
             pc: vec![
-                vec!["PC".to_string()],
-                vec!["0".to_string()],],
+                vec!["PC".to_string(), "D. Addr".to_string(), "Immediate".to_string()],
+                vec!["0".to_string(), "0".to_string(), "0".to_string()],
+                vec!["0x0".to_string(), "0x0".to_string(),"0x0".to_string()],],
         };
         t
+    }
+
+    pub fn set_direct_address(&mut self, address: u16)
+    {
+        self.pc[1][1] = address.to_string();
+        self.pc[2][1] = format!("0x{:04X}", address);
+    }
+
+    pub fn set_immediate(&mut self, immediate: u8)
+    {
+        self.pc[1][2] = immediate.to_string();
+        self.pc[2][2] = format!("0x{:02X}", immediate);
     }
 
     pub fn set_pc(&mut self, pc: u16)
     {
         self.pc[1][0] = pc.to_string();
+        self.pc[2][0] = format!("0x{:04X}", pc);
     }
 
     pub fn set_regs(&mut self, reg: &Registers)
@@ -173,13 +188,14 @@ impl<'a> Term<'a>
             .constraints([Constraint::Percentage(30)].as_ref());
 
 
-        let mem_pc_border = Block::default().title("Memory").borders(Borders::ALL);
-        let pc_border = Block::default().title("PC").borders(Borders::ALL);
-        let unknown_border = Block::default().title("Uknown").borders(Borders::ALL);
-        let registers_border = Block::default().title("Registers").borders(Borders::ALL);
-        let flags_border = Block::default().title("Flags").borders(Borders::ALL);
+        let mem_pc_border       = Block::default().title("Memory").borders(Borders::ALL);
+        let pc_border           = Block::default().title("PC").borders(Borders::ALL);
+        let shell_border        = Block::default().title("Shell").borders(Borders::ALL);
+        let registers_border    = Block::default().title("Registers").borders(Borders::ALL);
+        let flags_border        = Block::default().title("Flags").borders(Borders::ALL);
         let instructions_border = Block::default().title("Instructions").borders(Borders::ALL);
 
+        let mut shell_widget_position = Default::default();
 
         terminal.draw(|mut f|{
 
@@ -228,13 +244,20 @@ impl<'a> Term<'a>
             f.render_widget(flags_border, box_multi[2]);
             f.render_widget(flag_values, box_multi_in[2]);
 
-            f.render_widget(unknown_border, box_multi[3]);
 
-                          //Right: instructions
-                          f.render_widget(instructions_border, box_inst[0]);
-                          f.render_widget(instructions, box_inst_in[0]);
+            f.render_widget(shell_border, box_multi[3]);
+            f.render_widget(instructions_border, box_inst[0]);
+            f.render_widget(instructions, box_inst_in[0]);
 
-                      }).expect("Failed to draw!");
+            shell_widget_position = box_multi[3];
+
+        }).expect("Failed to draw!");
+
+        let cursor_x = shell_widget_position.x + 3;
+        let cursor_y = shell_widget_position.y + 3;
+        print!("{}", termion::cursor::Goto(cursor_x, cursor_y));
+        terminal.backend_mut().flush().expect("Failed to flush backend");
+        // backend.flush().expect("Failed to flush backend");
     }
 }
 

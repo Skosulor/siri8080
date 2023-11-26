@@ -136,6 +136,8 @@ fn update_disassembler(processor: &mut Processor)
     term.set_regs(&processor.get_registers());
     term.update_instructions(processor.get_instructions());
     term.set_pc(processor.get_pc());
+    term.set_direct_address(processor.get_direct_address());
+    term.set_immediate(processor.get_immediate());
 
     clear();
     term.update_dissambler()
