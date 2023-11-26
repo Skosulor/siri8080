@@ -666,6 +666,7 @@ impl Processor
     fn lda_op(&mut self)
     {
         let addr = self.get_direct_address();
+        self.program_counter += 2;
         let value = self.memory[addr as usize]; 
         self.set_reg(A_REG, value);
     }
@@ -690,6 +691,7 @@ impl Processor
     fn sta_op(&mut self)
     {
         let addr = self.get_direct_address();
+        self.program_counter += 2;
         let value = self.get_reg(A_REG);
         self.memory[addr as usize] = value;
     }
@@ -712,7 +714,7 @@ impl Processor
     fn call_op(&mut self)
     {
         let addr: u16         = self.get_direct_address();
-        let next_addr: u16    = self.program_counter + 1;
+        let next_addr: u16    = self.program_counter + 3;
         let lsb_next_addr: u8 = (next_addr & 0x00FF) as u8;
         let msb_next_addr: u8 = ((next_addr & 0xFF00) >> 8) as u8;
 
@@ -770,13 +772,17 @@ impl Processor
         self.set_reg(reg, res);
     }
 
-    fn get_direct_address(&mut self) -> u16
+    pub fn get_immediate(&mut self) -> u8
+    {
+        return self.memory[(self.program_counter + 1) as usize];
+    }
+
+    pub fn get_direct_address(&mut self) -> u16
     {
         let pc        = self.program_counter as usize;
         let lsb_value = self.memory[pc + 1];
         let msb_value = self.memory[pc + 2];
         let addr: u16 = (msb_value as u16) << 8 | lsb_value as u16;
-        self.program_counter += 2;
         return addr;
     }
 
