@@ -313,16 +313,16 @@ impl Instruction
 
     fn decode_pop(&mut self)
     {
+        self.low_nibble = Some(self.byte_val & 0x30);
         self.name = format!("POP {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
         self.instruction_type = InstructionTypes::POP;
-        self.low_nibble = Some(self.byte_val & 0x30);
     }
 
     fn decode_push(&mut self)
     {
+        self.low_nibble = Some(self.byte_val & 0x30);
         self.name = format!("PUSH {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
         self.instruction_type = InstructionTypes::PUSH;
-        self.low_nibble = Some(self.byte_val & 0x30);
     }
 
     fn decode_inx(&mut self)
