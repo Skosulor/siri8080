@@ -14,6 +14,7 @@ use crate::i8080::registers::*;
 const MEMORY_SIZE: usize = 0xFFFFF;
 
 
+#[derive(Clone)]
 pub struct Processor 
 {
     // clock_freq: f32,
@@ -46,6 +47,18 @@ impl Processor
         let mut file = File::open(p).expect("No such file");
         file.read(&mut proc.memory).expect("opsie");
         proc
+    }
+
+    pub fn reset(&mut self) 
+    {
+        self.stack_pointer = 0x20;
+        self.program_counter = 0;
+        self.memory = [0; MEMORY_SIZE];
+        self.flags = StatusFlags::new();
+        self.current_op = Instruction::new();
+        self.registers = Registers::new();
+        self.out = 0;
+        self.interrupts_enabled = false;
     }
 
     pub fn from_bytes(bytes: Vec<u8>) -> Processor 
@@ -166,6 +179,11 @@ impl Processor
     pub fn get_pc(&self) -> u16 
     {
         return self.program_counter;
+    }
+
+    pub fn get_current_op(&self) -> Instruction
+    {
+        return self.current_op.clone();
     }
 
     pub fn get_instructions(&mut self) -> Vec<String>

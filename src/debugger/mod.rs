@@ -1,8 +1,8 @@
 use crate::i8080::Processor;
 
 mod disassembler;
-use std::io::{stdin, Write};
-use termion::input::TermRead;
+use std::io::{stdin, Write, stdout};
+// use termion::input::TermRead;
 
 enum DebuggerCmds
 {
@@ -16,7 +16,7 @@ enum DebuggerCmds
 
 pub struct Debugger
 {
-    input: termion::input::Keys<termion::AsyncReader>,
+    // input: termion::input::Keys<termion::AsyncReader>,
     breakpoints: Vec<u16>,
 }
 
@@ -26,7 +26,6 @@ impl Debugger
     {
         let dgb = Debugger
         {
-            input: termion::async_stdin().keys(),
             breakpoints: Vec::new(),
         };
         return dgb
@@ -34,45 +33,51 @@ impl Debugger
 
     pub fn execute(&mut self, processor: &mut Processor) -> Option<u8>
     {
-        let cmd = self.get_debug_command();
-        let mut ret: Option<u8> = Some(0);
+        update_disassembler(processor);
 
-        match cmd 
+        let mut ret: Option<u8> = Some(0);
+        let inputs = get_input();
+        let mut inputs = inputs.split_whitespace();
+        let input;
+
+
+        match inputs.next()
         {
-            DebuggerCmds::Nop => (),
-            DebuggerCmds::Run => self.run_processor(processor),
-            DebuggerCmds::Step => step(processor),
-            DebuggerCmds::Breakpoint(b) => self.add_breakpoint(b),
-            DebuggerCmds::Quit => ret = None,
-            DebuggerCmds::Reset => reset_processor(processor),
+            Some(str) => input = str,
+            None => return ret,
         }
+
+        match input
+        {
+            "s" | "step"       => step(processor, inputs.next()),
+            "q" | "quit"       => ret = None,
+            "c" | "continue"   => self.run_processor(processor),
+            "b" | "breakpoint" => self.add_breakpoint(inputs.next()),
+            "r" | "reset"      => reset_processor(processor),
+            _ => (),
+        }
+        update_disassembler(processor);
         return ret
     }
 
-    fn add_breakpoint(&mut self, breakpoint: u16)
+    fn add_breakpoint(&mut self, breakpoint: Option<&str>)
     {
-        self.breakpoints.push(breakpoint);
-    }
 
-    fn get_debug_command(&mut self) -> DebuggerCmds
-    {
-        let input = self.input.next();
-        let mut command: DebuggerCmds = DebuggerCmds::Nop;
-
-        if let Some(Ok(key)) = input
+        match breakpoint
         {
-            match key 
+            Some(breakpoint) => 
             {
-                termion::event::Key::Char('s') => {command = DebuggerCmds::Step;},
-                termion::event::Key::Char('q') => {command = DebuggerCmds::Quit;},  
-                termion::event::Key::Char('r') => {command = DebuggerCmds::Reset;},
-                termion::event::Key::Char('c') => {command = DebuggerCmds::Run;}, 
-                termion::event::Key::Char('b') => {command = DebuggerCmds::Breakpoint(get_breakpoint());},
-                _ => (), 
-            }
-        }
-        return command
+                let breakpoint = match breakpoint.parse::<u16>()
+                {
+                    Ok(breakpoint) => breakpoint,
+                    Err(_) => return,
+                };
+                self.breakpoints.push(breakpoint)
+            },
+            None => return,
+        };
     }
+
 
     fn run_processor(&mut self, processor: &mut Processor)
     {
@@ -91,32 +96,40 @@ impl Debugger
     }
 }
 
-
-fn get_breakpoint() -> u16
+fn get_input() -> String
 {
-    print!("BreakPoint:");
-    let mut s = String::new();
-    let stdin = stdin();
-    std::io::stdout().flush().expect("Failed to flush stdout");
-    stdin.read_line(&mut s).expect("Failed to read line");
-    std::io::stdout().flush().expect("Failed to flush stdout");
-    //s.parse::<i32>().unwrap()
-    println!("{}",s);
-    let r: u16 = s.trim().parse().unwrap() ;
-    r
+    let mut input = String::new(); 
+    print!("> "); 
+    stdout().flush().unwrap(); 
+    stdin().read_line(&mut input).expect("Failed to read line"); 
+    return input;
 }
 
 
-fn step(processor: &mut Processor)
+fn step(processor: &mut Processor, steps: Option<&str>)
 {
-    processor.clock();
-    update_disassembler(processor);
+    match steps 
+    {
+        Some(steps) => 
+        {
+            let steps = match steps.parse::<u32>()
+            {
+                Ok(steps) => steps,
+                Err(_) => 1,
+            };
+
+            for _ in 0..steps
+            {
+                processor.clock();
+            }
+        },
+        None => processor.clock(),
+    }
 }
 
 fn reset_processor(processor: &mut Processor)
 {
-    processor.reset_pc();
-    update_disassembler(processor);
+    processor.reset();
 }
 
 fn clear()
@@ -132,13 +145,32 @@ fn update_disassembler(processor: &mut Processor)
 {
     let mut term = disassembler::Term::default();
 
+    term.update_instructions(get_instructions(processor));
     term.set_flags(&processor.get_flags());
     term.set_regs(&processor.get_registers());
-    term.update_instructions(processor.get_instructions());
     term.set_pc(processor.get_pc());
     term.set_direct_address(processor.get_direct_address());
     term.set_immediate(processor.get_immediate());
 
     clear();
     term.update_dissambler()
+}
+
+// Create a copy of the processor and clock it and read out each instruction name into a vector
+// Then return the vector
+fn get_instructions(processor: &mut Processor) -> Vec<String>
+{
+    let mut instructions: Vec<String> = Vec::new();
+    let mut processor = processor.clone();
+    instructions.push("".to_string());
+    for _ in 1 .. 48
+    {
+        let instruction = processor.get_current_op();
+        let (byte, name) = instruction.get_name_byte();
+
+        instructions.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", 
+                                               a=(processor.get_pc() as usize), b=byte, c=name)));
+        processor.clock();
+    }
+    return instructions
 }
