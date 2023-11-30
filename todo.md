@@ -33,11 +33,12 @@
     - [X] Brake out debug commands from main
     - [X] Give dissasmbler sane variable & function names
 - [ ] Rename low_byte & high_byte in instructions to Registers & give them an enum type?
-- [j] Add tests
+- [x] Add tests
 - [ ] Update instruction counter based on type of instruction
 - [ ] Acutally set aux flag
 - [X] Add Program counter to debugger
 - [ ] Add cycle count to debugger
+- [ ] Handle interrupt -> requires injection of instruction
 
 # Implement Op Codes
 TODO Op codes needed for space invaders
