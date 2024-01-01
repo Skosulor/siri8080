@@ -195,7 +195,7 @@ impl Processor
             let instruction = Instruction::from_byte(self.memory[self.program_counter as usize + x]);
             let (bin, stri) = instruction.get_name_byte();
             instructions.push(String::from(format!("{a:>6}:     0x{b:02X} {c:}", 
-                                           a=(self.program_counter as usize + x), b=bin, c=stri)));
+                                                   a=(self.program_counter as usize + x), b=bin, c=stri)));
         }
         return instructions
     }
@@ -224,7 +224,6 @@ impl Processor
             _ => panic!("No register {}", reg)
         }
     }
-
 
     fn get_reg(&self, reg: u8) -> u8
     {
@@ -322,7 +321,6 @@ impl Processor
         let val = self.get_reg(from);
         self.set_reg(to, val);
     }
-
 
     fn add_op(&mut self, with_carry: bool)
     {

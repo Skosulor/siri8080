@@ -31,7 +31,7 @@ impl StatusFlags
         flags |= ( self.auxiliary_flag as u8) << 4;
         flags |= ( self.zero_flag      as u8) << 6;
         flags |= ( self.sign_flag      as u8) << 7;
-        flags |= 1 << 1;
+        flags |= 1                            << 1;
         return flags
     }
 
