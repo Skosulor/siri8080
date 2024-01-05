@@ -151,6 +151,13 @@ impl Processor
             InstructionTypes::DI   => self.di_op(),
             InstructionTypes::INR  => self.inr_op(),
             InstructionTypes::CP   => self.cp_op(),
+            InstructionTypes::CNZ  => self.cnz_op(),
+            InstructionTypes::CC   => self.cc_op(),
+            InstructionTypes::CNC  => self.cnc_op(),
+            InstructionTypes::CPO  => self.cpo_op(),
+            InstructionTypes::CPE  => self.cpe_op(),
+            InstructionTypes::CM   => self.cm_op(),
+            InstructionTypes::CZ   => self.cz_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -742,6 +749,30 @@ impl Processor
         self.program_counter = addr - 1;
     }
 
+    fn cz_op(&mut self)
+    {
+        if self.flags.zero_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn cm_op(&mut self)
+    {
+        if self.flags.sign_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
     fn cp_op(&mut self)
     {
         if self.flags.sign_flag == false
@@ -800,6 +831,66 @@ impl Processor
         self.flags.sign_flag      = sign(res);
         self.flags.zero_flag      = zero(res);
         self.set_reg(reg, res);
+    }
+
+    fn cnz_op(&mut self)
+    {
+        if !self.flags.zero_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn cc_op(&mut self)
+    {
+        if self.flags.carry_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn cnc_op(&mut self)
+    {
+        if !self.flags.carry_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn cpo_op(&mut self)
+    {
+        if !self.flags.parity_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
+    }
+
+    fn cpe_op(&mut self)
+    {
+        if self.flags.parity_flag
+        {
+            self.call_op();
+        }
+        else
+        {
+            self.program_counter += 2;
+        }
     }
 
     pub fn get_immediate(&mut self) -> u8

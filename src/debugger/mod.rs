@@ -4,15 +4,15 @@ mod disassembler;
 use std::io::{stdin, Write, stdout};
 // use termion::input::TermRead;
 
-enum DebuggerCmds
-{
-    Run,
-    Step,
-    Breakpoint(u16),
-    Quit,
-    Reset,
-    Nop,
-}
+// enum DebuggerCmds
+// {
+//     Run,
+//     Step,
+//     Breakpoint(u16),
+//     Quit,
+//     Reset,
+//     Nop,
+// }
 
 pub struct Debugger
 {
