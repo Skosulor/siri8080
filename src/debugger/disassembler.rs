@@ -9,25 +9,22 @@ use tui::Terminal;
 use crate::i8080::registers::Registers;
 use crate::i8080::flags::StatusFlags;
 
-// const MEMORY_ROWS: usize = 44;
-// pub const N_MEM_BYTES: usize = 44*16;
-
-pub struct Term<'a>
+pub struct Disassembler<'a>
 {
-    mem:   Vec<Vec<&'a str>>,
+    mem:   Vec<Vec<String>>,
     inst:  Vec<String>,
     flags: Vec<Vec<&'a str>>,
     regs:  Vec<Vec<String>>,
     pc:    Vec<Vec<String>>,
 }
 
-impl<'a> Term<'a>
+impl<'a> Disassembler<'a>
 {
-    pub fn default() -> Term<'a>
+    pub fn default() -> Disassembler<'a>
     {
-        let t = Term
+        let t = Disassembler
         {
-            mem: vec![ vec!["00"; 17]; 44],
+            mem: vec![ vec!["00".to_string(); 17]; 44],
             inst: Vec::new(),
             regs: vec![
                 vec!["Accumulator".to_string(), "B".to_string(),"C".to_string()],
@@ -104,6 +101,20 @@ impl<'a> Term<'a>
         for x in instructions.iter()
         {
             self.inst.push(x.clone());
+        }
+    }
+
+    pub fn set_memory(&mut self, address: u16, memory: &[u8])
+    {
+        for i in 0..self.mem.len()
+        {
+            self.mem[i][0] = format!("{:04X}", address + (i as u16 * 16));
+
+            for j in 1..self.mem[i].len()
+            {
+                let index = address + (i as u16 * 16) + (j as u16 - 1);
+                self.mem[i][j] = format!("{:02X}", memory[index as usize]);
+            }
         }
     }
 

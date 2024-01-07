@@ -3,18 +3,20 @@ use crate::i8080::Processor;
 mod disassembler;
 use std::io::{stdin, Write, stdout};
 
-pub struct Debugger
+pub struct Debugger<'a>
 {
     breakpoints: Vec<u16>,
+    disassembler: disassembler::Disassembler<'a>,
 }
 
-impl Debugger
+impl<'a> Debugger<'a>
 {
-    pub fn default() -> Debugger
+    pub fn default() -> Debugger<'a>
     {
         let dgb = Debugger
         {
             breakpoints: Vec::new(),
+            disassembler: disassembler::Disassembler::default(),
         };
         return dgb
     }
@@ -23,7 +25,8 @@ impl Debugger
     {
         if first_execution
         {
-            update_disassembler(processor);
+            self.update_disassembler(processor);
+            self.disassembler.set_memory(0x0, &processor.get_memory());
         }
 
         let mut ret: Option<u8> = Some(0);
@@ -45,9 +48,11 @@ impl Debugger
             "c" | "continue"   => self.run_processor(processor),
             "b" | "breakpoint" => self.add_breakpoint(inputs.next()),
             "r" | "reset"      => reset_processor(processor),
+            "m" | "mem"        => self.disassembler.set_memory(input_to_u16(inputs.next()), &processor.get_memory()),
+        
             _ => (),
         }
-        update_disassembler(processor);
+        self.update_disassembler(processor);
 
         return ret
     }
@@ -80,14 +85,26 @@ impl Debugger
             let found = self.breakpoints.contains(&pc);
             if found 
             {
-                update_disassembler(processor);
+                self.update_disassembler(processor);
                 break;
             }
         }
-        
+    }
+
+    fn update_disassembler(&mut self, processor: &mut Processor)
+    {
+        self.disassembler.update_instructions(get_instructions(processor));
+        self.disassembler.set_stack_pointer(processor.get_stack_pointer());
+        self.disassembler.set_flags(&processor.get_flags());
+        self.disassembler.set_regs(&processor.get_registers());
+        self.disassembler.set_pc(processor.get_pc());
+        self.disassembler.set_direct_address(processor.get_direct_address());
+        self.disassembler.set_immediate(processor.get_immediate());
+
+        clear();
+        self.disassembler.update_dissambler()
     }
 }
-
 
 fn get_input() -> String
 {
@@ -134,21 +151,6 @@ fn clear()
         ).expect("Error clearing screen!");
 }
 
-fn update_disassembler(processor: &mut Processor)
-{
-    let mut term = disassembler::Term::default();
-
-    term.update_instructions(get_instructions(processor));
-    term.set_stack_pointer(processor.get_stack_pointer());
-    term.set_flags(&processor.get_flags());
-    term.set_regs(&processor.get_registers());
-    term.set_pc(processor.get_pc());
-    term.set_direct_address(processor.get_direct_address());
-    term.set_immediate(processor.get_immediate());
-
-    clear();
-    term.update_dissambler()
-}
 
 // Create a copy of the processor and clock it and read out each instruction name into a vector
 // Then return the vector
@@ -168,4 +170,20 @@ fn get_instructions(processor: &mut Processor) -> Vec<String>
         processor.clock();
     }
     return instructions
+}
+
+fn input_to_u16(input: Option<&str>) -> u16
+{
+    match input
+        {
+            Some(value) => 
+            {
+                match value.parse::<u16>()
+                {
+                    Ok(value) => return value,
+                    Err(_) => return 0,
+                };
+            },
+            None => return 0,
+        };
 }
