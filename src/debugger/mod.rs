@@ -5,7 +5,6 @@ use std::io::{stdin, Write, stdout};
 
 pub struct Debugger
 {
-    // input: termion::input::Keys<termion::AsyncReader>,
     breakpoints: Vec<u16>,
 }
 
@@ -20,9 +19,12 @@ impl Debugger
         return dgb
     }
 
-    pub fn execute(&mut self, processor: &mut Processor) -> Option<u8>
+    pub fn execute(&mut self, processor: &mut Processor, first_execution: bool) -> Option<u8>
     {
-        update_disassembler(processor);
+        if first_execution
+        {
+            update_disassembler(processor);
+        }
 
         let mut ret: Option<u8> = Some(0);
         let inputs = get_input();
@@ -46,6 +48,7 @@ impl Debugger
             _ => (),
         }
         update_disassembler(processor);
+
         return ret
     }
 
@@ -84,6 +87,7 @@ impl Debugger
         
     }
 }
+
 
 fn get_input() -> String
 {
@@ -135,6 +139,7 @@ fn update_disassembler(processor: &mut Processor)
     let mut term = disassembler::Term::default();
 
     term.update_instructions(get_instructions(processor));
+    term.set_stack_pointer(processor.get_stack_pointer());
     term.set_flags(&processor.get_flags());
     term.set_regs(&processor.get_registers());
     term.set_pc(processor.get_pc());
@@ -154,6 +159,7 @@ fn get_instructions(processor: &mut Processor) -> Vec<String>
     instructions.push("".to_string());
     for _ in 1 .. 48
     {
+        processor.fetch_instruction();
         let instruction = processor.get_current_op();
         let (byte, name) = instruction.get_name_byte();
 

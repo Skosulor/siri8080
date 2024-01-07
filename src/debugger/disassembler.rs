@@ -43,9 +43,20 @@ impl<'a> Term<'a>
             pc: vec![
                 vec!["PC".to_string(), "D. Addr".to_string(), "Immediate".to_string()],
                 vec!["0".to_string(), "0".to_string(), "0".to_string()],
-                vec!["0x0".to_string(), "0x0".to_string(),"0x0".to_string()],],
+                vec!["0x0".to_string(), "0x0".to_string(),"0x0".to_string()],
+                vec!["".to_string()],
+                vec!["SP".to_string()],
+                vec!["0x0".to_string()],
+                vec!["0".to_string()],
+            ],
         };
         t
+    }
+
+    pub fn set_stack_pointer(&mut self, stack_pointer: u16)
+    {
+        self.pc[5][0] = stack_pointer.to_string();
+        self.pc[6][0] = format!("0x{:04X}", stack_pointer);
     }
 
     pub fn set_direct_address(&mut self, address: u16)
