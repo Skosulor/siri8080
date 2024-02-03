@@ -28,6 +28,7 @@ pub struct Processor
     interrupts_enabled: bool,
 }
 
+
 impl Processor 
 {
     pub fn from_file(p: String) -> Processor 
@@ -87,14 +88,14 @@ impl Processor
         self.fetch_instruction();
         self.execute_instruction();
         self.update_program_counter();
-     }
+    }
 
     pub fn reset_pc(&mut self)
     {
         self.program_counter = 0;
     }
 
-    fn fetch_instruction(&mut self)  
+    pub fn fetch_instruction(&mut self)  
     {
         self.current_op.byte_to_op(self.memory[self.program_counter as usize]);
     }
@@ -158,6 +159,14 @@ impl Processor
             InstructionTypes::CPE  => self.cpe_op(),
             InstructionTypes::CM   => self.cm_op(),
             InstructionTypes::CZ   => self.cz_op(),
+            InstructionTypes::RC   => self.rc_op(),
+            InstructionTypes::RNC  => self.rnc_op(),
+            InstructionTypes::RZ   => self.rz_op(),
+            InstructionTypes::RNZ  => self.rnz_op(),
+            InstructionTypes::RM   => self.rm_op(),
+            InstructionTypes::RP   => self.rp_op(),
+            InstructionTypes::RPE  => self.rpe_op(),
+            InstructionTypes::RPO  => self.rpo_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -191,6 +200,11 @@ impl Processor
     pub fn get_current_op(&self) -> Instruction
     {
         return self.current_op.clone();
+    }
+
+    pub fn get_stack_pointer(&self) -> u16
+    {
+        return self.stack_pointer;
     }
 
     pub fn get_instructions(&mut self) -> Vec<String>
@@ -309,6 +323,11 @@ impl Processor
             }
             _ => panic!("No register pair {}, PC at {}", reg, self.program_counter)
         }
+    }
+
+    pub fn get_memory(&self) -> [u8; MEMORY_SIZE]
+    {
+        return self.memory;
     }
 
     pub fn get_memory_at(&self, addr: u16) -> u8
@@ -792,7 +811,6 @@ impl Processor
         let msb_addr = self.memory[(self.stack_pointer + 1) as usize];
 
         let addr: u16 = ((msb_addr as u16) << 8) + lsb_addr as u16;
-        println!("you");
         self.program_counter = addr - 1;
     }
 
@@ -893,6 +911,71 @@ impl Processor
         }
     }
 
+    fn rc_op(&mut self)
+    {
+        if self.flags.carry_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rnc_op(&mut self)
+    {
+        if !self.flags.carry_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rz_op(&mut self)
+    {
+        if self.flags.zero_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rnz_op(&mut self)
+    {
+        if !self.flags.zero_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rm_op(&mut self)
+    {
+        if self.flags.sign_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rp_op(&mut self)
+    {
+        if !self.flags.sign_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rpe_op(&mut self)
+    {
+        if self.flags.parity_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    fn rpo_op(&mut self)
+    {
+        if !self.flags.parity_flag
+        {
+            self.ret_op();
+        }
+    }
+
+    
     pub fn get_immediate(&mut self) -> u8
     {
         return self.memory[(self.program_counter + 1) as usize];
