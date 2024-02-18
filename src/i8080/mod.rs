@@ -731,7 +731,7 @@ impl Processor
         let lsb;
         let msb;
 
-        if self.current_op.low_nibble.unwrap() & 0x10 == 0x10
+        if (self.current_op.byte_val & 0x10) == 0x10
         {
             (msb, lsb) = self.get_reg_pair(DE_PAIR_REG);
         }
@@ -996,6 +996,7 @@ impl Processor
         let h_reg_value = self.memory[(addr + 1) as usize];
         self.set_reg(L_REG, l_reg_value);
         self.set_reg(H_REG, h_reg_value);
+        self.program_counter += 2;
     }
 
     fn shld_op(&mut self)
@@ -1003,6 +1004,9 @@ impl Processor
         let addr = self.get_direct_address();
         let l_reg_value = self.get_reg(L_REG);
         let h_reg_value = self.get_reg(H_REG);
+        self.set_memory_at(addr, l_reg_value);
+        self.set_memory_at(addr + 1, h_reg_value);
+        self.program_counter += 2;
     }
 
     pub fn get_immediate(&mut self) -> u8
