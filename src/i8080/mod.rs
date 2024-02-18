@@ -702,7 +702,7 @@ impl Processor
         let (msb, lsb) = self.get_reg_pair(reg_pair);
         let num: u16   = ((msb as u16) << 8) + lsb as u16;
         let (res, _)   = num.overflowing_add(1);
-        self.set_reg_pair(reg_pair, (res << 8) as u8, res as u8);
+        self.set_reg_pair(reg_pair, (res >> 8) as u8, res as u8);
     }
 
     fn lda_op(&mut self)
