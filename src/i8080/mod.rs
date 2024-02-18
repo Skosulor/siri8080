@@ -166,6 +166,7 @@ impl Processor
             InstructionTypes::RP   => self.rp_op(),
             InstructionTypes::RPE  => self.rpe_op(),
             InstructionTypes::RPO  => self.rpo_op(),
+            InstructionTypes::DCX  => self.dcx_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -695,6 +696,15 @@ impl Processor
         let mut res           = accumulator >> 1;
         res                   = res | ((carry as u8) << 7);
         self.set_reg(A_REG, res);
+    }
+
+    fn dcx_op(&mut self)
+    {
+        let reg_pair   = self.current_op.low_nibble.unwrap();
+        let (msb, lsb) = self.get_reg_pair(reg_pair);
+        let num: u16   = ((msb as u16) << 8) + lsb as u16;
+        let (res, _)   = num.overflowing_sub(1);
+        self.set_reg_pair(reg_pair, (res >> 8) as u8, res as u8);
     }
 
     fn inx_op(&mut self)

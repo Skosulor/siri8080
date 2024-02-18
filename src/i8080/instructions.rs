@@ -51,6 +51,7 @@ pub enum InstructionTypes
     RAL,
     RAR,
     INX,
+    DCX,
     LDA,
     LDAX,
     STA,
@@ -305,7 +306,7 @@ impl Instruction
                     0x07 => self.set_instruction(InstructionTypes::RLC),
                     0x08 | 0x10 | 0x18 | 0x20 | 0x28 | 0x30 | 0x38        => self.name = "__ NOT IMP".to_string(),
                     0x09 | 0x19 | 0x29 | 0x39 => self.decode_dad(),
-                    0x0B | 0x1B | 0x2B | 0x3B => self.name = "DCX NOT IMP".to_string(),
+                    0x0B | 0x1B | 0x2B | 0x3B => self.decode_dcx(),
                     0x0F => self.set_instruction(InstructionTypes::RRC),
                     0x17 => self.set_instruction(InstructionTypes::RAL),
                     0x1A | 0x0A => self.set_instruction(InstructionTypes::LDAX),
@@ -344,6 +345,12 @@ impl Instruction
     fn decode_inx(&mut self)
     {
         self.set_instruction(InstructionTypes::INX);
+        self.low_nibble = Some((self.byte_val & 0x30) >> 4);
+    }
+
+    fn decode_dcx(&mut self)
+    {
+        self.set_instruction(InstructionTypes::DCX);
         self.low_nibble = Some((self.byte_val & 0x30) >> 4);
     }
 
