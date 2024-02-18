@@ -167,6 +167,8 @@ impl Processor
             InstructionTypes::RPE  => self.rpe_op(),
             InstructionTypes::RPO  => self.rpo_op(),
             InstructionTypes::DCX  => self.dcx_op(),
+            InstructionTypes::LHLD => self.lhld_op(),
+            InstructionTypes::SHLD => self.shld_op(),
             InstructionTypes::NOP  => (),
             InstructionTypes::Unknown => (),
         }
@@ -987,7 +989,22 @@ impl Processor
         }
     }
 
-    
+    fn lhld_op(&mut self)
+    {
+        let addr = self.get_direct_address();
+        let l_reg_value = self.memory[addr as usize];
+        let h_reg_value = self.memory[(addr + 1) as usize];
+        self.set_reg(L_REG, l_reg_value);
+        self.set_reg(H_REG, h_reg_value);
+    }
+
+    fn shld_op(&mut self)
+    {
+        let addr = self.get_direct_address();
+        let l_reg_value = self.get_reg(L_REG);
+        let h_reg_value = self.get_reg(H_REG);
+    }
+
     pub fn get_immediate(&mut self) -> u8
     {
         return self.memory[(self.program_counter + 1) as usize];
