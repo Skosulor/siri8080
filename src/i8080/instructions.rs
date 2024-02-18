@@ -313,7 +313,7 @@ impl Instruction
                     0x17 => self.set_instruction(InstructionTypes::RAL),
                     0x1A | 0x0A => self.set_instruction(InstructionTypes::LDAX),
                     0x1F => self.set_instruction(InstructionTypes::RAR),
-                    0x22 => self.set_instruction(InstructionTypes::LHLD),
+                    0x22 => self.set_instruction(InstructionTypes::SHLD),
                     0x27 => self.name = "DAA NOT IMP".to_string(),
                     0x2A => self.set_instruction(InstructionTypes::LHLD),
                     0x2F => self.name = "CMA NOT IMP".to_string(),
