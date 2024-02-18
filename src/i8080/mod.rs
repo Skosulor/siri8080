@@ -750,6 +750,7 @@ impl Processor
     {
         let lsb = self.memory[(self.stack_pointer + 0) as usize];
         let msb = self.memory[(self.stack_pointer + 1) as usize];
+        self.stack_pointer += 2;
         self.set_reg_pair(self.current_op.low_nibble.unwrap(), msb, lsb);
     }
 
