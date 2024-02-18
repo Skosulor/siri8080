@@ -811,6 +811,7 @@ impl Processor
         let msb_addr = self.memory[(self.stack_pointer + 1) as usize];
 
         let addr: u16 = ((msb_addr as u16) << 8) + lsb_addr as u16;
+        self.stack_pointer += 2;
         self.program_counter = addr - 1;
     }
 
