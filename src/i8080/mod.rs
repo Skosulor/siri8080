@@ -52,13 +52,12 @@ impl Processor
 
     pub fn reset(&mut self) 
     {
-        self.stack_pointer = 0x20;
-        self.program_counter = 0;
-        self.memory = [0; MEMORY_SIZE];
-        self.flags = StatusFlags::new();
-        self.current_op = Instruction::new();
-        self.registers = Registers::new();
-        self.out = 0;
+        self.stack_pointer      = 0x20;
+        self.program_counter    = 0;
+        self.flags              = StatusFlags::new();
+        self.current_op         = Instruction::new();
+        self.registers          = Registers::new();
+        self.out                = 0;
         self.interrupts_enabled = false;
     }
 
