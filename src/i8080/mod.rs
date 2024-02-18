@@ -667,9 +667,10 @@ impl Processor
 
     fn dcr_op(&mut self)
     {
-        let reg                   = self.get_reg(self.current_op.low_nibble.unwrap());
-        let (res, _)              = reg.overflowing_sub(1);
-        self.flags.auxiliary_flag = reg & 0x0F == 0x00;
+        let reg                   = self.current_op.low_nibble.unwrap();
+        let reg_value             = self.get_reg(reg);
+        let (res, _)              = reg_value.overflowing_sub(1);
+        self.flags.auxiliary_flag = reg_value & 0x0F == 0x00;
         self.flags.parity_flag    = parity(res);
         self.flags.sign_flag      = sign(res);
         self.flags.zero_flag      = zero(res);

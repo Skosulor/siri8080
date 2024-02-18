@@ -365,7 +365,7 @@ impl Instruction
     {
         self.adress_mode = AddressingMode::Direct;
         self.instruction_type = InstructionTypes::DCR;
-        self.low_nibble = Some(self.byte_val & 0x30);
+        self.low_nibble = Some((self.byte_val & 0x38) >> 3);
         self.name = format!("DCR {}", Registers::translate_to_reg(self.low_nibble.unwrap()));
     }
 
